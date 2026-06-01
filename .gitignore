@@ -1,0 +1,24 @@
+# Jupyter Book build output
+jupyter-book/_build/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Data files (too large for git)
+lecture/*.zip
+lecture/h1_data/
+lecture/h1_data_copy/
+lecture/h2_data/
+lecture/h2_data_copy/
+lecture/h3_data/
+lecture/h3_data_copy/
+lecture/h4_data/
+lecture/h4_data_copy/
+
+# Generated images
+lecture/*.png
+
+# Logs
+lecture/*.log

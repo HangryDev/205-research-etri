@@ -1,0 +1,19 @@
+title: Industrial AI — Anomaly Detection & Predictive Maintenance
+author: Research Team
+logo: ""
+execute:
+  execute_notebooks: "off"
+parse:
+  myst_enable_extensions:
+    - dollarmath
+    - linkify
+repository:
+  url: https://github.com/hangrydev/205-research-etri
+  branch: main
+html:
+  use_repository_button: true
+  use_issues_button: true
+  home_page_in_navbar: false
+sphinx:
+  config:
+    language: ko

@@ -1,0 +1,18 @@
+format: jb-book
+root: intro
+parts:
+  - caption: Part 1. Claude Code
+    chapters:
+      - file: claude_code
+  - caption: Part 2. CNC Milling Machine Vibration Anomaly Detection
+    chapters:
+      - file: h1_cnc_anomaly_detection
+  - caption: Part 3. NASA Turbofan Engine RUL Prediction
+    chapters:
+      - file: h2_nasa_turbofan_rul
+  - caption: Part 4. CCTV Safety Violation Detection
+    chapters:
+      - file: h3_cctv_safety_detection
+  - caption: Part 5. MVTec Industrial Image Anomaly Detection
+    chapters:
+      - file: h4_mvtec_anomaly_detection
