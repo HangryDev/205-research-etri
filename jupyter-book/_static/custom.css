@@ -1,0 +1,239 @@
+/* ── Pretendard Font ── */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+:root {
+  /* Ocean palette */
+  --oce-deep:    #0B2545;
+  --oce-navy:    #13315C;
+  --oce-blue:    #134074;
+  --oce-teal:    #0B7A75;
+  --oce-cyan:    #07BEB8;
+  --oce-light:   #A4DEF9;
+  --oce-mist:    #D6F4FA;
+  --oce-foam:    #EEFAFB;
+  --oce-text:    #1B2A4A;
+  --oce-muted:   #5A6E8A;
+}
+
+/* ── Global ── */
+html, body, p, li, h1, h2, h3, h4, h5, h6,
+.navbar, .sidebar, .footer, input, button, label,
+.admonition, .admonition-title, table, th, td,
+code, pre, . MathJax {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
+               "Segoe UI", Roboto, "Helvetica Neue", "Apple SD Gothic Neo",
+               "Noto Sans KR", "Malgun Gothic", sans-serif !important;
+}
+
+body {
+  color: var(--oce-text);
+  background: var(--oce-foam);
+}
+
+/* ── Top navbar ── */
+.navbar-brand-box .navbar-brand {
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.c-top-bar {
+  background: linear-gradient(135deg, var(--oce-deep) 0%, var(--oce-blue) 100%) !important;
+}
+
+/* ── Left sidebar ── */
+.sidebar-start {
+  background: linear-gradient(180deg, var(--oce-navy) 0%, var(--oce-deep) 100%) !important;
+}
+.sidebar-start .navbar-brand {
+  color: #fff !important;
+}
+.sidebar-start a,
+.sidebar-start .caption-text {
+  color: var(--oce-light) !important;
+}
+.sidebar-start a:hover {
+  color: var(--oce-cyan) !important;
+}
+.sidebar-start .active a,
+.sidebar-start .current a {
+  color: var(--oce-cyan) !important;
+  border-left-color: var(--oce-cyan) !important;
+}
+.sidebar-start .caption-text {
+  font-weight: 700;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+/* ── Right sidebar (in-page TOC) ── */
+.sidebar-end {
+  background: var(--oce-foam) !important;
+}
+.sidebar-end a {
+  color: var(--oce-blue) !important;
+}
+.sidebar-end .active a {
+  color: var(--oce-teal) !important;
+  border-left-color: var(--oce-teal) !important;
+}
+
+/* ── Links ── */
+a,
+.reference.external,
+.reference.internal {
+  color: var(--oce-teal);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: var(--oce-cyan);
+  text-decoration: underline;
+}
+
+/* ── Headings ── */
+h1 {
+  color: var(--oce-deep);
+  border-bottom: 2px solid var(--oce-light);
+  padding-bottom: 0.3em;
+  font-weight: 800;
+}
+h2 {
+  color: var(--oce-blue);
+  font-weight: 700;
+}
+h3 {
+  color: var(--oce-navy);
+  font-weight: 600;
+}
+h4, h5, h6 {
+  color: var(--oce-teal);
+  font-weight: 600;
+}
+
+/* ── Admonitions ── */
+.admonition {
+  border-radius: 8px;
+  border-left: 4px solid var(--oce-teal);
+  background: var(--oce-mist);
+}
+.admonition.tip {
+  border-left-color: var(--oce-teal);
+  background: linear-gradient(135deg, #e6faf9 0%, var(--oce-mist) 100%);
+}
+.admonition.warning {
+  border-left-color: #E67E22;
+  background: #FFF8EC;
+}
+.admonition.note {
+  border-left-color: var(--oce-blue);
+  background: #EAF0F9;
+}
+.admonition.important {
+  border-left-color: var(--oce-navy);
+  background: #E8EEF6;
+}
+.admonition-title {
+  color: var(--oce-deep) !important;
+  font-weight: 700 !important;
+}
+
+/* ── Tables ── */
+table {
+  border-collapse: collapse;
+  border-radius: 6px;
+  overflow: hidden;
+}
+thead th {
+  background: var(--oce-blue);
+  color: #fff;
+  font-weight: 600;
+}
+tbody tr:nth-child(even) {
+  background: var(--oce-foam);
+}
+tbody tr:hover {
+  background: var(--oce-mist);
+}
+
+/* ── Code blocks ── */
+pre {
+  background: #1B2A4A !important;
+  color: #E8F4FD !important;
+  border-radius: 8px;
+  padding: 1em;
+}
+code {
+  background: var(--oce-mist);
+  color: var(--oce-navy);
+  border-radius: 4px;
+  padding: 0.15em 0.35em;
+  font-size: 0.9em;
+}
+
+/* ── Buttons ── */
+.btn,
+.button {
+  background: var(--oce-teal);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.btn:hover,
+.button:hover {
+  background: var(--oce-cyan);
+  color: #fff;
+}
+
+/* ── Footer ── */
+.footer {
+  background: linear-gradient(135deg, var(--oce-deep) 0%, var(--oce-blue) 100%) !important;
+  color: var(--oce-light) !important;
+  text-align: center;
+  padding: 1.2em 0 !important;
+  font-size: 0.88em;
+  letter-spacing: 0.01em;
+}
+.footer a {
+  color: var(--oce-cyan) !important;
+}
+
+/* ── Scrollbar (webkit) ── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--oce-foam);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--oce-light);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--oce-teal);
+}
+
+/* ── Search input ── */
+.search-button {
+  color: var(--oce-light) !important;
+}
+.form-control {
+  border: 1px solid var(--oce-light);
+  border-radius: 6px;
+}
+
+/* ── Mermaid diagram background ── */
+.mermaid {
+  background: var(--oce-foam);
+  border-radius: 8px;
+  padding: 1em;
+  text-align: center;
+}
+
+/* ── Print-friendly ── */
+@media print {
+  .navbar, .sidebar, .footer { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+}

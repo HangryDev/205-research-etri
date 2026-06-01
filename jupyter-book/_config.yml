@@ -1,5 +1,6 @@
-title: Industrial AI — Anomaly Detection & Predictive Maintenance
-author: Research Team
+title: 스마트 안전 및 제조 데이터 혁신
+author: Hankyul Jeong
+copyright: "2026 Hankyul Jeong. All rights reserved."
 logo: ""
 execute:
   execute_notebooks: "off"
@@ -15,6 +16,9 @@ html:
   use_repository_button: true
   use_issues_button: true
   home_page_in_navbar: false
+  css:
+    - _static/custom.css
 sphinx:
   config:
     language: ko
+    html_permalinks_icon: "<i class='fas fa-link'></i>"

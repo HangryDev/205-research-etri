@@ -1,4 +1,4 @@
-# 산업 AI 실습 — 이상 탐지와 예지 보전
+# 스마트 안전 및 제조 데이터 혁신
 
 ```{admonition} 환영합니다!
 본 교재는 산업 현장의 핵심 AI 과제인 **이상 탐지(Anomaly Detection)**와 **예지 보전(Predictive Maintenance)**을 직접 실습하며 배우는 실무 중심 강의 자료입니다. Claude Code를 개발 파트너로 활용하여, 현업에서 바로 적용 가능한 AI 솔루션을 구축해 봅니다.
