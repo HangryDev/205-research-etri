@@ -1,7 +1,10 @@
 # 섹션 2 | Action Recognition — 사람의 행동을 숫자로 읽는다
 
-> **참고 교재**: *Practical Machine Learning for Computer Vision* (Valliappa Lakshmanan et al., O'Reilly)
-> **소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
+:::{admonition} 참고 교재
+:class: note
+**참고 교재**: *Practical Machine Learning for Computer Vision* (Valliappa Lakshmanan et al., O'Reilly)
+**소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
+:::
 
 ---
 

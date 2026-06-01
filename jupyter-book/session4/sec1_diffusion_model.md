@@ -1,7 +1,10 @@
 # 섹션 1 | Diffusion Model — 노이즈에서 결함 이미지를 꺼내는 법
 
-> **참고 교재**: *Hands-On Generative AI with Transformers and Diffusion Models* (Omar Sanseviero et al., O'Reilly)
-> **소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
+:::{admonition} 참고 교재
+:class: note
+**참고 교재**: *Hands-On Generative AI with Transformers and Diffusion Models* (Omar Sanseviero et al., O'Reilly)
+**소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
+:::
 
 ---
 

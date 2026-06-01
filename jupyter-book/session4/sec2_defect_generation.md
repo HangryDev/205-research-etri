@@ -1,7 +1,10 @@
 # 섹션 2 | Defect Generation — 프롬프트로 결함을 설계한다
 
-> **참고 교재**: *Generative Deep Learning, 2nd Ed.* (David Foster, O'Reilly)
-> **소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
+:::{admonition} 참고 교재
+:class: note
+**참고 교재**: *Generative Deep Learning, 2nd Ed.* (David Foster, O'Reilly)
+**소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
+:::
 
 ---
 

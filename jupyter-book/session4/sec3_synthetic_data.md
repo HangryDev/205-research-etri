@@ -1,7 +1,10 @@
 # 섹션 3 | 합성 데이터 고도화 — 만든 데이터가 실제로 도움이 되는가
 
-> **참고 교재**: *Practical Synthetic Data Generation* (Khaled El Emam et al., O'Reilly)
-> **소요 시간**: 50분 (핵심 개념+실험 설계 10 + Claude Code 시연 15 + 자유 실습 25)
+:::{admonition} 참고 교재
+:class: note
+**참고 교재**: *Practical Synthetic Data Generation* (Khaled El Emam et al., O'Reilly)
+**소요 시간**: 50분 (핵심 개념+실험 설계 10 + Claude Code 시연 15 + 자유 실습 25)
+:::
 
 ---
 

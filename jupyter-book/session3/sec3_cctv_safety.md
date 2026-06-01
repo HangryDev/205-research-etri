@@ -1,7 +1,10 @@
 # 섹션 3 | CCTV 안전 위반 탐지 통합 실습
 
-> **참고 교재**: *Practical Machine Learning for Computer Vision* (Valliappa Lakshmanan et al., O'Reilly)
-> **소요 시간**: 50분 (파이프라인 설계+데이터 준비 10 + 통합 탐지+알림 15 + 자유 실습 25)
+:::{admonition} 참고 교재
+:class: note
+**참고 교재**: *Practical Machine Learning for Computer Vision* (Valliappa Lakshmanan et al., O'Reilly)
+**소요 시간**: 50분 (파이프라인 설계+데이터 준비 10 + 통합 탐지+알림 15 + 자유 실습 25)
+:::
 
 ---
 

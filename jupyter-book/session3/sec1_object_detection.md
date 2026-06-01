@@ -1,7 +1,10 @@
 # 섹션 1 | Object Detection — YOLO가 어떻게 그렇게 빠른가
 
-> **참고 교재**: *Practical Deep Learning for Cloud, Mobile, and Edge* (Anirudh Koul et al., O'Reilly)
-> **소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
+:::{admonition} 참고 교재
+:class: note
+**참고 교재**: *Practical Deep Learning for Cloud, Mobile, and Edge* (Anirudh Koul et al., O'Reilly)
+**소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
+:::
 
 ---
 
