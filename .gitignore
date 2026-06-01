@@ -22,3 +22,6 @@ lecture/*.png
 
 # Logs
 lecture/*.log
+
+# Lecture notes source
+lecturenotes/

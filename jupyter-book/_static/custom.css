@@ -19,7 +19,7 @@
 html, body, p, li, h1, h2, h3, h4, h5, h6,
 .navbar, .sidebar, .footer, input, button, label,
 .admonition, .admonition-title, table, th, td,
-code, pre, . MathJax {
+code, pre, .MathJax {
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
                "Segoe UI", Roboto, "Helvetica Neue", "Apple SD Gothic Neo",
                "Noto Sans KR", "Malgun Gothic", sans-serif !important;
@@ -158,11 +158,25 @@ tbody tr:hover {
 }
 
 /* ── Code blocks ── */
-pre {
-  background: #1B2A4A !important;
-  color: #E8F4FD !important;
+div.highlight {
+  background: #F0F4F8 !important;
+  border: 1px solid var(--oce-light);
   border-radius: 8px;
-  padding: 1em;
+  padding: 0.25em 0;
+}
+div.highlight pre {
+  background: transparent !important;
+  color: inherit !important;
+  border-radius: 8px;
+  padding: 0.75em 1em;
+  margin: 0;
+}
+pre {
+  background: #F0F4F8 !important;
+  color: var(--oce-text) !important;
+  border: 1px solid var(--oce-light);
+  border-radius: 8px;
+  padding: 0.75em 1em;
 }
 code {
   background: var(--oce-mist);
@@ -170,6 +184,12 @@ code {
   border-radius: 4px;
   padding: 0.15em 0.35em;
   font-size: 0.9em;
+}
+pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
 }
 
 /* ── Buttons ── */
