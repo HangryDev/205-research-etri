@@ -35,7 +35,7 @@
     .cover-subtitle { font-size: 1.1rem; opacity: 0.85; margin: 0 0 2rem; font-weight: 400; }
     .cover-divider { border: none; border-top: 1px solid rgba(255,255,255,0.3); margin-bottom: 1.5rem; }
     .cover-info { display: flex; gap: 2rem; font-size: 0.85rem; opacity: 0.8; flex-wrap: wrap; }
-    .cover-info span::before { content: "\00b7 "; opacity: 0.5; }
+    .cover-info span::before { content: "· "; opacity: 0.5; }
     .cover-info span:first-child::before { content: ""; }
 
     /* TOC */
@@ -102,7 +102,7 @@
       break-inside: avoid;
     }
     .presentable::before {
-      content: "\23F1  \BC1C\uD45C \BC94\uC704";
+      content: "⏱ 발표 범위";
       display: inline-block;
       font-size: 0.7rem; font-weight: 600;
       background: #F0A030; color: white;
@@ -120,7 +120,7 @@
       margin: 1rem 0; font-size: 0.88rem;
     }
     .deep-dive::before {
-      content: "\uD83D\uDCD6  \uC2EC\uD654 \uCC38\uACE0 (\uC2DC\uAC04 \uC678)";
+      content: "📖 심화 참고 (시간 외)";
       display: block; font-size: 0.7rem; font-weight: 600;
       color: var(--color-muted); margin-bottom: 0.5rem;
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
