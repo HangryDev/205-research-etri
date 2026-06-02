@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session 2 | 딥러닝 기반 이상 탐지</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #F8F6F1;
+      --color-text: #1A1A1A;
+      --color-accent: #0D7E6E;
+      --color-accent-light: #e6f4f1;
+      --color-muted: #5A5A5A;
+      --color-border: #D8D5CE;
+      --color-code-bg: #F0EDE8;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-bg); color: var(--color-text);
+      line-height: 1.75; word-break: keep-all; font-feature-settings: "kern" 1;
+      margin: 0; padding: 0;
+    }
+    .container { max-width: 780px; margin: 0 auto; padding: 0 2rem; }
+
+    /* COVER */
+    .cover { background: var(--color-accent); color: white; padding: 5rem 2rem 4rem; }
+    .cover-inner { max-width: 780px; margin: 0 auto; }
+    .cover-meta { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; margin-bottom: 1.5rem; }
+    .cover-title { font-size: 2.4rem; font-weight: 700; line-height: 1.25; margin: 0 0 0.75rem; }
+    .cover-subtitle { font-size: 1.1rem; opacity: 0.85; margin: 0 0 2rem; font-weight: 400; }
+    .cover-divider { border: none; border-top: 1px solid rgba(255,255,255,0.3); margin-bottom: 1.5rem; }
+    .cover-info { display: flex; gap: 2rem; font-size: 0.85rem; opacity: 0.8; flex-wrap: wrap; }
+    .cover-info span::before { content: "- "; opacity: 0.5; }
+    .cover-info span:first-child::before { content: ""; }
+
+    /* TOC */
+    .toc { background: white; border: 1px solid var(--color-border); border-radius: 8px; padding: 1.75rem 2rem; margin: 2.5rem auto; max-width: 780px; }
+    .toc h2 { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-accent); margin: 0 0 1rem; }
+    .toc ol { margin: 0; padding-left: 1.25rem; list-style: none; counter-reset: tc; }
+    .toc li { counter-increment: tc; margin: 0.4rem 0; font-size: 0.9rem; }
+    .toc li::before { content: counter(tc, decimal-leading-zero) ". "; color: var(--color-accent); font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+    .toc a { color: var(--color-text); text-decoration: none; }
+    .toc a:hover { color: var(--color-accent); }
+
+    /* MODULE */
+    .module { margin-top: 3rem; padding-bottom: 2rem; }
+    .module + .module { border-top: 1px solid var(--color-border); padding-top: 1rem; }
+    .module-header { display: flex; align-items: baseline; gap: 1rem; border-bottom: 2px solid var(--color-accent); padding-bottom: 0.75rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .module-number { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-accent); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+    .module-title { font-size: 1.5rem; font-weight: 700; flex: 1; margin: 0; line-height: 1.3; }
+    .module-duration { font-size: 0.78rem; background: var(--color-accent); color: white; padding: 0.2em 0.7em; border-radius: 3px; font-weight: 500; white-space: nowrap; }
+    .module-desc { color: var(--color-muted); font-size: 0.95rem; margin: -1rem 0 1.75rem; line-height: 1.6; }
+
+    /* SECTION / STEP */
+    .section-block { margin-top: 2.5rem; }
+    .section-block h3 { font-size: 1.15rem; font-weight: 600; color: var(--color-text); margin: 0 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--color-border); }
+    .step-block { margin: 1.25rem 0; page-break-inside: avoid; break-inside: avoid; }
+    .step-block h4 { font-size: 1rem; font-weight: 600; margin: 0 0 0.5rem; color: var(--color-text); }
+    .step-badge { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); background: var(--color-accent-light); border: 1px solid rgba(13,126,110,0.2); border-radius: 3px; padding: 0.1em 0.5em; margin-right: 0.5rem; vertical-align: middle; }
+
+    /* TIME TABLE */
+    table, .time-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; page-break-inside: avoid; break-inside: avoid; }
+    th { background: var(--color-accent); color: white; padding: 0.45rem 0.75rem; text-align: left; font-weight: 500; }
+    td { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+    tr:nth-child(even) td { background: rgba(13,126,110,0.03); }
+    .time-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--color-accent); white-space: nowrap; }
+
+    /* CALLOUT */
+    .callout { display: flex; gap: 0.75rem; padding: 0.875rem 1rem; border-left: 3px solid; background: var(--color-code-bg); margin: 1.25rem 0; font-size: 0.9rem; page-break-inside: avoid; break-inside: avoid; }
+    .callout-instructor { border-color: #E8A020; }
+    .callout-prompt { border-color: var(--color-accent); }
+    .callout-tip { border-color: #3D7EC4; }
+    .callout-warning { border-color: #C0392B; }
+    .callout-icon { font-size: 1rem; flex-shrink: 0; padding-top: 0.05rem; }
+
+    /* CODE */
+    pre { background: var(--color-code-bg); border: 1px solid var(--color-border); border-radius: 6px; padding: 1rem 1.25rem; overflow-x: auto; font-size: 0.8rem; line-height: 1.65; page-break-inside: avoid; break-inside: avoid; margin: 1rem 0; }
+    code { font-family: 'JetBrains Mono', monospace; }
+    p code, li code, td code { background: var(--color-code-bg); border: 1px solid var(--color-border); border-radius: 3px; padding: 0.1em 0.35em; font-size: 0.83em; }
+
+    /* FIGURE / GALLERY */
+    .figure-block { margin: 1.5rem 0; text-align: center; page-break-inside: avoid; break-inside: avoid; }
+    .figure-block img { max-width: 90%; height: auto; border-radius: 6px; border: 1px solid var(--color-border); }
+    .figure-block figcaption { font-size: 0.82rem; color: var(--color-muted); margin-top: 0.5rem; font-style: italic; }
+    .image-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1.5rem 0; page-break-inside: avoid; break-inside: avoid; }
+    .image-gallery .figure-block { margin: 0; }
+    .image-gallery .figure-block img { max-width: 100%; }
+
+    /* PRESENTABLE */
+    .presentable {
+      background: #FFF9E6;
+      border-left: 4px solid #F0A030;
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    .presentable::before {
+      content: "[발표 범위]";
+      display: inline-block; font-size: 0.7rem; font-weight: 600;
+      background: #F0A030; color: white;
+      padding: 0.15em 0.5em; border-radius: 3px; margin-bottom: 0.75rem;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .presentable p, .presentable ul, .presentable pre { margin-top: 0.5rem; }
+
+    /* DEEP DIVE */
+    .deep-dive {
+      color: var(--color-muted);
+      border-left: 2px solid var(--color-border);
+      padding-left: 1rem; padding-top: 0.25rem; padding-bottom: 0.25rem;
+      margin: 1rem 0; font-size: 0.88rem;
+    }
+    .deep-dive::before {
+      content: "[심화 참고 - 시간 외]";
+      display: block; font-size: 0.7rem; font-weight: 600;
+      color: var(--color-muted); margin-bottom: 0.5rem;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .deep-dive p, .deep-dive ul { margin-top: 0.4rem; }
+
+    /* TYPOGRAPHY */
+    h1 { font-size: 1.8rem; font-weight: 700; margin: 2rem 0 1rem; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 0.75rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+    p { margin: 0.6rem 0 0.9rem; }
+    ul, ol { margin: 0.5rem 0 0.9rem; padding-left: 1.5rem; }
+    li { margin-bottom: 0.3rem; }
+    strong { font-weight: 700; }
+    blockquote { border-left: 3px solid var(--color-accent); margin: 1rem 0; padding: 0.5rem 1rem; background: var(--color-accent-light); font-size: 0.92rem; }
+    a { color: var(--color-accent); }
+    hr { border: none; border-top: 1px solid var(--color-border); margin: 2rem 0; }
+
+    /* APPENDIX */
+    .appendix { background: white; border: 1px solid var(--color-border); border-radius: 8px; padding: 1.75rem 2rem; margin: 3rem auto; max-width: 780px; }
+    .appendix h2 { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-accent); margin: 0 0 1rem; border-bottom: none; }
+
+    /* PRINT */
+    @page { size: A4; margin: 2cm 2.5cm 2.5cm 2.5cm; @bottom-right { content: counter(page); font-size: 9pt; color: #888; } }
+    h1, h2, h3, h4 { page-break-after: avoid; break-after: avoid; }
+    pre, code, blockquote, table, figure, .no-break, .callout, .step-block, .time-table, .figure-block, .image-gallery, .presentable, .deep-dive { page-break-inside: avoid; break-inside: avoid; }
+    .module { page-break-before: always; break-before: page; }
+    .module:first-of-type { page-break-before: auto; break-before: auto; }
+    @media print {
+      body { background: white !important; font-size: 10pt; line-height: 1.75; word-break: keep-all; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      a { text-decoration: none; color: inherit; }
+      a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 7.5pt; color: #666; }
+      .toc { display: none; }
+      .cover { padding: 3rem 2rem 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-inner">
+    <div class="cover-meta">Session 2</div>
+    <h1 class="cover-title">딥러닝 기반 이상 탐지</h1>
+    <p class="cover-subtitle">Autoencoder, LSTM RUL 예측, NASA Turbofan 통합 실습</p>
+    <hr class="cover-divider">
+    <div class="cover-info">
+      <span>Autoencoder / PCA</span>
+      <span>LSTM RUL 예측</span>
+      <span>NASA Turbofan 통합 실습</span>
+      <span>총 140분</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>목차</h2>
+  <ol>
+    <li><a href="#s2-1">섹션 1 | Autoencoder - 정상을 학습해서 이상을 찾는다 (45분)</a></li>
+    <li><a href="#s2-2">섹션 2 | RUL 예측 - 얼마나 버틸 수 있는가 (45분)</a></li>
+    <li><a href="#s2-3">섹션 3 | NASA Turbofan 통합 실습 (50분)</a></li>
+    <li><a href="#s2-appendix">심화 학습 자료</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODULE 1: Autoencoder                                         -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="module" id="s2-1">
+  <div class="module-header">
+    <span class="module-number">Section 01</span>
+    <h2 class="module-title">Autoencoder - 정상을 학습해서 이상을 찾는다</h2>
+    <span class="module-duration">45분</span>
+  </div>
+  <p class="module-desc">
+    <strong>참고 교재</strong>: <em>Hands-On Unsupervised Learning Using Python</em> (Ankur A. Patel, O'Reilly)<br>
+    시간 배분: 문제 제기 3분 + 이론 13분 + 시연 10분 + 실습 19분
+  </p>
+
+  <!-- 1-1 문제 제기 -->
+  <div class="section-block">
+    <h3>1-1. 문제 제기 <span class="time-badge">3분</span></h3>
+
+    <div class="presentable">
+
+    <p><strong>상황</strong>: 공장에서 수만 개의 정상 제품이 생산되는 동안 불량은 몇 개뿐입니다.
+    이 불량에는 라벨이 붙어 있지 않습니다. 작업자가 미처 발견하지 못했거나, 아직 고장이 나지 않은 상태이기 때문입니다.</p>
+    <pre><code>[현실적인 제조 데이터의 모습]
+
+정상 데이터: ████████████████████████████  수만 건 (라벨 있음)
+이상 데이터: █                             수십 건 (라벨 없음 or 불확실)</code></pre>
+    <p><strong>지도학습으로 해결하려면</strong>:</p>
+    <ul>
+      <li>불량 샘플이 충분히 필요 - 현실에서 불가능</li>
+      <li>라벨링 작업 필요 - 비용과 시간 소모</li>
+      <li>새로운 유형의 불량 - 기존 모델이 탐지 못함</li>
+    </ul>
+    <p><strong>핵심 질문</strong>: 라벨 없이, 정상 데이터만 가지고 이상을 찾을 수 있을까?<br>
+    <strong>핵심 아이디어</strong>: 정상만 보고 학습한 모델은 이상을 제대로 재현하지 못한다</p>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_1_img04.png" alt="PCA 산점도: 정상과 이상의 분포 차이" loading="lazy">
+
+    <figcaption>PCA 산점도: 정상과 이상의 분포 차이</figcaption>
+</div>
+  </div>
+
+  <!-- 1-2 이론 -->
+  <div class="section-block">
+    <h3>1-2. 이론 <span class="time-badge">13분</span></h3>
+
+    <h4>① 비지도 학습의 프레임워크 <span class="time-badge">3분</span></h4>
+    <div class="presentable">
+
+    <p>라벨 없이 데이터 자체의 구조를 학습합니다.</p>
+    <pre><code>[지도학습 vs 비지도학습]
+
+지도학습:   입력 -> 모델 -> 예측값  (정답 라벨로 학습)
+비지도학습: 입력 -> 모델 -> 구조/표현  (데이터 자체로 학습)
+
+비지도학습이 답하는 질문:
+  "이 데이터는 어떤 구조를 가지고 있는가?"
+  "이 샘플은 다른 샘플들과 얼마나 다른가?"</code></pre>
+    <p>이상탐지에서의 비지도 학습 전략:</p>
+    <ol>
+      <li>정상 데이터만으로 "정상이 어떤 모습인지" 학습</li>
+      <li>새로운 데이터가 들어왔을 때 "정상과 얼마나 다른지" 측정</li>
+      <li>차이가 임계값을 넘으면 이상으로 판단</li>
+    </ol>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_1_img06.png" alt="비지도 학습 프레임워크 개요" loading="lazy">
+
+    <figcaption>비지도 학습 프레임워크 개요</figcaption>
+</div>
+
+    <h4>② Autoencoder 구조와 재구성 오차 <span class="time-badge">5분</span></h4>
+    <div class="presentable">
+
+    <p>Autoencoder는 <strong>압축(Encoder) - 복원(Decoder)</strong>을 학습하는 신경망입니다.</p>
+    <pre><code>[Autoencoder 구조]
+
+입력 x        잠재 표현 z       재구성 x-hat
+(원본 데이터)  (압축된 표현)     (복원된 데이터)
+
+[64차원]  ->  Encoder  ->  [8차원]  ->  Decoder  ->  [64차원]
+  x                          z                       x-hat
+
+학습 목표: x와 x-hat의 차이(재구성 오차)를 최소화
+Loss = ||x - x-hat||^2  (MSE)</code></pre>
+    <p><strong>이상탐지에 활용하는 원리</strong>:</p>
+    <pre><code>정상 데이터로만 학습:
+  정상 입력 -> Encoder -> 정상 패턴의 잠재 표현 -> Decoder -> 잘 복원됨
+  재구성 오차 낮음
+
+이상 데이터 투입:
+  이상 입력 -> Encoder -> 정상 패턴으로 억지로 표현 -> Decoder -> 복원 실패
+  재구성 오차 높음
+
+결론: 재구성 오차 = 이상 점수</code></pre>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>PyTorch Autoencoder 기본 구현</strong>:</p>
+    <pre><code class="language-python">import torch
+import torch.nn as nn
+
+class Autoencoder(nn.Module):
+    def __init__(self, input_dim=64, latent_dim=8):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, 32),
+            nn.ReLU(),
+            nn.Linear(32, latent_dim)
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(latent_dim, 32),
+            nn.ReLU(),
+            nn.Linear(32, input_dim)
+        )
+
+    def forward(self, x):
+        z = self.encoder(x)
+        return self.decoder(z)</code></pre>
+    <ul>
+      <li><code>nn.Sequential(...)</code>: 층들을 순서대로 묶어 주는 컨테이너</li>
+      <li><code>latent_dim=8</code>: 잠재 공간의 차원. 이 숫자가 작을수록 압축이 강해지고 이상 탐지에 유리</li>
+      <li><code>forward(x)</code>: 모델에 x를 넣으면 자동으로 호출되는 메서드</li>
+    </ul>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>재구성 오차 계산</strong>:</p>
+    <pre><code class="language-python">def reconstruction_error(model, x):
+    x_hat = model(x)
+    return ((x - x_hat) ** 2).mean(dim=1)  # 샘플별 MSE</code></pre>
+    <ul>
+      <li><code>(x - x_hat) ** 2</code>: 샘플마다, 각 특징마다 오차의 제곱</li>
+      <li><code>.mean(dim=1)</code>: 특징 방향으로 평균. 샘플 하나당 숫자 하나 = 이상 점수</li>
+    </ul>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_1_img07.png" alt="Autoencoder 재구성 오차 분포: 정상 vs 이상" loading="lazy">
+
+    <figcaption>Autoencoder 재구성 오차 분포: 정상 vs 이상</figcaption>
+</div>
+
+    <h4>③ 임계값 설정: 어디서부터 이상인가 <span class="time-badge">5분</span></h4>
+    <div class="presentable">
+
+    <p>모델을 학습했다고 끝이 아닙니다. <strong>임계값을 어떻게 정하느냐</strong>가 실무의 핵심입니다.</p>
+    <pre><code>[정상 데이터의 재구성 오차 분포]
+
+   빈도
+    |     ████
+    |    ██████
+    |   █████████
+    |  ███████████
+    | ██████████████....
+    └──────────────┬──────── 재구성 오차
+                  |
+              임계값 T
+
+T보다 낮은 오차 -> 정상
+T보다 높은 오차 -> 이상</code></pre>
+    <p><strong>임계값 설정 방법 3가지</strong>:</p>
+    <pre><code>방법 1. 백분위수 기반 (가장 흔함)
+  T = 정상 데이터 재구성 오차의 95th percentile
+  -> "정상 샘플의 5%는 이상으로 오탐되는 것을 허용"
+
+방법 2. 평균 + k x 표준편차
+  T = mu + 3sigma  (3-sigma rule)
+  -> 정규분포를 가정할 때 유효
+
+방법 3. 도메인 전문가 설정
+  "재구성 오차 0.05 이상이면 작업자에게 알림"
+  -> 실무에서 최종 조정은 항상 사람이 함</code></pre>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>트레이드오프 정리</strong>:</p>
+    <table>
+      <tr><th>임계값 설정</th><th>민감도</th><th>오탐율</th><th>적용 사례</th></tr>
+      <tr><td>T 낮게</td><td>이상을 더 많이 잡음</td><td>정상을 이상으로 오탐 (현장 피로도 증가)</td><td>안전 직결 설비</td></tr>
+      <tr><td>T 높게</td><td>실제 이상 놓칠 수 있음</td><td>알림이 울리면 진짜 이상</td><td>단순 품질 검사</td></tr>
+    </table>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_1_img08.png" alt="임계값에 따른 이상 탐지율 변화" loading="lazy">
+
+    <figcaption>임계값에 따른 이상 탐지율 변화</figcaption>
+</div>
+    <div class="figure-block">
+  <img src="images/s2_1_img09.png" alt="ROC 커브: 재구성 오차 기반 이상 탐지" loading="lazy">
+
+    <figcaption>ROC 커브: 재구성 오차 기반 이상 탐지</figcaption>
+</div>
+
+    <div class="deep-dive">
+
+    <p><strong>PCA와 Autoencoder의 관계</strong>: PCA는 선형 Autoencoder의 특수한 형태입니다. Autoencoder가 비선형 활성화 함수를 사용하면 PCA보다 복잡한 패턴을 학습할 수 있습니다.</p>
+    <p>PCA는 데이터의 분산을 최대화하는 축을 찾고, Autoencoder는 재구성 오차를 최소화하는 잠재 표현을 학습합니다. 결과적으로 유사한 목적이지만 Autoencoder가 더 표현력이 높습니다.</p>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_1_img10.png" alt="PCA vs Autoencoder 차원 축소 비교" loading="lazy">
+
+    <figcaption>PCA vs Autoencoder 차원 축소 비교</figcaption>
+</div>
+    <div class="figure-block">
+  <img src="images/s2_1_img11.png" alt="PCA 주성분 분석 결과" loading="lazy">
+
+    <figcaption>PCA 주성분 분석 결과</figcaption>
+</div>
+    <div class="figure-block">
+  <img src="images/s2_1_img12.png" alt="Autoencoder 잠재 공간 시각화" loading="lazy">
+
+    <figcaption>Autoencoder 잠재 공간 시각화</figcaption>
+</div>
+  </div>
+
+  <!-- 1-3 Claude Code 시연 -->
+  <div class="section-block">
+    <h3>1-3. Claude Code 시연 <span class="time-badge">10분</span></h3>
+
+    <div class="presentable">
+
+    <div class="callout callout-instructor"><span class="callout-icon">[강사]</span><div>Autoencoder 구조 설계보다 <strong>재구성 오차가 실제로 이상 신호를 잡는지</strong> 확인하는 과정에 집중하세요.</div></div>
+    <p><strong>Claude에게 던질 프롬프트</strong>:</p>
+    <pre><code class="language-text">제조 진동 데이터 이상탐지용 Autoencoder를 만들어줘.
+- 정상 데이터: 사인파 기반 합성 신호 (1000개)
+- 이상 데이터: 노이즈가 추가된 신호 (50개, 학습에는 사용 안 함)
+- PyTorch로 Autoencoder 구현 (input_dim=64, latent_dim=8)
+- 정상 데이터로만 학습 (epoch=50)
+- 결과: 정상/이상 재구성 오차 분포를 겹쳐서 시각화
+- 95th percentile 임계값 표시</code></pre>
+    <p><strong>시연 흐름</strong>:</p>
+    <ol>
+      <li>정상/이상 합성 데이터 생성</li>
+      <li>Autoencoder 학습 (정상만)</li>
+      <li>정상/이상 각각 재구성 오차 계산</li>
+      <li>분포 히스토그램 비교 + 임계값 표시</li>
+      <li><strong>추가 질문</strong>: "latent_dim을 8에서 2로 줄이면 분리도가 어떻게 달라져?"</li>
+    </ol>
+    
+</div>
+  </div>
+
+  <!-- 1-4 실습 -->
+  <div class="section-block">
+    <h3>1-4. 실습 <span class="time-badge">19분</span></h3>
+
+    <div class="presentable">
+
+    <p><strong>과제</strong>: latent_dim을 바꿔가며 정상/이상 분리도를 비교하세요.</p>
+    <table>
+      <tr><th>실험</th><th>latent_dim</th><th>관찰 포인트</th></tr>
+      <tr><td>A</td><td>32</td><td>압축이 거의 없음 - 이상도 잘 복원?</td></tr>
+      <tr><td>B</td><td>16</td><td>기준선</td></tr>
+      <tr><td>C</td><td>8</td><td>강의 시연과 동일</td></tr>
+      <tr><td>D</td><td>4</td><td>강한 압축 - 분리도 변화?</td></tr>
+    </table>
+    <p><strong>분리도 측정</strong>:</p>
+    
+</div>
+
+    <div class="presentable">
+
+    <pre><code class="language-python"># 정상과 이상의 재구성 오차 분포가 얼마나 겹치는지 확인
+threshold = np.percentile(normal_errors, 95)
+recall = (anomaly_errors &gt; threshold).mean()
+print(f"latent_dim={{latent_dim}}, 이상 탐지율: {{recall:.2%}}")</code></pre>
+    <p><strong>제출 항목</strong>:</p>
+    <ul>
+      <li>4가지 latent_dim의 재구성 오차 분포 그래프</li>
+      <li>각 설정의 이상 탐지율(Recall) 비교 표</li>
+      <li>"압축이 너무 강하거나 너무 약할 때 각각 어떤 문제가 생기는가?" 한 문단</li>
+    </ul>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>실습 시작 코드</strong>:</p>
+    <pre><code class="language-python">import numpy as np
+import torch
+import torch.nn as nn
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+t = np.linspace(0, 1, 64)
+
+# 정상 데이터: 사인파 (약간의 노이즈 포함)
+normal_data = np.array([
+    np.sin(2 * np.pi * 5 * t) + 0.05 * np.random.randn(64)
+    for _ in range(1000)
+], dtype=np.float32)
+
+# 이상 데이터: 강한 노이즈
+anomaly_data = np.array([
+    np.sin(2 * np.pi * 5 * t) + 0.5 * np.random.randn(64)
+    for _ in range(50)
+], dtype=np.float32)
+
+class Autoencoder(nn.Module):
+    def __init__(self, input_dim=64, latent_dim=8):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, 32), nn.ReLU(),
+            nn.Linear(32, latent_dim)
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(latent_dim, 32), nn.ReLU(),
+            nn.Linear(32, input_dim)
+        )
+    def forward(self, x):
+        return self.decoder(self.encoder(x))
+
+def train_and_evaluate(latent_dim, normal_data, anomaly_data, epochs=50):
+    # TODO: 모델 생성 -&gt; 학습 -&gt; 오차 계산 -&gt; 분리도 평가
+    pass
+
+for latent_dim in [32, 16, 8, 4]:
+    train_and_evaluate(latent_dim, normal_data, anomaly_data)</code></pre>
+    
+</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODULE 2: RUL 예측                                            -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="module" id="s2-2">
+  <div class="module-header">
+    <span class="module-number">Section 02</span>
+    <h2 class="module-title">RUL 예측 - 얼마나 버틸 수 있는가</h2>
+    <span class="module-duration">45분</span>
+  </div>
+  <p class="module-desc">
+    <strong>참고 교재</strong>: <em>Deep Learning with Python, 2nd Ed.</em> (Francois Chollet, Manning)<br>
+    시간 배분: 문제 제기 3분 + 이론 13분 + 시연 10분 + 실습 19분
+  </p>
+
+  <!-- 2-1 문제 제기 -->
+  <div class="section-block">
+    <h3>2-1. 문제 제기 <span class="time-badge">3분</span></h3>
+
+    <div class="presentable">
+
+    <p><strong>RUL (Remaining Useful Life)</strong>: 지금부터 설비가 고장날 때까지 남은 사이클(또는 시간)</p>
+    <pre><code>[설비 유지보수 전략 3가지]
+
+1. 사후보전 (Reactive Maintenance)
+   고장 -> 수리
+   비용: 최대 (긴급 수리 + 생산 중단)
+   위험: 최대 (안전사고 가능)
+
+2. 예방보전 (Preventive Maintenance)
+   일정 주기(예: 매 30일)마다 교체
+   비용: 중간 (멀쩡한 부품도 교체)
+   위험: 낮음
+
+3. 예지보전 (Predictive Maintenance) <- 목표
+   RUL 예측 기반으로 교체 시점 결정
+   비용: 최소 (필요한 시점에 정확하게 교체)
+   위험: 최저</code></pre>
+    <p><strong>RUL의 정의</strong>:</p>
+    <pre><code>엔진이 총 300 사이클 후 고장난다면:
+
+사이클   1: RUL = 299
+사이클 100: RUL = 200
+사이클 250: RUL = 50   <- 이 시점에 교체 결정
+사이클 300: RUL = 0    <- 고장</code></pre>
+    <p><strong>핵심 질문</strong>: 현재 센서 데이터만 보고 RUL을 예측할 수 있을까?</p>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_2_img01.png" alt="설비 유지보수 전략 비교" loading="lazy">
+
+    <figcaption>설비 유지보수 전략 비교</figcaption>
+</div>
+  </div>
+
+  <!-- 2-2 이론 -->
+  <div class="section-block">
+    <h3>2-2. 이론 <span class="time-badge">13분</span></h3>
+
+    <h4>① 왜 일반 회귀가 아닌 LSTM인가 <span class="time-badge">3분</span></h4>
+    <div class="presentable">
+
+    <p>RUL 예측은 결국 숫자를 맞추는 회귀(Regression) 문제입니다.
+    그런데 <strong>왜 선형 회귀나 일반 신경망(MLP)으로는 부족할까요?</strong></p>
+    <pre><code>[문제: 순서가 중요한 데이터]
+
+센서 값만 보면:
+  사이클 50:  온도=520, 압력=14.6, 진동=0.02  -> RUL = ?
+  사이클 250: 온도=521, 압력=14.7, 진동=0.02  -> RUL = ?
+
+두 샘플의 순간 값이 거의 같아도 RUL은 전혀 다름
+-> "지금 값"이 아니라 "값이 변해온 패턴"이 중요
+
+MLP: 각 샘플을 독립적으로 처리 -> 순서 정보 무시
+LSTM: 이전 상태를 기억하며 처리 -> 변화 패턴 학습</code></pre>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_2_img11.png" alt="순차 데이터: MLP vs RNN 비교" loading="lazy">
+
+    <figcaption>순차 데이터: MLP vs RNN 비교</figcaption>
+</div>
+
+    <h4>② LSTM의 직관 <span class="time-badge">5분</span></h4>
+    <div class="presentable">
+
+    <p>LSTM(Long Short-Term Memory)은 <strong>"무엇을 기억하고, 무엇을 버릴지"를 학습하는</strong> 순환 신경망입니다.</p>
+    <pre><code>[LSTM 셀의 직관적 이해]
+
+일반 RNN의 문제:
+  먼 과거 정보가 현재에 영향을 못 줌 (기울기 소실)
+
+LSTM의 해결책: 게이트 3개
+  입력 게이트: "새 정보를 얼마나 받아들일까?"
+  망각 게이트: "과거 정보를 얼마나 잊을까?"
+  출력 게이트: "지금 무엇을 내보낼까?"
+
+엔진 마모 예시:
+  초반 사이클: 망각 게이트 -> 정상 패턴 유지
+  마모 진행중: 입력 게이트 -> 온도 상승 패턴 축적
+  말기 사이클: 출력 게이트 -> "RUL이 낮다"는 신호 출력</code></pre>
+    <p><strong>시퀀스 입력 구조 (슬라이딩 윈도우)</strong>:</p>
+    <pre><code>window_size=30 사이클:
+
+사이클 1~30   -> [센서값 30x14] -> LSTM -> RUL 예측값
+사이클 2~31   -> [센서값 30x14] -> LSTM -> RUL 예측값
+사이클 3~32   -> [센서값 30x14] -> LSTM -> RUL 예측값</code></pre>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_2_img18.png" alt="LSTM 셀 구조와 게이트 메커니즘" loading="lazy">
+
+    <figcaption>LSTM 셀 구조와 게이트 메커니즘</figcaption>
+</div>
+
+    <div class="presentable">
+
+    <p><strong>Keras LSTM 모델</strong>:</p>
+    <pre><code class="language-python">import tensorflow as tf
+
+model = tf.keras.Sequential([
+    tf.keras.layers.LSTM(64, input_shape=(30, 14),
+                         return_sequences=False),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(1)
+])
+model.compile(optimizer='adam', loss='mse', metrics=['mae'])</code></pre>
+    <ul>
+      <li><code>input_shape=(30, 14)</code>: 30개 사이클 동안 14개 센서값</li>
+      <li><code>return_sequences=False</code>: 마지막 순간의 출력만 반환</li>
+      <li>마지막 <code>Dense(1)</code>: 활성화 없음. 회귀에서는 숫자를 그대로 출력</li>
+      <li><code>compile(...)</code>: MSE 손실 + MAE 지표</li>
+    </ul>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_2_img20.png" alt="슬라이딩 윈도우 입력 구성" loading="lazy">
+
+    <figcaption>슬라이딩 윈도우 입력 구성</figcaption>
+</div>
+
+    <h4>③ 과적합 방지: Dropout과 Early Stopping <span class="time-badge">5분</span></h4>
+    <div class="presentable">
+
+    <p>제조 센서 데이터는 <strong>노이즈가 많고 샘플 수가 제한적</strong>이라 과적합 위험이 높습니다.</p>
+    <pre><code>[과적합이 발생하는 신호]
+
+학습 손실:    .........  (계속 감소)
+검증 손실:    .....^^^^^  (어느 순간 다시 상승)
+                      |
+                 이 시점이 최적</code></pre>
+    <p><strong>Dropout</strong>: 학습 중 뉴런의 일부를 랜덤하게 끄는 기법</p>
+    <ul>
+      <li>특정 뉴런에 과의존하지 않도록 강제</li>
+      <li>앙상블 효과: 매 배치마다 다른 네트워크를 학습하는 것과 유사</li>
+      <li>추론 시에는 자동으로 비활성화됨</li>
+    </ul>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>Early Stopping</strong>: 검증 손실이 개선되지 않으면 학습을 자동으로 멈춤</p>
+    <pre><code class="language-python">early_stopping = tf.keras.callbacks.EarlyStopping(
+    monitor='val_loss',
+    patience=10,
+    restore_best_weights=True
+)
+
+model.fit(
+    X_train, y_train,
+    validation_split=0.2,
+    epochs=200,
+    callbacks=[early_stopping]
+)</code></pre>
+    <ul>
+      <li><code>patience=10</code>: 10 epoch 동안 개선 없으면 중단</li>
+      <li><code>restore_best_weights=True</code>: 최고 성능 시점의 가중치 복원</li>
+      <li><code>validation_split=0.2</code>: 학습 데이터의 20%를 검증용으로 분리</li>
+    </ul>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_2_img21.png" alt="Dropout 동작 원리" loading="lazy">
+
+    <figcaption>Dropout 동작 원리</figcaption>
+</div>
+    <div class="figure-block">
+  <img src="images/s2_2_img22.png" alt="과적합 발생: 학습/검증 손실 곡선" loading="lazy">
+
+    <figcaption>과적합 발생: 학습/검증 손실 곡선</figcaption>
+</div>
+
+    <div class="deep-dive">
+
+    <p><strong>심화: 표현 학습(Representation Learning)</strong></p>
+    <p>딥러닝의 핵심은 데이터를 더 나은 "표현(representation)"으로 변환하는 것입니다. 각 층이 점점 더 추상적인 특징을 학습합니다:</p>
+    <ul>
+      <li>입력층: 원본 센서값</li>
+      <li>은닉층 1: 지역적 패턴 (진동 주기, 온도 변화율)</li>
+      <li>은닉층 2: 전역적 패턴 (마모 추세, 이상 징후)</li>
+      <li>출력층: RUL 예측값</li>
+    </ul>
+    <p>이런 "자동 특징 추출"이 딥러닝을 전통 ML과 구분하는 핵심입니다. 전통 ML에서는 도메인 전문가가 직접 특징을 설계해야 했지만, 딥러닝은 데이터로부터 특징을 자동 학습합니다.</p>
+    
+</div>
+
+    <div class="image-gallery">
+    <div class="figure-block">
+      <img src="images/s2_2_img32.png" alt="딥러닝 표현 학습: 층별 특징 추출" loading="lazy">
+      <figcaption>딥러닝 표현 학습: 층별 특징 추출</figcaption>
+    </div>
+    <div class="figure-block">
+      <img src="images/s2_2_img38.png" alt="신경망 학습: 순전파와 역전파" loading="lazy">
+      <figcaption>신경망 학습: 순전파와 역전파</figcaption>
+    </div>
+</div>
+  </div>
+
+  <!-- 2-3 Claude Code 시연 -->
+  <div class="section-block">
+    <h3>2-3. Claude Code 시연 <span class="time-badge">10분</span></h3>
+
+    <div class="presentable">
+
+    <div class="callout callout-instructor"><span class="callout-icon">[강사]</span><div>모델 구현보다 <strong>학습 곡선과 예측 결과 해석</strong>에 집중하세요.</div></div>
+    <p><strong>Claude에게 던질 프롬프트</strong>:</p>
+    <pre><code class="language-text">NASA Turbofan FD001 데이터로 LSTM 기반 RUL 예측 모델을 만들어줘.
+- 데이터 로드 및 RUL 라벨 생성 (clip 125)
+- window_size=30, 센서 14개 사용
+- LSTM(64) -&gt; Dropout(0.2) -&gt; Dense(32) -&gt; Dense(1)
+- Early Stopping (patience=10)
+- 결과 시각화 2개:
+  1. 학습/검증 손실 곡선
+  2. 실제 RUL vs 예측 RUL 산점도 (대각선 기준선 포함)</code></pre>
+    <p><strong>시연 후 추가 질문</strong>:</p>
+    <blockquote>"RMSE는 낮은데 실제로 조기경보가 잘 안 될 수 있는 이유가 뭐야? Scoring Function이라는 비대칭 평가 지표는 왜 필요한 거야?"</blockquote>
+    <p><strong>시연 흐름</strong>:</p>
+    <ol>
+      <li>데이터 로드 + RUL 라벨 생성 확인</li>
+      <li>슬라이딩 윈도우 시퀀스 구성</li>
+      <li>LSTM 모델 정의 및 학습</li>
+      <li>학습 곡선 (Early Stopping 발동 시점 확인)</li>
+      <li>예측 vs 실제 비교 산점도</li>
+    </ol>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_2_img42.png" alt="LSTM 학습 곡선과 RUL 예측 결과" loading="lazy">
+
+    <figcaption>LSTM 학습 곡선과 RUL 예측 결과</figcaption>
+</div>
+  </div>
+
+  <!-- 2-4 실습 -->
+  <div class="section-block">
+    <h3>2-4. 실습 <span class="time-badge">19분</span></h3>
+
+    <div class="presentable">
+
+    <p><strong>과제</strong>: LSTM 레이어 수와 Dropout 비율 조합을 바꿔보며 과적합과 성능의 트레이드오프를 분석하세요.</p>
+    <table>
+      <tr><th>실험</th><th>LSTM 레이어</th><th>Dropout</th><th>예상 결과</th></tr>
+      <tr><td>A</td><td>1개</td><td>0.0</td><td>기준선 (과적합 가능)</td></tr>
+      <tr><td>B</td><td>1개</td><td>0.2</td><td>Dropout 효과 확인</td></tr>
+      <tr><td>C</td><td>2개</td><td>0.0</td><td>복잡한 모델 (과적합↑)</td></tr>
+      <tr><td>D</td><td>2개</td><td>0.2</td><td>복잡 + 정규화</td></tr>
+    </table>
+    <p><strong>제출 항목</strong>:</p>
+    <ul>
+      <li>4가지 조합의 학습/검증 손실 곡선 (subplot)</li>
+      <li>각 조합의 RMSE 비교 표</li>
+      <li>"Dropout이 없을 때와 있을 때 학습 곡선이 어떻게 달랐는가?" 한 문단</li>
+    </ul>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>실습 시작 코드 - Step 1: 데이터 로드</strong>:</p>
+    <pre><code class="language-python">import numpy as np
+import pandas as pd
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+cols = ['unit', 'cycle', 'op1', 'op2', 'op3'] + [f's{{i}}' for i in range(1, 22)]
+train_df = pd.read_csv('train_FD001.txt', sep=' ', header=None, names=cols)
+train_df = train_df.dropna(axis=1)</code></pre>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>Step 2: RUL 라벨 만들기 (클리핑 포함)</strong>:</p>
+    <pre><code class="language-python">max_cycle = train_df.groupby('unit')['cycle'].max()
+train_df = train_df.merge(max_cycle.rename('max_cycle'), on='unit')
+train_df['RUL'] = (train_df['max_cycle'] - train_df['cycle']).clip(upper=125)</code></pre>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>Step 3: 슬라이딩 윈도우 시퀀스 생성</strong>:</p>
+    <pre><code class="language-python">sensor_cols = ['s2','s3','s4','s7','s8','s9','s11','s12',
+               's13','s14','s15','s17','s20','s21']
+
+def create_sequences(df, sensor_cols, window_size=30):
+    X, y = [], []
+    for unit in df['unit'].unique():
+        unit_data = df[df['unit'] == unit][sensor_cols].values
+        unit_rul  = df[df['unit'] == unit]['RUL'].values
+        for i in range(len(unit_data) - window_size):
+            X.append(unit_data[i:i+window_size])
+            y.append(unit_rul[i+window_size])
+    return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
+
+X, y = create_sequences(train_df, sensor_cols)</code></pre>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>Step 4: 정규화 (Min-Max Scaling)</strong>:</p>
+    <pre><code class="language-python">from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+X_reshaped = X.reshape(-1, len(sensor_cols))
+X_scaled = scaler.fit_transform(X_reshaped).reshape(X.shape)
+
+split = int(len(X_scaled) * 0.8)
+X_train, X_val = X_scaled[:split], X_scaled[split:]
+y_train, y_val = y[:split], y[split:]</code></pre>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>Step 5: LSTM 4가지 설정으로 실험</strong>:</p>
+    <pre><code class="language-python">results = {{}}
+for n_layers, dropout_rate in [(1, 0.0), (1, 0.2), (2, 0.0), (2, 0.2)]:
+    # TODO: 모델 구성 -&gt; 학습 -&gt; RMSE 계산
+    pass</code></pre>
+    <p><strong>Step 6: 결과 비교 시각화</strong> - 4가지 설정의 학습 곡선과 RMSE를 한눈에 비교</p>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_2_img45.png" alt="LSTM 모델 학습 결과 비교" loading="lazy">
+
+    <figcaption>LSTM 모델 학습 결과 비교</figcaption>
+</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODULE 3: NASA Turbofan 통합 실습                             -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="module" id="s2-3">
+  <div class="module-header">
+    <span class="module-number">Section 03</span>
+    <h2 class="module-title">NASA Turbofan 통합 실습</h2>
+    <span class="module-duration">50분</span>
+  </div>
+  <p class="module-desc">
+    <strong>참고 교재</strong>: <em>Machine Learning for Time-Series with Python</em> (Ben Auffarth, Packt)<br>
+    시간 배분: 데이터 확인+라벨 설계 10분 + 모델링+평가 15분 + 자유 실습 25분
+  </p>
+
+  <!-- 3-1 데이터 확인 -->
+  <div class="section-block">
+    <h3>3-1. 데이터 확인 + RUL 라벨 설계 <span class="time-badge">10분</span></h3>
+
+    <div class="presentable">
+
+    <p><strong>NASA Turbofan Engine Degradation 데이터셋 소개</strong>:</p>
+    <pre><code>[데이터셋 구성]
+
+FD001: 단일 운전 조건, 단일 고장 모드  <- 이번 실습 주 데이터
+FD002: 6가지 운전 조건, 단일 고장 모드
+FD003: 단일 운전 조건, 2가지 고장 모드
+FD004: 6가지 운전 조건, 2가지 고장 모드
+
+각 파일 구조:
+  열: unit번호 | 사이클 | 운전조건 3개 | 센서값 21개
+  행: 각 유닛의 사이클별 측정값
+  train: 고장 시점까지의 전체 이력
+  test: 고장 전 일부 구간 (RUL을 맞춰야 함)</code></pre>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_3_img01.png" alt="NASA Turbofan 데이터셋 구조" loading="lazy">
+
+    <figcaption>NASA Turbofan 데이터셋 구조</figcaption>
+</div>
+
+    <div class="presentable">
+
+    <p><strong>Claude로 EDA 요청</strong>:</p>
+    <pre><code class="language-text">NASA Turbofan FD001 train 데이터를 탐색해줘.
+1. 기본 정보: shape, 결측치, 유닛 수, 사이클 범위
+2. 센서별 시계열 플롯 (유닛 1개 선택, 센서 21개를 4x6 subplot)
+3. 변동이 거의 없는 센서 식별 (std &lt; 0.01인 센서)
+4. 유닛별 수명(max cycle) 분포 히스토그램</code></pre>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_3_img04.png" alt="센서별 시계열 플롯" loading="lazy">
+
+    <figcaption>센서별 시계열 플롯</figcaption>
+</div>
+    <div class="figure-block">
+  <img src="images/s2_3_img05.png" alt="센서 상관관계 히트맵" loading="lazy">
+
+    <figcaption>센서 상관관계 히트맵</figcaption>
+</div>
+
+    <h4>RUL 클리핑: 왜 125로 자르는가</h4>
+
+    <div class="presentable">
+
+    <p><strong>클리핑이 필요한 이유</strong>:</p>
+    <pre><code>실제 RUL 분포 (클리핑 전):
+엔진 초반 구간에서 RUL = 250, 300, 350...
+이 구간의 센서 데이터는 사실상 모두 "정상"으로 동일
+-> 모델이 초반 구간을 구분하는 데 불필요한 에너지 낭비
+
+클리핑 후 (max=125):
+RUL > 125인 구간은 모두 125로 고정
+-> "남은 수명이 125 이하인 구간"만 정밀하게 학습
+-> 실무적으로 의미 있는 예측 범위에 집중</code></pre>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>RUL 라벨 생성 코드</strong>:</p>
+    <pre><code class="language-python"># RUL 라벨 생성 + 클리핑
+max_cycle = train_df.groupby('unit')['cycle'].max().reset_index()
+max_cycle.columns = ['unit', 'max_cycle']
+train_df = train_df.merge(max_cycle, on='unit')
+train_df['RUL'] = (train_df['max_cycle'] - train_df['cycle']).clip(upper=125)</code></pre>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_3_img07.png" alt="RUL 클리핑 전후 분포 비교" loading="lazy">
+
+    <figcaption>RUL 클리핑 전후 분포 비교</figcaption>
+</div>
+    <div class="figure-block">
+  <img src="images/s2_3_img09.png" alt="센서별 RUL과의 상관관계" loading="lazy">
+
+    <figcaption>센서별 RUL과의 상관관계</figcaption>
+</div>
+
+    <div class="deep-dive">
+
+    <p><strong>심화: 시계열 정상성 검정 (Stationarity Test)</strong></p>
+    <p>시계열 분석에서 "정상성(stationarity)"은 통계적 특성이 시간에 따라 변하지 않음을 의미합니다. 센서 데이터가 정상적이지 않으면 모델이 안정적으로 학습하기 어렵습니다.</p>
+    <ul>
+      <li>ADF (Augmented Dickey-Fuller) 검정: p-value가 0.05 미만이면 정상</li>
+      <li>KPSS 검정: p-value가 0.05 이상이면 정상</li>
+      <li>자기상관 함수(ACF) 분석: 느리게 감소하면 비정상</li>
+    </ul>
+    <p>NASA Turbofan의 대부분의 센서는 엔진 마모가 진행됨에 따라 추세(trend)를 보이므로 비정상적입니다. 이것이 슬라이딩 윈도우 + LSTM 접근이 유리한 이유입니다.</p>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_3_img10.png" alt="시계열 정상성 검정 결과" loading="lazy">
+
+    <figcaption>시계열 정상성 검정 결과</figcaption>
+</div>
+  </div>
+
+  <!-- 3-2 모델링 + 평가 -->
+  <div class="section-block">
+    <h3>3-2. 모델링 + 평가 <span class="time-badge">15분</span></h3>
+
+    <h4>LSTM 모델 적용</h4>
+    <div class="presentable">
+
+    <p>섹션 2에서 만든 LSTM 구조를 Turbofan 데이터에 적용합니다.</p>
+    <pre><code class="language-python"># 2층 LSTM + Dropout
+model = tf.keras.Sequential([
+    tf.keras.layers.LSTM(64, input_shape=(30, 14),
+                         return_sequences=True),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.LSTM(32),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(1)
+])
+
+early_stop = tf.keras.callbacks.EarlyStopping(
+    monitor='val_loss', patience=10, restore_best_weights=True
+)
+history = model.fit(
+    X_train, y_train,
+    validation_split=0.2,
+    epochs=100, batch_size=256,
+    callbacks=[early_stop], verbose=1
+)</code></pre>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_3_img14.png" alt="LSTM 학습 곡선" loading="lazy">
+
+    <figcaption>LSTM 학습 곡선</figcaption>
+</div>
+    <div class="figure-block">
+  <img src="images/s2_3_img16.png" alt="실제 RUL vs 예측 RUL 비교" loading="lazy">
+
+    <figcaption>실제 RUL vs 예측 RUL 비교</figcaption>
+</div>
+
+    <h4>평가 지표: RMSE만으로는 부족한 이유</h4>
+    <div class="presentable">
+
+    <p><strong>RMSE의 한계</strong>: 조기 예측 오차와 지연 예측 오차를 동일하게 취급</p>
+    <pre><code>실제 RUL=10, 예측 RUL=20 (조기 경보: 10 사이클 일찍 교체)
+  -> 비용: 교체 비용만 발생
+
+실제 RUL=10, 예측 RUL=0  (지연 경보: 10 사이클 늦게 알림)
+  -> 비용: 설비 고장 + 생산 중단 + 안전사고</code></pre>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>NASA Scoring Function (비대칭 평가)</strong>:</p>
+    <pre><code class="language-python">import numpy as np
+
+def nasa_score(y_true, y_pred):
+    d = y_pred - y_true
+    score = np.where(
+        d &lt; 0,                       # 음수 = 지연 예측 (더 위험)
+        np.exp(-d / 13) - 1,         # 지연: 페널티 급격히 증가
+        np.exp(d / 10) - 1           # 조기: 페널티 완만하게 증가
+    )
+    return np.sum(score)
+
+y_pred = model.predict(X_val).flatten()
+rmse = np.sqrt(np.mean((y_val - y_pred) ** 2))
+score = nasa_score(y_val, y_pred)
+print(f"RMSE: {{rmse:.2f}}")
+print(f"NASA Score: {{score:.2f}}  (낮을수록 좋음)")</code></pre>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_3_img17.png" alt="RMSE vs NASA Score 비교" loading="lazy">
+
+    <figcaption>RMSE vs NASA Score 비교</figcaption>
+</div>
+    <div class="figure-block">
+  <img src="images/s2_3_img18.png" alt="비대칭 손실 함수 시각화" loading="lazy">
+
+    <figcaption>비대칭 손실 함수 시각화</figcaption>
+</div>
+
+    <div class="deep-dive">
+
+    <p><strong>심화: 특징 공학 (Feature Engineering)</strong></p>
+    <p>시계열 데이터에서 유용한 특징:</p>
+    <ul>
+      <li>롤링 통계: 이동평균, 이동표준편차 (window=5, 10, 30)</li>
+      <li>차분 특징: 1차/2차 차분으로 추세와 변화율 포착</li>
+      <li>주파수 특징: FFT 기반 스펙트럼 에너지</li>
+      <li>도메인 특징: 온도x압력 상호작용, 진동 피크 간격</li>
+    </ul>
+    <p>LSTM이 자동으로 이런 특징을 학습하지만, 명시적으로 추가하면 적은 데이터로도 성능 향상이 가능합니다.</p>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_3_img21.png" alt="특징 공학: 파생 특징 예시" loading="lazy">
+
+    <figcaption>특징 공학: 파생 특징 예시</figcaption>
+</div>
+  </div>
+
+  <!-- 3-3 자유 실습 -->
+  <div class="section-block">
+    <h3>3-3. 자유 실습 <span class="time-badge">25분</span></h3>
+
+    <div class="presentable">
+
+    <p><strong>기본 - FD001 단일 학습 및 평가</strong>:</p>
+    <ol>
+      <li>FD001 데이터 로드 + RUL 라벨 생성 (클리핑 125)</li>
+      <li>센서 14개 선택 + 슬라이딩 윈도우(30) 시퀀스 생성</li>
+      <li>LSTM 학습 (Early Stopping)</li>
+      <li>RMSE + NASA Score 계산</li>
+      <li>실제 vs 예측 RUL 산점도 출력</li>
+    </ol>
+    <p><strong>제출</strong>: RMSE와 NASA Score 숫자 + 산점도 이미지</p>
+    
+</div>
+
+    <div class="presentable">
+
+    <p><strong>중급 - FD001 vs FD002 비교 (운전 조건 일반화)</strong>:</p>
+    <ol>
+      <li>FD001로 학습한 모델을 FD002 데이터에 바로 적용 -> RMSE, NASA Score 기록</li>
+      <li>FD002로 재학습한 모델과 성능 비교</li>
+      <li>"운전 조건이 다른 데이터에 바로 적용하면 어떻게 되는가?"</li>
+    </ol>
+    <p><strong>제출</strong>: FD001 학습 -> FD001 평가 vs FD002 평가 비교 표</p>
+    
+</div>
+
+    <div class="deep-dive">
+
+    <p><strong>심화 - Autoencoder + LSTM 통합 파이프라인</strong>:</p>
+    <pre><code>파이프라인 구조:
+  센서 데이터
+      |
+  [Autoencoder] -> 재구성 오차 계산
+      |
+  재구성 오차 > 임계값? -> Yes -> 이상 경보 발생
+      | No
+  [LSTM] -> RUL 예측
+      |
+  RUL < 30? -> 교체 권고</code></pre>
+    <p>구현 순서:</p>
+    <ol>
+      <li>섹션 1 Autoencoder로 각 윈도우의 이상 점수 계산</li>
+      <li>이상 점수를 LSTM 입력의 추가 특징으로 연결</li>
+      <li>통합 파이프라인 실행 -> 이상 경보 + RUL 예측 동시 출력</li>
+    </ol>
+    <p><strong>제출</strong>: 파이프라인 흐름도 + 주요 구간에서의 이상 점수 + RUL 예측값</p>
+    
+</div>
+
+    <div class="figure-block">
+  <img src="images/s2_3_img29.png" alt="FD001 vs FD002 센서 분포 비교" loading="lazy">
+
+    <figcaption>FD001 vs FD002 센서 분포 비교</figcaption>
+</div>
+    <div class="figure-block">
+  <img src="images/s2_3_img32.png" alt="운전 조건에 따른 센서 범위 차이" loading="lazy">
+
+    <figcaption>운전 조건에 따른 센서 범위 차이</figcaption>
+</div>
+  </div>
+
+  <div class="image-gallery">
+    <div class="figure-block">
+      <img src="images/s2_3_img39.png" alt="LSTM 예측 결과: 엔진별 RUL 궤적" loading="lazy">
+      <figcaption>LSTM 예측 결과: 엔진별 RUL 궤적</figcaption>
+    </div>
+    <div class="figure-block">
+      <img src="images/s2_3_img40.png" alt="이상 탐지 결과: 재구성 오차 히트맵" loading="lazy">
+      <figcaption>이상 탐지 결과: 재구성 오차 히트맵</figcaption>
+    </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- APPENDIX: 심화 학습 자료                                       -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="module" id="s2-appendix">
+  <div class="module-header">
+    <span class="module-number">Appendix</span>
+    <h2 class="module-title">심화 학습 자료</h2>
+  </div>
+
+  <div class="section-block">
+    <h3>섹션 1 심화: Autoencoder 변형과 Deep SVDD</h3>
+    <div class="deep-dive">
+
+    <p><strong>Autoencoder 변형 비교</strong>:</p>
+    <table>
+      <tr><th>종류</th><th>핵심 아이디어</th><th>이상탐지에서의 장점</th></tr>
+      <tr><td>Vanilla AE</td><td>기본 압축-복원</td><td>구현 단순, 기준선</td></tr>
+      <tr><td>Sparse AE</td><td>잠재 표현에 희소성 제약</td><td>더 선명한 특징 분리</td></tr>
+      <tr><td>Denoising AE</td><td>노이즈 입력 -> 원본 복원 학습</td><td>노이즈에 강건한 정상 표현</td></tr>
+      <tr><td>VAE</td><td>잠재 공간을 확률 분포로 학습</td><td>이상 점수에 불확실성 포함</td></tr>
+      <tr><td>LSTM-AE</td><td>시계열 입력의 Autoencoder</td><td>시간 패턴 이상 탐지에 최적</td></tr>
+    </table>
+    
+</div>
+
+    <div class="deep-dive">
+
+    <p><strong>Deep SVDD (Support Vector Data Description)</strong>:</p>
+    <p>Autoencoder가 "재구성 오차"로 이상을 판단한다면, Deep SVDD는 <strong>"정상 데이터를 하나의 구에 가둔다"</strong>는 아이디어입니다.</p>
+    <pre><code class="language-python">def svdd_loss(z, center, radius, nu=0.1):
+    dist = torch.sum((z - center) ** 2, dim=1)
+    loss = radius ** 2 + (1 / nu) * torch.mean(
+        torch.clamp(dist - radius ** 2, min=0)
+    )
+    return loss</code></pre>
+    
+</div>
+  </div>
+
+  <div class="section-block">
+    <h3>섹션 2 심화: RNN 계열 모델 비교와 Keras 심화</h3>
+    <div class="deep-dive">
+
+    <p><strong>RNN 계열 모델 비교</strong>:</p>
+    <table>
+      <tr><th>모델</th><th>파라미터 수</th><th>학습 속도</th><th>장기 의존성</th><th>RUL 예측 적합도</th></tr>
+      <tr><td>Simple RNN</td><td>적음</td><td>빠름</td><td>약함</td><td>짧은 시퀀스만</td></tr>
+      <tr><td>LSTM</td><td>많음</td><td>느림</td><td>강함</td><td>표준 선택</td></tr>
+      <tr><td>GRU</td><td>중간</td><td>중간</td><td>강함</td><td>LSTM 대안 (더 단순)</td></tr>
+      <tr><td>Bidirectional LSTM</td><td>2배</td><td>느림</td><td>양방향</td><td>배치 예측에 효과적</td></tr>
+      <tr><td>Conv1D + LSTM</td><td>중간</td><td>빠름</td><td>강함</td><td>지역+전역 패턴 동시</td></tr>
+    </table>
+    
+</div>
+
+    <div class="deep-dive">
+
+    <p><strong>Keras Functional API: 복잡한 모델 설계</strong>:</p>
+    <pre><code class="language-python">inputs = tf.keras.Input(shape=(30, 14))
+x = tf.keras.layers.LSTM(64, return_sequences=True)(inputs)
+x = tf.keras.layers.Dropout(0.2)(x)
+x = tf.keras.layers.LSTM(32)(x)
+
+# 다중 출력: RUL 예측 + 이상 점수 동시 출력
+rul_output = tf.keras.layers.Dense(1, name='rul')(x)
+anomaly_output = tf.keras.layers.Dense(1, activation='sigmoid',
+                                        name='anomaly')(x)
+
+model = tf.keras.Model(inputs=inputs,
+                       outputs=[rul_output, anomaly_output])
+model.compile(
+    optimizer='adam',
+    loss={{'rul': 'mse', 'anomaly': 'binary_crossentropy'}},
+    loss_weights={{'rul': 1.0, 'anomaly': 0.5}}
+)</code></pre>
+    
+</div>
+
+    <div class="deep-dive">
+
+    <p><strong>불확실성 정량화: MC Dropout</strong>:</p>
+    <pre><code class="language-python">def predict_with_uncertainty(model, X, n_iter=100):
+    predictions = np.array([
+        model(X, training=True).numpy()
+        for _ in range(n_iter)
+    ])
+    mean_pred = predictions.mean(axis=0)
+    std_pred = predictions.std(axis=0)
+    return mean_pred, std_pred
+
+mean, std = predict_with_uncertainty(model, X_test)
+# RUL 예측값 +- 2sigma 범위로 신뢰 구간 시각화 가능</code></pre>
+    
+</div>
+  </div>
+
+  <div class="section-block">
+    <h3>섹션 3 심화: 시계열 이상탐지 고급 기법</h3>
+    <div class="deep-dive">
+
+    <p><strong>도메인 적응 (Domain Adaptation): FD001 -> FD002</strong>:</p>
+    <pre><code class="language-python"># 해결책 1: 운전 조건별 정규화
+for op_condition in df['op_condition'].unique():
+    mask = df['op_condition'] == op_condition
+    df.loc[mask, sensor_cols] = scaler.fit_transform(
+        df.loc[mask, sensor_cols]
+    )
+
+# 해결책 2: 운전 조건을 모델 입력에 포함
+sensor_input = tf.keras.Input(shape=(30, 14))
+op_input = tf.keras.Input(shape=(3,))
+lstm_out = tf.keras.layers.LSTM(64)(sensor_input)
+combined = tf.keras.layers.Concatenate()([lstm_out, op_input])
+output = tf.keras.layers.Dense(1)(combined)</code></pre>
+    
+</div>
+
+    <div class="deep-dive">
+
+    <p><strong>온라인/스트리밍 RUL 예측</strong>:</p>
+    <pre><code class="language-python">from collections import deque
+
+class OnlineRULPredictor:
+    def __init__(self, model, window_size=30, n_sensors=14):
+        self.model = model
+        self.window = deque(maxlen=window_size)
+
+    def update(self, new_sensor_values):
+        self.window.append(new_sensor_values)
+
+    def predict(self):
+        if len(self.window) &lt; self.window_size:
+            return None
+        X = np.array(self.window)[np.newaxis, ...]
+        return self.model.predict(X)[0, 0]
+
+# 사용 예시
+predictor = OnlineRULPredictor(model)
+for new_data in streaming_sensor_data:
+    predictor.update(new_data)
+    rul = predictor.predict()
+    if rul is not None and rul &lt; 30:
+        send_alert(f"경고: 잔여 수명 {{rul:.1f}} 사이클")</code></pre>
+    
+</div>
+  </div>
+
+  <div class="section-block">
+    <h3>추천 학습 경로</h3>
+
+    <div class="deep-dive">
+
+    <p><strong>비지도 이상탐지 (1~2주) - Hands-On Unsupervised Learning Using Python</strong>:</p>
+    <table>
+      <tr><th>순서</th><th>챕터</th><th>핵심 내용</th></tr>
+      <tr><td>1</td><td>Ch.1</td><td>비지도 학습 전체 지형도</td></tr>
+      <tr><td>2</td><td>Ch.3</td><td>Dimensionality Reduction (PCA 등)</td></tr>
+      <tr><td>3</td><td>Ch.4</td><td>Anomaly Detection</td></tr>
+      <tr><td>4</td><td>Ch.7 / Ch.8</td><td>Autoencoders (Vanilla, Sparse, Denoising)</td></tr>
+    </table>
+
+    <p><strong>딥러닝 시계열 (2주) - Deep Learning with Python, 2nd Ed.</strong>:</p>
+    <table>
+      <tr><th>순서</th><th>챕터</th><th>핵심 내용</th></tr>
+      <tr><td>1</td><td>Ch.1</td><td>딥러닝 개요, 표현 학습</td></tr>
+      <tr><td>2</td><td>Ch.4</td><td>과적합 원인, 정규화 전략</td></tr>
+      <tr><td>3</td><td>Ch.10</td><td>RNN, LSTM, GRU, Conv1D</td></tr>
+      <tr><td>4</td><td>Ch.7</td><td>Functional API, 복잡한 모델 설계</td></tr>
+    </table>
+
+    <p><strong>통합 실습 심화 (2주) - ML for Time-Series with Python</strong>:</p>
+    <table>
+      <tr><th>순서</th><th>챕터</th><th>핵심 내용</th></tr>
+      <tr><td>1</td><td>Ch.2</td><td>시계열 EDA, 정상성 검정</td></tr>
+      <tr><td>2</td><td>Ch.3</td><td>전처리, 슬라이딩 윈도우, 특징 공학</td></tr>
+      <tr><td>3</td><td>Ch.7</td><td>LSTM 분류/회귀 심화</td></tr>
+      <tr><td>4</td><td>Ch.9</td><td>확률적 모델, 온라인 이상탐지</td></tr>
+    </table>
+    
+</div>
+  </div>
+
+  <div class="section-block">
+    <h3>출처</h3>
+    <ul>
+      <li><strong>섹션 1</strong>: <a href="https://www.oreilly.com/library/view/hands-on-unsupervised-learning/9781492035633/">Hands-On Unsupervised Learning Using Python</a></li>
+      <li><strong>섹션 2</strong>: <a href="https://www.oreilly.com/library/view/deep-learning-with/9781617296422/">Deep Learning with Python (2nd Ed.)</a></li>
+      <li><strong>섹션 3</strong>: <a href="https://www.oreilly.com/library/view/machine-learning-for/9781801819626/">Machine Learning for Time-Series with Python</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="container" style="text-align:center; padding: 3rem 2rem; color: var(--color-muted); font-size: 0.82rem;">
+  <p>이 문서는 세션 2 강의 자료로 제작되었습니다.<br>
+  질문 및 피드백: Claude Code를 활용해 실습 중 막히는 부분을 언제든지 질문하세요.<br>
+  세션 1 자료와 함께 참고하세요: <code>session1_manufacturing_data_analysis.md</code></p>
+</div>
+
+</body>
+</html>
