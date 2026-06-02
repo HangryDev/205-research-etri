@@ -24,3 +24,5 @@ sphinx:
   config:
     language: ko
     html_permalinks_icon: "<i class='fas fa-link'></i>"
+    html_js_files:
+      - force-light.js
