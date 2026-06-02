@@ -91,25 +91,28 @@
     .image-gallery .figure-block { margin: 0; }
     .image-gallery .figure-block img { max-width: 100%; }
 
-    /* PRESENTABLE */
+    /* ★ PRESENTABLE — 발표 시간 내 커버 가능 */
     .presentable {
       background: #FFF9E6;
       border-left: 4px solid #F0A030;
       border-radius: 4px;
       padding: 1rem 1.25rem;
       margin: 1.25rem 0;
-      page-break-inside: avoid; break-inside: avoid;
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
     .presentable::before {
       content: "[발표 범위]";
-      display: inline-block; font-size: 0.7rem; font-weight: 600;
+      display: inline-block;
+      font-size: 0.7rem; font-weight: 600;
       background: #F0A030; color: white;
-      padding: 0.15em 0.5em; border-radius: 3px; margin-bottom: 0.75rem;
+      padding: 0.15em 0.5em; border-radius: 3px;
+      margin-bottom: 0.75rem;
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     .presentable p, .presentable ul, .presentable pre { margin-top: 0.5rem; }
 
-    /* DEEP DIVE */
+    /* ★ DEEP DIVE — 심화 참고 (시간 외) */
     .deep-dive {
       color: var(--color-muted);
       border-left: 2px solid var(--color-border);
@@ -136,10 +139,6 @@
     blockquote { border-left: 3px solid var(--color-accent); margin: 1rem 0; padding: 0.5rem 1rem; background: var(--color-accent-light); font-size: 0.92rem; }
     a { color: var(--color-accent); }
     hr { border: none; border-top: 1px solid var(--color-border); margin: 2rem 0; }
-
-    /* APPENDIX */
-    .appendix { background: white; border: 1px solid var(--color-border); border-radius: 8px; padding: 1.75rem 2rem; margin: 3rem auto; max-width: 780px; }
-    .appendix h2 { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-accent); margin: 0 0 1rem; border-bottom: none; }
 
     /* PRINT */
     @page { size: A4; margin: 2cm 2.5cm 2.5cm 2.5cm; @bottom-right { content: counter(page); font-size: 9pt; color: #888; } }
