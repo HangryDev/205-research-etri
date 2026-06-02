@@ -18,6 +18,7 @@ html:
   home_page_in_navbar: false
   css:
     - _static/custom.css
+    - _static/darkmode.css
 sphinx:
   config:
     language: ko

@@ -1,0 +1,44 @@
+/* Force light mode only */
+html { color-scheme: light only !important; }
+html[data-theme="dark"] { color-scheme: light only !important; }
+.theme-toggle-button { display: none !important; }
+html[data-theme="dark"] body,
+html[data-theme="dark"] main,
+html[data-theme="dark"] .bd-main,
+html[data-theme="dark"] .bd-content,
+html[data-theme="dark"] .bd-article {
+  background: #EEFAFB !important;
+  color: #1B2A4A !important;
+}
+html[data-theme="dark"] .highlight,
+html[data-theme="dark"] pre,
+html[data-theme="dark"] code {
+  background: #F0F4F8 !important;
+  color: #1B2A4A !important;
+}
+html[data-theme="dark"] table thead th {
+  background: #134074 !important;
+  color: #fff !important;
+}
+html[data-theme="dark"] table tbody tr:nth-child(even) {
+  background: #EEFAFB !important;
+}
+html[data-theme="dark"] table td {
+  color: #1B2A4A !important;
+}
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4 {
+  color: #0B2545 !important;
+}
+html[data-theme="dark"] .admonition {
+  background: #D6F4FA !important;
+  color: #1B2A4A !important;
+}
+html[data-theme="dark"] .admonition-title {
+  color: #0B2545 !important;
+}
+html[data-theme="dark"] a {
+  color: #0B7A75 !important;
+}
