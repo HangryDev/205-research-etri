@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 제조 실무 시리즈 — 강의 자료</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
+  <style>
+    :root {
+      --color-bg: #F8F6F1;
+      --color-text: #1A1A1A;
+      --color-accent: #0D7E6E;
+      --color-border: #D8D5CE;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+      word-break: keep-all;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 3rem 2rem; }
+    h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+    .subtitle { color: #5A5A5A; font-size: 0.95rem; margin-bottom: 2.5rem; }
+    .section-label {
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--color-accent);
+      margin: 2rem 0 0.75rem;
+    }
+    .card {
+      display: block; text-decoration: none; color: inherit;
+      background: white; border: 1px solid var(--color-border);
+      border-radius: 8px; padding: 1.25rem 1.5rem;
+      margin-bottom: 0.75rem; transition: border-color 0.15s;
+    }
+    .card:hover { border-color: var(--color-accent); }
+    .card-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .card-desc { font-size: 0.85rem; color: #5A5A5A; }
+    .badge {
+      display: inline-block; font-size: 0.7rem; font-weight: 600;
+      padding: 0.15em 0.5em; border-radius: 3px; margin-right: 0.4rem;
+    }
+    .badge-instructor { background: #FFF3CD; color: #856404; }
+    .badge-student { background: #D4EDDA; color: #155724; }
+    footer { text-align: center; padding: 2rem; color: #888; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>AI 제조 실무 시리즈</h1>
+  <p class="subtitle">강의 자료 &middot; 2026</p>
+
+  <p class="section-label">Session 1 &mdash; 제조 데이터 심층 분석 및 전처리</p>
+  <a class="card" href="session1_lecture_notes.html">
+    <div class="card-title"><span class="badge badge-instructor">강의용</span>제조 데이터 심층 분석 및 전처리</div>
+    <div class="card-desc">노이즈 제거, 데이터 불균형 처리, CNC 이상탐지 파이프라인 구축</div>
+  </a>
+  <a class="card" href="session1_forPT.html">
+    <div class="card-title"><span class="badge badge-student">학생용</span>제조 데이터 심층 분석 및 전처리</div>
+    <div class="card-desc">노이즈 제거, 데이터 불균형 처리, CNC 이상탐지 파이프라인 구축</div>
+  </a>
+
+  <p class="section-label">Session 2 &mdash; 딥러닝 이상탐지</p>
+  <a class="card" href="session2_lecture_notes.html">
+    <div class="card-title"><span class="badge badge-instructor">강의용</span>딥러닝 기반 이상탐지 실무</div>
+    <div class="card-desc">Autoencoder, LSTM, CNN으로 시계열 및 이미지 이상탐지</div>
+  </a>
+  <a class="card" href="session2_forPT.html">
+    <div class="card-title"><span class="badge badge-student">학생용</span>딥러닝 기반 이상탐지 실무</div>
+    <div class="card-desc">Autoencoder, LSTM, CNN으로 시계열 및 이미지 이상탐지</div>
+  </a>
+
+  <p class="section-label">Session 3 &mdash; Vision AI 안전 모니터링</p>
+  <a class="card" href="session3_lecture_notes.html">
+    <div class="card-title"><span class="badge badge-instructor">강의용</span>Vision AI와 스마트 안전 모니터링</div>
+    <div class="card-desc">Object Detection, Action Recognition, CCTV 안전 위반 탐지 파이프라인</div>
+  </a>
+  <a class="card" href="session3_forPT.html">
+    <div class="card-title"><span class="badge badge-student">학생용</span>Vision AI와 스마트 안전 모니터링</div>
+    <div class="card-desc">Object Detection, Action Recognition, CCTV 안전 위반 탐지 파이프라인</div>
+  </a>
+
+  <p class="section-label">Session 4 &mdash; Generative AI 합성 데이터</p>
+  <a class="card" href="session4_lecture_notes.html">
+    <div class="card-title"><span class="badge badge-instructor">강의용</span>Generative AI: 합성 데이터 혁명</div>
+    <div class="card-desc">Diffusion Model, 프롬프트 기반 결함 생성, 합성 데이터 효과 검증</div>
+  </a>
+  <a class="card" href="session4_forPT.html">
+    <div class="card-title"><span class="badge badge-student">학생용</span>Generative AI: 합성 데이터 혁명</div>
+    <div class="card-desc">Diffusion Model, 프롬프트 기반 결함 생성, 합성 데이터 효과 검증</div>
+  </a>
+
+</div>
+<footer>AI 제조 실무 시리즈 &middot; 2026</footer>
+</body>
+</html>
