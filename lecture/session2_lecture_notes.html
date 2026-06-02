@@ -159,12 +159,12 @@
 <body>
 
 <!-- COVER -->
-<div class="cover">
+<header class="cover">
   <div class="cover-inner">
     <div class="cover-meta">Session 2</div>
     <h1 class="cover-title">딥러닝 기반 이상 탐지</h1>
     <p class="cover-subtitle">Autoencoder, LSTM RUL 예측, NASA Turbofan 통합 실습</p>
-    <hr class="cover-divider">
+    <div class="cover-divider"></div>
     <div class="cover-info">
       <span>Autoencoder / PCA</span>
       <span>LSTM RUL 예측</span>
@@ -172,10 +172,10 @@
       <span>총 140분</span>
     </div>
   </div>
-</div>
+</header>
 
 <!-- TOC -->
-<div class="toc">
+<nav class="toc">
   <h2>목차</h2>
   <ol>
     <li><a href="#s2-1">섹션 1 | Autoencoder - 정상을 학습해서 이상을 찾는다 (45분)</a></li>
@@ -183,14 +183,14 @@
     <li><a href="#s2-3">섹션 3 | NASA Turbofan 통합 실습 (50분)</a></li>
     <li><a href="#s2-appendix">심화 학습 자료</a></li>
   </ol>
-</div>
+</nav>
 
 <div class="container">
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- MODULE 1: Autoencoder                                         -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<div class="module" id="s2-1">
+<section class="module" id="s2-1">
   <div class="module-header">
     <span class="module-number">Section 01</span>
     <h2 class="module-title">Autoencoder - 정상을 학습해서 이상을 찾는다</h2>
@@ -524,12 +524,12 @@ for latent_dim in [32, 16, 8, 4]:
     
 </div>
   </div>
-</div>
+</section>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- MODULE 2: RUL 예측                                            -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<div class="module" id="s2-2">
+<section class="module" id="s2-2">
   <div class="module-header">
     <span class="module-number">Section 02</span>
     <h2 class="module-title">RUL 예측 - 얼마나 버틸 수 있는가</h2>
@@ -883,12 +883,12 @@ for n_layers, dropout_rate in [(1, 0.0), (1, 0.2), (2, 0.0), (2, 0.2)]:
     <figcaption>LSTM 모델 학습 결과 비교</figcaption>
 </div>
   </div>
-</div>
+</section>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- MODULE 3: NASA Turbofan 통합 실습                             -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<div class="module" id="s2-3">
+<section class="module" id="s2-3">
   <div class="module-header">
     <span class="module-number">Section 03</span>
     <h2 class="module-title">NASA Turbofan 통합 실습</h2>
@@ -1191,12 +1191,12 @@ print(f"NASA Score: {{score:.2f}}  (낮을수록 좋음)")</code></pre>
       <figcaption>이상 탐지 결과: 재구성 오차 히트맵</figcaption>
     </div>
 </div>
-</div>
+</section>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- APPENDIX: 심화 학습 자료                                       -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<div class="module" id="s2-appendix">
+<section class="module" id="s2-appendix">
   <div class="module-header">
     <span class="module-number">Appendix</span>
     <h2 class="module-title">심화 학습 자료</h2>
@@ -1383,7 +1383,7 @@ for new_data in streaming_sensor_data:
       <li><strong>섹션 3</strong>: <a href="https://www.oreilly.com/library/view/machine-learning-for/9781801819626/">Machine Learning for Time-Series with Python</a></li>
     </ul>
   </div>
-</div>
+</section>
 
 </div>
 
