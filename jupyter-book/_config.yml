@@ -13,8 +13,9 @@ parse:
 repository:
   url: https://github.com/hangrydev/205-research-etri
   branch: main
+  path_to_book: jupyter-book
 launch_buttons:
-  colab: true
+  colab_url: "https://colab.research.google.com"
 html:
   use_repository_button: true
   use_issues_button: true
