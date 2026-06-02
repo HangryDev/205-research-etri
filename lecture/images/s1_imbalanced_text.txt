@@ -1,0 +1,1133 @@
+[0] (Normal) 1
+[1] (Normal) Introduction to Data Imbalance in Machine Learning
+[2] (Normal) Machine learning algorithms have helped solve real-world problems as diverse as disease prediction and online shopping. However, many problems we would like to address with machine learning involve imbalanced datasets. In this chapter, we will discuss and define imbalanced datasets, explaining how t
+[3] (Normal) In particular, we will learn about the following topics:
+[4] (Normal) Introduction to imbalanced datasets
+[5] (Normal) Machine learning 101
+[6] (Normal) Types of datasets and splits
+[7] (Normal) Common evaluation metrics
+[8] (Normal) Challenges and considerations when dealing with imbalanced data
+[9] (Normal) When can we have an imbalance in datasets?
+[10] (Normal) Why can imbalanced data be a challenge?
+[11] (Normal) When to not worry about data imbalance
+[12] (Normal) Introduction to the imbalanced-learn library
+[13] (Normal) General rules to follow
+[14] (Normal) Technical requirements
+[15] (Normal) In this chapter, we will utilize common libraries such as numpy and scikit-learn and introduce the imbalanced-learn library. The code and notebooks for this chapter are available on GitHub at https://github.com/PacktPublishing/Machine-Learning-for-Imbalanced-Data/tree/main/chapter01. You can fire up
+[16] (Normal) Introduction to imbalanced datasets
+[17] (Normal) Machine learning algorithms learn from collections of examples that we call datasets. These datasets contain multiple data samples or points, which we may refer to as examples, samples, or instances interchangeably throughout this book.
+[18] (Normal) A dataset can be said to have a balanced distribution when all the target classes have a similar number of examples, as shown in Figure 1.1:
+[19] (Normal) [IMG]
+[20] (Normal) Figure 1.1 – Balanced distribution with an almost equal number of examples for each class
+[21] (Normal) Imbalanced datasets or skewed datasets are those that have some target classes (also called labels) that outnumber the rest of the classes (Figure 1.2). Though this generally applies to classification problems (for example, fraud detection) in machine learning, they inevitably occur in regression pr
+[22] (Normal) [IMG]
+[23] (Normal) Figure 1.2 – An imbalanced dataset with five classes and a varying number of samples
+[24] (Normal) We label the class with more instances as the “majority” or “negative” class and the one with fewer instances as the “minority” or “positive” class. Most of the time, our main interest lies in the minority class, which is why we often refer to the minority class as the “positive” class and to the ma
+[25] (Normal) [IMG]
+[26] (Normal) Figure 1.3 – A visual guide to common terminology used in imbalanced classification
+[27] (Normal) This can be scaled to more than two classes, and such classification problems are called multi-class classification. In the first half of this book, we will focus our attention only on binary class classification to keep the material easier to grasp. It’s relatively easy to extend the concepts to mu
+[28] (Normal) Let’s look at a few examples of imbalanced datasets:
+[29] (Normal) Fraud detection is where fraudulent transactions need to be detected out of several transactions. This problem is often encountered and widely used in finance, healthcare, and e-commerce industries.
+[30] (Normal) Network intrusion detection using machine learning involves analyzing large volumes of network traffic data to detect and prevent instances of unauthorized access and misuse of computer systems.
+[31] (Normal) Cancer detection. Cancer is not rare, but we still may want to use machine learning to analyze medical data to identify potential cases of cancer earlier and improve treatment outcomes.
+[32] (Normal) In this book, we would like to focus on the class imbalance problem in general and look at various solutions where we see that class imbalance is affecting the performance of our model. A typical problem is that models perform quite poorly on the minority classes for which the model has seen a very 
+[33] (Normal) Machine learning 101
+[34] (Normal) Let’s do a quick overview of machine learning and its related fields:
+[35] (Normal) Artificial intelligence is the superset of all intelligence-related problems. Classical machine learning encompasses problems that can be solved by training traditional classical models (such as decision trees or logistic regression) and predicting the target values. They typically work on tabular d
+[36] (Normal) In supervised learning, we have both inputs and outputs (labels) in the dataset, and the model learns to predict the output during the training. Each input can be represented as a list of features. The output or labels can be a finite set of classes (classification), a real number (regression), or s
+[37] (Normal) In unsupervised learning, models either don’t have access to the labels or don’t use the labels and then try to make some predictions – for example, clustering the examples in the dataset into different groups.
+[38] (Normal) In reinforcement learning, the model tries to learn by making mistakes and optimizing a goal or profit variable. An example would be training a model to play chess and adjusting its strategy based on feedback received through rewards and penalties.
+[39] (Normal) In supervised learning (which is the focus of this book), there are two main types of problems: classification and regression. Classification problems involve categorizing data into predefined classes or labels, such as “fraud” or “non-fraud” and “spam” or “non-spam.” On the other hand, regression p
+[40] (Normal) While data imbalance can also affect regression problems, this book will concentrate solely on classification problems. This focus is due to several factors, such as the limited scope of this book and the well-established techniques available for classification. In some cases, you might even be able
+[41] (Normal) When it comes to various kinds of models that are popular for classification problems, we have quite a few categories of classical supervised machine learning models:
+[42] (Normal) Logistic regression: This is a supervised machine learning algorithm that’s used for binary classification problems. It predicts the probability of a binary target variable based on a set of predictor variables (features) by fitting a logistic function to the data, which outputs a value between 0 an
+[43] (Normal) Support Vector Machines (SVMs): These are supervised machine learning algorithms that are mainly used for classification and can be extended to regression problems. SVMs classify data by finding the optimal hyperplane that maximally separates the different classes in the input data, thus making it a
+[44] (Normal) K-Nearest Neighbors (KNN): This is a supervised machine learning algorithm that’s used for classification and regression analysis. It predicts the target variable based on the k-nearest neighbors in the training dataset. The value of k determines the number of neighbors to consider when making a pre
+[45] (Normal) Tree models: These are a type of supervised machine learning algorithm that’s used for classification and regression analysis. They recursively split the data into smaller subsets based on the most important features to create a decision tree that predicts the target variable based on the input feat
+[46] (Normal) Ensemble models: These combine multiple individual models to improve predictive accuracy and reduce overfitting (explained later in this chapter). Ensemble techniques include bagging (for example, random forest), boosting (for example, XGBoost), and stacking. They are commonly used for classificatio
+[47] (Normal) Neural networks: These models are inspired by the human brain, consist of multiple layers with numerous neurons in each, and are capable of learning complex functions. We will discuss these in more detail in Chapter 6, Data Imbalance in Deep Learning.
+[48] (Normal) Figure 1.4 displays the decision boundaries of various classifiers we have reviewed so far. It shows that logistic regression has a linear decision boundary, while tree-based models such as decision trees, random forests, and XGBoost work by dividing examples into axis-parallel rectangles to form th
+[49] (Normal) [IMG]
+[50] (Normal) Figure 1.4 – The decision boundaries of popular machine learning algorithms on an imbalanced dataset
+[51] (Normal) Next, we’ll delve into the principles underlying the process of model training.
+[52] (Normal) What happens during model training?
+[53] (Normal) [IMG]In the training phase of a machine learning model, we provide a dataset consisting of examples, each with input features and a corresponding label, to the model. Let  represent the list of features used for training, and  be the list of labels in the training dataset. The goal of the model is to lea
+[54] (Normal) [IMG]The model has adjustable parameters, denoted as θ, which are fine-tuned during the training process. The error function, commonly referred to as the loss function, is defined as . This error function needs to be minimized by a learning algorithm, which finds the optimal setting of these parameters, 
+[55] (Normal) In classification problems, our typical loss functions are cross-entropy loss (also called the log loss):
+[56] (Normal) [IMG]
+[57] (Normal) [IMG]Here, p is the predicted probability from the model when .
+[58] (Normal) When the model’s prediction closely agrees with the target label, the loss function will approach zero. However, when the prediction deviates significantly from the target, the loss can become arbitrarily large, indicating a poor model fit.
+[59] (Normal) As training progresses, the training loss keeps going down (Figure 1.5):
+[60] (Normal) [IMG]
+[61] (Normal) Figure 1.5 – Rate of change of the loss function as training progresses
+[62] (Normal) This brings us to the concept of the fit of a model:
+[63] (Normal) A model is said to underfit if it is too simple and can’t capture the data’s complexity. It performs poorly on both training and new data.
+[64] (Normal) A model is of right fit if it accurately captures data patterns without learning noise. It performs well on both training and new data.
+[65] (Normal) An overfit model is too complex and learns noise along with data patterns. It performs well on training data but poorly on new data (Figure 1.6):
+[66] (Normal) [IMG]
+[67] (Normal) Figure 1.6 – Underfit, right fit, and overfit models for classification task
+[68] (Normal) Next, let’s briefly try to learn about two important concepts in machine learning:
+[69] (Normal) Regularization is a set of techniques that are used to prevent the overfitting of a model to the training data. One type of regularization (namely L1 or L2) adds a penalty term to the loss function, which encourages the model to have smaller weights and reduces its complexity. This helps prevent the
+[70] (Normal) Feature engineering is the process of selecting and transforming the input features of a model to improve its performance. Feature engineering involves selecting the most relevant features for the problem, transforming them to make them more informative, and creating new features from the existing o
+[71] (Normal) Types of dataset and splits
+[72] (Normal) Typically, we train our model on the training set and test the model on an independent unseen dataset called the test set. We do this to do a fair evaluation of the model. If we don’t do this and train the model on the full dataset and evaluate the model on the same dataset, we don’t know how good t
+[73] (Normal) We may encounter three kinds of datasets in machine learning:
+[74] (Normal) Training set: A dataset on which the model is trained.
+[75] (Normal) Validation set: A dataset used for tuning the hyperparameters of the model. A validation set is often referred to as a development set.
+[76] (Normal) Evaluation set or test set: A dataset used for evaluating the performance of the model.
+[77] (Normal) When working with small example datasets, it’s common to allocate 80% of the data for the training set, 10% for the validation set, and 10% for the test set. However, the specific ratio between training and test sets is not as important as ensuring that the test set is large enough to provide statis
+[78] (Normal) Often, people don’t have a dedicated validation set for hyperparameter tuning and refer to the test set as an evaluation set. This can happen when the hyperparameter tuning is not performed as a part of the regular training cycle and is a one-off activity.
+[79] (Normal) Cross-validation
+[80] (Normal) Cross-validation can be a confusing term to guess its meaning. Breaking it down: cross + validation, so it’s some sort of validation on an extended (cross) something. Something here is the test set for us.
+[81] (Normal) Let’s see what cross-validation is:
+[82] (Normal) Cross-validation is a technique that’s used to estimate how accurately a model will perform in practice
+[83] (Normal) It is typically used to detect overfitting – that is, failing to generalize patterns in data, particularly when the amount of data may be limited
+[84] (Normal) Let’s look at the different types of cross-validation:
+[85] (Normal) Holdout: In the holdout method, we randomly assign data points to two sets, usually called the training set and the test set, respectively. We then train (build a model) on the training set and test (evaluate its performance) on the test set.
+[86] (Normal) k-fold: This works as follows:
+[87] (Normal) We randomly shuffle the data.
+[88] (Normal) We divide all the data into k parts, also known as folds. We train the model on k-1 folds and evaluate it on the remaining fold. We record the performance of this model using our chosen model evaluation metric, then discard this model.
+[89] (Normal) We repeat this process k times, each time holding out a different subset for testing. We take an average of the evaluation metric values (for example, accuracy) from all the previous models. This average represents the overall performance measure of the model.
+[90] (Normal) k-fold cross-validation is mainly used when you have limited data points, say 100 points. Using 5 or 10 folds is the most common when doing cross-validation.
+[91] (Normal) Let’s look at the common evaluation metrics in machine learning, with a special focus on the ones relevant to problems with imbalanced data.
+[92] (Normal) Common evaluation metrics
+[93] (Normal) Several machine learning and deep learning metrics are used for evaluating the performance of classification models.
+[94] (Normal) Let’s look at some of the helpful metrics that can help evaluate the performance of our model on the test set.
+[95] (Normal) Confusion matrix
+[96] (Normal) Given a model that tries to classify an example as belonging to the positive or negative class, there are four possibilities:
+[97] (Normal) True Positive (TP): This occurs when the model correctly predicts a sample as part of the positive class, which is its actual classification
+[98] (Normal) False Negative (FN): This happens when the model incorrectly classifies a sample from the positive class as belonging to the negative class
+[99] (Normal) True Negative (TN): This refers to instances where the model correctly identifies a sample as part of the negative class, which is its actual classification
+[100] (Normal) False Positive (FP): This occurs when the model incorrectly predicts a sample from the negative class as belonging to the positive class
+[101] (Normal) Table 1.1 shows in what ways the model can get “confused” when making predictions, aptly called the confusion matrix. The confusion matrix forms the basis of many common metrics in machine learning:
+[102] (Normal) Table 1.1 – Confusion matrix
+[103] (Normal) Let’s look at some of the most common metrics in machine learning:
+[104] (Normal) True Positive Rate (TPR) measures the proportion of actual positive examples correctly classified by the model:
+[105] (Normal) [IMG]
+[106] (Normal) False Positive Rate (FPR) measures the proportion of actual negative examples that are incorrectly identified as positives by the model:
+[107] (Normal) [IMG]
+[108] (Normal) [IMG]Accuracy: Accuracy is the fraction of correct predictions made out of all the predictions that the model makes. This is mathematically equal to . This functionality is available in the sklearn library as sklearn.metrics.accuracy_score.
+[109] (Normal) [IMG]Precision: Precision, as an evaluation metric, measures the proportion of true positives over the number of items that the model predicts as belonging to the positive class, which is equal to the sum of the true positives and false positives. A high precision score indicates that the model has a low
+[110] (Normal) Recall (or sensitivity, or true positive rate): Recall measures the proportion of true positives over the number of items that belong to the positive class. The number of items that belong to the positive class is equal to the sum of true positives and false negatives. A high recall score indicates 
+[111] (Normal) [IMG]Recall measures the model’s ability to correctly detect all the positive instances. Recall can be considered to be the accuracy of the positive class in binary classification. You can find this functionality in the sklearn library under the name sklearn.metrics.recall_score.
+[112] (Normal) Table 1.2 summarizes the differences between precision and recall:
+[113] (Normal) Table 1.2 – Precision versus recall
+[114] (Normal) Why can accuracy be a bad metric for imbalanced datasets?
+[115] (Normal) Let’s assume we have an imbalanced dataset with 1,000 examples, with 100 labels belonging to class 1 (the minority class) and 900 belonging to class 0 (the majority class).
+[116] (Normal) [IMG]Let’s say we have a model that always predicts 0 for all examples. The model’s accuracy for the minority class is
+[117] (Normal) [IMG]
+[118] (Normal) Figure 1.7 – A comic showing accuracy may not always be the right metric
+[119] (Normal) [IMG]This brings us to the precision-recall trade-off in machine learning. Usually, precision and recall are inversely correlated – that is, when recall increases, precision most often decreases. Why? Note that recall  and for recall to increase, FN should decrease. This means the model needs to classify
+[120] (Normal) Next, let’s try to understand some of the precision and recall-based metrics that can help measure the performance of models trained on imbalanced data:
+[121] (Normal) F1 score: The F1 score (also called F-measure) is the harmonic mean of precision and recall. It combines precision and recall into a single metric. The F1 score varies between 0 and 1 and is most useful when we want to give equal priority to precision and recall (more on this later). This is availab
+[122] (Normal) F-beta score or F-measure: The F-beta score is a generalization of the F1 score. It is a weighted harmonic mean of precision and recall, where the beta parameter controls the relative importance of precision and recall.
+[123] (Normal) [IMG]The formula for the F-beta  score is as follows:
+[124] (Normal) [IMG]
+[125] (Normal) [IMG]Here, beta  is a positive parameter that determines the weight given to precision in the calculation of the score. When beta  is set to 1, the F1 score is obtained, which is the harmonic mean of precision and recall. The F-beta score is a useful metric for imbalanced datasets, where one class may be
+[126] (Normal) [IMG]Conversely, if we want to prioritize recall over precision for the minority class, we can set beta > 1 (we can set β = ∞ in the  formula to see it reduce to recall).
+[127] (Normal) In practice, the choice of beta parameter depends on the specific problem and the desired trade-off between precision and recall. In general, higher values of beta result in more emphasis on recall, while lower values of beta result in more emphasis on precision. This is available in the sklearn lib
+[128] (Normal) Balanced accuracy score: The balanced accuracy score is defined as the average of the recall obtained in each class. This metric is commonly used in both binary and multiclass classification scenarios to address imbalanced datasets. This is available in the sklearn library as sklearn.metrics.balance
+[129] (Normal) Specificity (SPE): Specificity is a measure of the model’s ability to correctly identify the negative samples. In binary classification, it is calculated as the ratio of true negative predictions to the total number of negative samples. High specificity indicates that the model is good at identifyin
+[130] (Normal) Support: Support refers to the number of samples in each class. Support is one of the values returned by the sklearn.metrics.precision_recall_fscore_support and imblearn.metrics.classification_report_imbalanced APIs.
+[131] (Normal) Geometric mean: The geometric mean is a measure of the overall performance of the model on imbalanced datasets. In imbalanced-learn, geometric_mean_score() is defined by the geometric mean of “accuracy on positive class examples” (recall or sensitivity or TPR) and “accuracy on negative class example
+[132] (Normal) Index Balanced Accuracy (IBA): The IBA [1] is a measure of the overall accuracy of the model on imbalanced datasets. It takes into account both the sensitivity and specificity of the model and is calculated as the mean of the sensitivity and specificity, weighted by the imbalance ratio of each class
+[133] (Normal) Table 1.3 shows the associated metrics and their formulas as an extension of the confusion matrix:
+[134] (Normal) Table 1.3 – Confusion matrix with various metrics and their definitions
+[135] (Normal) ROC
+[136] (Normal) Receiver Operating Characteristics, commonly known as ROC curves, are plots that display the TPR on the y-axis against the FPR on the x-axis for various threshold values:
+[137] (Normal) The ROC curve essentially represents the proportion of correctly predicted positive instances on the y-axis, contrasted with the proportion of incorrectly predicted negative instances on the x-axis.
+[138] (Normal) In classification tasks, a threshold is a cut-off value that’s used to determine the class of an example. For instance, if a model classifies an example as “positive,” a threshold of 0.5 might be set to decide whether the instance should be labeled as belonging to the “positive” or “negative” class.
+[139] (Normal) To create the ROC curve, we calculate the TPR and FPR for many various threshold values of the model’s predicted probabilities. For each threshold, the corresponding TPR value is plotted on the y-axis, and the FPR value is plotted on the x-axis, creating a single point. By connecting these points, w
+[140] (Normal) [IMG]
+[141] (Normal) Figure 1.8 – The ROC curve as a plot of TPR versus FPR (the dotted line shows a model with no skill)
+[142] (Normal) Some properties of the ROC curve are as follows:
+[143] (Normal) The Area Under Curve (AUC) of a ROC curve (also called AUC-ROC) serves a specific purpose: it provides a single numerical value that represents the model’s performance across all possible classification thresholds:
+[144] (Normal) AUC-ROC represents the degree of separability of the classes. This means that the higher the AUC-ROC, the more the model can distinguish between the classes and predict a positive class example as positive and a negative class example as negative. A poor model with an AUC near 0 essentially predicts
+[145] (Normal) The AUC-ROC of a random classifier is 0.5 and is the diagonal joining the points (0,0) and (1,0) on the ROC curve.
+[146] (Normal) The AUC-ROC has a probabilistic interpretation: an AUC of 0.9 indicates a 90% likelihood that the model will assign a higher score to a randomly chosen positive class example than to a negative class example. That is, AUC-ROC can be depicted as follows:
+[147] (Normal) [IMG]P(score(x+ ) > score(x− ))
+[148] (Normal) Here, 𝑥+ denotes the positive (minority) class, and 𝑥− denotes the negative (majority) class.
+[149] (Normal) In the context of evaluating model performance, it’s crucial to use a test set that reflects the distribution of the data the model will encounter in real-world scenarios. This is particularly relevant when considering metrics such as the ROC curve, which remains consistent regardless of changes in 
+[150] (Normal) Now, let’s look at some of the problems in using ROC for imbalanced datasets:
+[151] (Normal) ROC does not distinguish between the various classes – that is, it does not emphasize one class more over the other. This can be a problem for imbalanced datasets where, often, the minority class is more important to detect than the majority class. Because of this, it may not reflect the minority cl
+[152] (Normal) While ROC curves can be useful for comparing the performance of models across a full range of FPRs, they may not be as relevant for specific applications that require a very low FPR, such as fraud detection in financial transactions or banking applications. The reason the FPR needs to be very low is
+[153] (Normal) Let’s say that for a test set, we have a total of 10,000 examples and only 100 examples of the positive class, making up 1% of the examples. So, any FPR higher than 1% - that is, 0.01 – is going to raise too many alerts to be handled manually by investigators.
+[154] (Normal) The performance on the far left-hand side of the ROC curve becomes crucial in most real-world problems, which are often dominated by a large number of negative instances. As a result, most of the ROC curve becomes irrelevant for applications that need to maintain a very low FPR.
+[155] (Normal) Precision-Recall curve
+[156] (Normal) Similar to ROC curves, Precision-Recall (PR) curves plot a pair of metrics for different threshold values. But unlike ROC curves, which plot TPR and FPR, PR curves plot precision and recall. To demonstrate the difference between the two curves, let’s say we compare the performance of two models – Mo
+[157] (Normal) In Figure 1.9 (a), the ROC curves for both models appear to be close to the top-left corner (point (0, 1)), which might lead you to conclude that both models are performing well. However, this can be misleading, especially in the context of imbalanced datasets.
+[158] (Normal) When we turn our attention to the PR curves in Figure 1.9 (b), a different story unfolds. Model 2 comes closer to the ideal top-right corner (point (1, 1)) of the plot, indicating that its performance is much better than Model 1 when precision and recall are considered.
+[159] (Normal) The PR curve reveals that Model 2 has an advantage over Model 1.
+[160] (Normal) This discrepancy between the ROC and PR curves also underscores the importance of using multiple metrics for model evaluation, particularly when dealing with imbalanced data:
+[161] (Normal) [IMG]
+[162] (Normal) Figure 1.9 – The PR curve can show obvious differences between models compared to the ROC curve
+[163] (Normal) Let’s try to understand these observations in detail. While the ROC curve shows very little difference between the performance of the two models, the PR curve shows a much bigger gap. The reason for this is that the ROC curve uses FPR, which is FP/(FP+TN). Usually, TN is really high for an imbalance
+[164] (Normal) The conclusion of which classifier is superior can change with the distribution of classes in the test set. In the case of skewed datasets, the PR curve can more clearly show that the model did not work well compared to the ROC curve, as shown in the preceding figure.
+[165] (Normal) The average precision is a single number that’s used to summarize a PR curve, and the corresponding API in sklearn is sklearn.metrics.average_precision_score.
+[166] (Normal) Relation between the ROC curve and PR curve
+[167] (Normal) The primary distinction between the ROC curve and the PR curve lies in the fact that while ROC assesses how well the model can “calculate” both positive and negative classes, PR solely focuses on the positive class. Therefore, when dealing with a balanced dataset scenario and you are concerned with 
+[168] (Normal) We can reimagine the PR curve with precision on the x-axis and TPR, also known as recall, on the y-axis. The key difference between the two curves is that while the ROC curve uses FPR, the PR curve uses precision.
+[169] (Normal) As discussed earlier, FPR tends to be very low when dealing with imbalanced datasets. This aspect of having low FPR values is crucial in certain applications such as fraud detection, where the capacity for manual investigations is inherently limited. Consequently, this perspective can alter the perc
+[170] (Normal) Let’s summarize this:
+[171] (Normal) The AUC-ROC is the area under the curve plotted with TPR on the y-axis and FPR on the x-axis.
+[172] (Normal) The AUC-PR is the area under the curve plotted with precision on the y-axis and recall on the x-axis.
+[173] (Normal) As TPR equals recall, the two plots only differ in what recall is compared to – either precision or FPR. Additionally, the plots are rotated by 90 degrees relative to each other:
+[174] (Normal) Table 1.4 – Comparing the ROC and PR curves
+[175] (Normal) In the next few sections, we’ll explore the circumstances that lead to imbalances in datasets, the challenges these imbalances can pose, and the situations where data imbalance might not be a concern.
+[176] (Normal) Challenges and considerations when dealing with imbalanced data
+[177] (Normal) In certain instances, directly using data for machine learning without worrying about data imbalance can yield usable results suitable for a given business scenario. Yet, there are situations where a more dedicated effort is needed to manage the effects of imbalanced data.
+[178] (Normal) Broad statements claiming that you must always or never adjust for imbalanced classes tend to be misleading. The truth is that the need to address class imbalance is contingent on the specific characteristics of the data, the problem at hand, and the definition of an acceptable solution. Therefore, 
+[179] (Normal) When can we have an imbalance in datasets?
+[180] (Normal) In this section, we’ll explore various situations and causes leading to an imbalance in datasets, such as rare event occurrences or skewed data collection processes:
+[181] (Normal) Inherent in the problem: Sometimes, the task we need to solve involves detecting outliers in datasets – for example, patients with a certain disease or fraud cases in a set of transactions. In such cases, the dataset is inherently imbalanced because the target events are rare to begin with.
+[182] (Normal) High cost of data collection while bootstrapping a machine learning solution: The cost of collecting data might be too high for certain classes. For example, collecting data on COVID-19 patients incurs high costs due to the need for specialized medical tests, protective equipment, and the ethical an
+[183] (Normal) Noisy labels for certain classes: This may happen when a lot of noise is introduced into the labels of the dataset for certain classes during data collection.
+[184] (Normal) Labeling errors: Errors in labeling can also contribute to data imbalance. For example, if some samples are mistakenly labeled as negative when they are positive, this can result in an imbalance in the dataset. Additionally, if a class is already inherently rare, human annotators might be biased and
+[185] (Normal) Sampling bias: Data collection methods can sometimes introduce bias in the dataset. For example, if a survey is conducted in a specific geographical area or among a specific group of people, the resulting dataset may not be representative of the entire population.
+[186] (Normal) Data cleaning: During the data cleaning or filtering process, some classes or samples may be removed due to incomplete or missing data. This can result in an imbalance in the remaining dataset.
+[187] (Normal) Why can imbalanced data be a challenge?
+[188] (Normal) Let’s delve into the difficulties posed by imbalanced data on model predictions and their impact on model performance:
+[189] (Normal) Failure of metrics such as accuracy: As we discussed previously, conventional metrics such as accuracy can be misleading in the context of imbalanced data (a 99% imbalanced dataset would still achieve 99% accuracy). Threshold-invariant metrics such as the PR curve or ROC curve attempt to expose the 
+[190] (Normal) Imbalanced data can be a challenge for a model’s loss function: This may happen because the loss function is typically designed to minimize the errors between the predicted outputs and the true labels of the training data. When the data is imbalanced, there are more instances of one class than anoth
+[191] (Normal) Different misclassification costs for different classes: Often, it may be more expensive to misclassify positive examples than to misclassify negative examples. We may have false positives that are more expensive than false negatives. For example, usually, the cost of misclassifying a patient with c
+[192] (Normal) Constraints on computational resources: In sectors such as finance, healthcare, and retail, handling big data is a common challenge. Training on these large datasets is not only time-consuming but also costly due to the computational power needed. In such scenarios, downsampling or undersampling the
+[193] (Normal) Not enough variation in the minority class examples to sufficiently represent its distribution: Often, an absolute number of samples of the minority class is not as big of a problem as the variation in the samples of the minority class. The dataset might look large, but there might not be many varia
+[194] (Normal) [IMG]
+[195] (Normal) Figure 1.10 – Change in decision boundary with a different distribution of minority class examples – the crosses denote the majority class, and the circles denote the minority class
+[196] (Normal) Poor performance of uncalibrated models: Imbalanced data can be a challenge for uncalibrated models. Uncalibrated models are models that do not output well-calibrated probabilities, which means that the predicted probabilities may not reflect the true likelihood of the predicted classes:
+[197] (Normal) When dealing with imbalanced data, uncalibrated models can be particularly susceptible to producing biased predictions toward the majority class as they may not be able to effectively differentiate between the minority and majority classes. This can lead to poor performance in the minority class, wh
+[198] (Normal) For example, an uncalibrated model that is trained on imbalanced data may incorrectly classify instances that belong to the minority class as majority class examples, often with high confidence. This is because the model may not have learned to adjust its predictions based on the imbalance in the da
+[199] (Normal) To address this challenge, it is important to use well-calibrated models [4] that can output probabilities that reflect the true likelihood of the predicted classes. This can be achieved through techniques such as Platt scaling or isotonic regression, which can calibrate the predicted probabilities 
+[200] (Normal) Poor performance of models because of non-adjusted thresholds: It’s important to use intelligent thresholding when making predictions using models trained on imbalanced datasets. Simply predicting 1 when the model probability is over 0.5 may not always be the best approach. Instead, we should consid
+[201] (Normal) Next, let’s try to see when we shouldn’t do anything about data imbalance.
+[202] (Normal) When to not worry about data imbalance
+[203] (Normal) Class imbalance may not always negatively impact performance, and using imbalance-specific methods can sometimes worsen results [5]. Therefore, it’s crucial to accurately assess whether a task is genuinely affected by class imbalance before applying any specialized techniques. One such strategy can 
+[204] (Normal) Let’s explore scenarios where data imbalance may not be a concern and no corrective measures may be needed:
+[205] (Normal) When the imbalance is small: If the imbalance in the dataset is relatively small, with the ratio of the minority class to the majority class being only slightly skewed (say 4:5 or 2:3), the impact on the model’s performance may be minimal. In such cases, the model may still perform reasonably well w
+[206] (Normal) When the goal is to predict the majority class: In some cases, the focus may be on predicting the majority class accurately, and the minority class may not be of particular interest. For example, in online ad placement, the focus can be on targeting users (majority class) likely to click on ads to m
+[207] (Normal) When the cost of misclassification is nearly equal for both classes: In some applications, the cost of misclassifying a positive class example is not high (that is, false negative). An example is classifying emails as spam or non-spam. It’s totally fine to miss a spam email once in a while and miscl
+[208] (Normal) When the dataset is sufficiently large: Even if the ratio of minority to majority class samples is very low, such as 1:100, and if the dataset is sufficiently large, with a large number of samples in both the minority and majority classes, the impact of data imbalance on the model’s performance may 
+[209] (Normal) In the next section, we will become familiar with a library that can be very useful when dealing with imbalanced data. We will train a model on an imbalanced toy dataset and look at some metrics to evaluate the performance of the trained model.
+[210] (Normal) Introduction to the imbalanced-learn library
+[211] (Normal) imbalanced-learn (imported as imblearn) is a Python package that offers several techniques to deal with data imbalance. In the first half of this book, we will rely heavily on this library. Let’s install the imbalanced-learn library:
+[212] (Normal) pip3 install imbalanced-learn==0.11.0
+[213] (Normal) We can use imbalanced-learn to create a synthetic dataset for our analysis:
+[214] (Normal) from sklearn.datasets import make_classification
+[215] (Normal) import pandas as pd
+[216] (Normal) import matplotlib.pyplot as plt
+[217] (Normal) import seaborn as sns
+[218] (Normal) def make_data(sep):
+[219] (Normal) X, y = make_classification(n_samples=50000,
+[220] (Normal) n_features=2, n_redundant=0,
+[221] (Normal) n_clusters_per_class=1, weights=[0.995],
+[222] (Normal) class_sep=sep, random_state=1)
+[223] (Normal) X = pd.DataFrame(X, columns=['feature_1', 'feature_2'])
+[224] (Normal) y = pd.Series(y)
+[225] (Normal) return X, y
+[226] (Normal) Let’s analyze the generated dataset:
+[227] (Normal) from collections import Counter
+[228] (Normal) X, y = make_data(sep=2)
+[229] (Normal) print(y.value_counts())
+[230] (Normal) sns.scatterplot(data=X, x="feature_1", y="feature_2", hue=y)
+[231] (Normal) plt.title('Separation: {}'.format(separation))
+[232] (Normal) plt.show()
+[233] (Normal) Here’s the output:
+[234] (Normal) 0     49498
+[235] (Normal) 1       502
+[236] (Normal) [IMG]
+[237] (Normal) Figure 1.11 – 2 class dataset with two features
+[238] (Normal) Let’s split this dataset into training and test sets:
+[239] (Normal) From sklearn.model_selection import train_test_split
+[240] (Normal) X_train, X_test, y_train, y_test = train_test_split(X, y, stratify = \
+[241] (Normal) y, test_size=0.2, random_state=42)
+[242] (Normal) print('train data: ', Counter(y_train))
+[243] (Normal) print('test data: ', Counter(y_test))
+[244] (Normal) Here’s the output:
+[245] (Normal) train data:  Counter({0: 39598, 1: 402})
+[246] (Normal) test data:  Counter({0: 9900, 1: 100})
+[247] (Normal) Note the usage of stratify in the train_test_split API of sklearn. Specifying stratify=y ensures we maintain the same ratio of majority and minority classes in both the training set and the test set. Let’s understand stratification in more detail.
+[248] (Normal) Stratified sampling is a way to split the dataset into various subgroups (called “strata”) based on certain characteristics they share. It can be highly valuable when dealing with imbalanced datasets because it ensures that the train and test datasets have the same proportions of class labels as the
+[249] (Normal) In an imbalanced dataset, the minority class constitutes a small fraction of the total data. If we perform a simple random split without any stratification, there’s a risk that the minority class may not be adequately represented in the training set or could be entirely left out from the test set, w
+[250] (Normal) With stratified sampling, the proportion of each class in the overall dataset is preserved in both training and test sets, ensuring representative sampling and a better chance for the model to learn from the minority class. This leads to a more robust model and a more reliable evaluation of the mode
+[251] (Normal) The scikit-learn APIs for stratification
+[252] (Normal) The scikit-learn APIs, such as RepeatedStratifiedKFold and StratifiedKFold, employ the concept of stratification to evaluate model performance through cross-validation, especially when working with imbalanced datasets.
+[253] (Normal) Now, let’s train a logistic regression model on training data:
+[254] (Normal) from sklearn.linear_model import LogisticRegression
+[255] (Normal) lr = LogisticRegression(random_state=0, max_iter=2000)
+[256] (Normal) lr.fit(X_train, y_train)
+[257] (Normal) y_pred = lr.predict(X_test)
+[258] (Normal) Let’s get the report metrics from the sklearn library:
+[259] (Normal) from sklearn.metrics import classification_report
+[260] (Normal) print(classification_report(y_test, y_pred))
+[261] (Normal) This outputs the following:
+[262] (Normal) precision     recall      f1-score    support
+[263] (Normal) 0         0.99          1.00        1.00        9900
+[264] (Normal) 1         0.94          0.17        0.29        100
+[265] (Normal) accuracy                                0.99      10000
+[266] (Normal) macro avg       0.97        0.58        0.64      10000
+[267] (Normal) weighted avg    0.99        0.99        0.99      10000
+[268] (Normal) Let’s get the report metrics from imblearn:
+[269] (Normal) from imblearn.metrics import classification_report_imbalanced
+[270] (Normal) print(classification_report_imbalanced(y_test, y_pred))
+[271] (Normal) This outputs a lot more columns:
+[272] (Normal) [IMG]
+[273] (Normal) Figure 1.12 – Output of the classification report from imbalanced-learn
+[274] (Normal) Do you notice the extra metrics here compared to the API of sklearn? We got three additional metrics: spe for specificity, geo for geometric mean, and iba for index balanced accuracy.
+[275] (Normal) The imblearn.metrics module has several such functions that can be helpful for imbalanced datasets. Apart from classification_report_imbalanced(), it offers APIs such as sensitivity_specificity_support(), geometric_mean_score(), sensitivity_score(), and specificity_score().
+[276] (Normal) General rules to follow
+[277] (Normal) Usually, the first step in any machine learning pipeline should be to split the data into train/test/validation sets. We should avoid applying any techniques to handle the imbalance until after the data has been split. We should begin by splitting the data into training, testing, and validation sets
+[278] (Normal) We should ensure that the validation data closely resembles the test data. Both validation data and test data should represent real-world scenarios on which the model will be used for prediction. Avoid applying any sampling techniques or modifications to the validation set. The only requirement is t
+[279] (Normal) Let’s switch to discussing a bit about using unsupervised learning algorithms. Anomaly detection or outlier detection is a class of problems that can be used for dealing with imbalanced data problems. Anomalies or outliers are data points that deviate significantly from the rest of the data. These a
+[280] (Normal) The term that’s often used for these kinds of problems is one-class classification. This technique is particularly beneficial when the positive (minority) cases are sparse or when gathering them before the training is not feasible. The model is trained exclusively on what is considered the “normal” 
+[281] (Normal) However, it does have a drawback: outliers or positive cases during training are discarded [7], which could lead to the potential loss of valuable information.
+[282] (Normal) In summary, while unsupervised methods such as one-class classification offer an alternative for managing class imbalance, our discussion in this book will remain centered on supervised learning algorithms. Nevertheless, we recommend that you explore and experiment with such solutions when you find 
+[283] (Normal) Summary
+[284] (Normal) Let’s summarize what we’ve learned so far. Imbalanced data is a common problem in machine learning, where there are significantly more instances of one class than another. Imbalanced datasets can arise from various situations, including rare event occurrences, high data collection costs, noisy label
+[285] (Normal) Several techniques can be used to deal with imbalanced data, such as oversampling, undersampling, and cost-sensitive learning. The best technique to use depends on the specific problem and the data.
+[286] (Normal) In some cases, data imbalance may not be a concern. When the dataset is sufficiently large, the impact of data imbalance on the model’s performance may be reduced. However, it is still advisable to compare the baseline model’s performance with the performance of models that have been built using tec
+[287] (Normal) Traditional performance metrics such as accuracy can fail in imbalanced datasets. Some more useful metrics for imbalanced datasets are the ROC curve, the PR curve, precision, recall, and F1 score. While ROC curves are suitable for balanced datasets, PR curves are more suitable for imbalanced dataset
+[288] (Normal) The imbalanced-learn library is a Python package that offers several techniques to deal with data imbalance.
+[289] (Normal) There are some general rules to follow, such as splitting the data into train/test/validation sets before applying any techniques to handle the imbalance in the data, ensuring that the validation data closely resembles the test data and that test data represents the data on which the model will make
+[290] (Normal) One-class classification or anomaly detection is another technique that can be used for dealing with unsupervised imbalanced data problems. In this book, we will focus our discussion on supervised learning algorithms only.
+[291] (Normal) In the next chapter, we will look at one of the common ways to handle the data imbalance problem in datasets by applying oversampling techniques.
+[292] (Normal) Questions
+[293] (Normal) How does the choice of loss function when training a model affect the performance of the model on imbalanced datasets?
+[294] (Normal) Can you explain why the PR curve is more informative than the ROC curve when dealing with highly skewed datasets?
+[295] (Normal) What are some of the potential issues with using accuracy as a metric for model performance on imbalanced datasets?
+[296] (Normal) How does the concept of “class imbalance” affect the process of feature engineering in machine learning?
+[297] (Normal) In the context of imbalanced datasets, how does the choice of “k” in k-fold cross-validation affect the performance of the model? How would you fix the issue?
+[298] (Normal) How does the distribution of classes in the test data affect the PR curve, and why? What about the ROC curve?
+[299] (Normal) What are the implications of having a high AUC-ROC but a low AUC-PR in the context of an imbalanced dataset?
+[300] (Normal) How does the concept of “sampling bias” contribute to the challenge of imbalanced datasets in machine learning?
+[301] (Normal) How does the concept of “labeling errors” contribute to the challenge of imbalanced datasets in machine learning?
+[302] (Normal) What are some of the real-world scenarios where dealing with imbalanced datasets is inherently part of the problem?
+[303] (Normal) Matthews Correlation Coefficient (MCC) is a metric that takes all the cells of the confusion matrix into account and is given by the following formula:
+[304] (Normal) [IMG]
+[305] (Normal) What can be the minimum and maximum values of the metric?
+[306] (Normal) Because it takes TN into account, its value may not change much when we are comparing different models, but it can tell us if the predictions for various classes are going well. Let’s illustrate this through an artificial example where we take a dummy model that always predicts 1 for an imbalanced t
+[307] (Normal) What can you conclude about the model from the MCC value that you just computed in the previous question?
+[308] (Normal) Create an imbalanced dataset using imblearn’s fetch_dataset API and then compute the values of MCC, accuracy, precision, recall, and F1 score. See if the MCC value can be a useful metric for this dataset.
+[309] (Normal) References
+[310] (Normal) V. García, R. A. Mollineda, and J. S. Sánchez, Index of Balanced Accuracy: A Performance Measure for Skewed Class Distributions, in Pattern Recognition and Image Analysis, vol. 5524, H. Araujo, A. M. Mendonça, A. J. Pinho, and M. I. Torres, Eds. Berlin, Heidelberg: Springer Berlin Heidelberg, 2009, 
+[311] (Normal) T. Fawcett, An introduction to ROC analysis, Pattern Recognition Letters, vol. 27, no. 8, pp. 861–874, Jun. 2006, doi: 10.1016/j.patrec.2005.10.010.
+[312] (Normal) Y.-A. Le Borgne, W. Siblini, B. Lebichot, and G. Bontempi, Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook. Université Libre de Bruxelles, 2022. [Online]. Available at https://github.com/Fraud-Detection-Handbook/fraud-detection-handbook.
+[313] (Normal) W. Siblini, J. Fréry, L. He-Guelton, F. Oblé, and Y.-Q. Wang, Master your Metrics with Calibration, vol. 12080, 2020, pp. 457–469. doi: 10.1007/978-3-030-44584-3_36.
+[314] (Normal) Xu-Ying Liu, Jianxin Wu, and Zhi-Hua Zhou, Exploratory Undersampling for Class-Imbalance Learning, IEEE Trans. Syst., Man, Cybern. B, vol. 39, no. 2, pp. 539–550, Apr. 2009, doi: 10.1109/TSMCB.2008.2007853.
+[315] (Normal) M. S. Santos, J. P. Soares, P. H. Abreu, H. Araujo, and J. Santos, Cross-Validation for Imbalanced Datasets: Avoiding Overoptimistic and Overfitting Approaches [Research Frontier], IEEE Comput. Intell. Mag., vol. 13, no. 4, pp. 59–76, Nov. 2018, doi: 10.1109/MCI.2018.2866730.
+[316] (Normal) A. Fernández, S. García, M. Galar, R. Prati, B. Krawczyk, and F. Herrera, Learning from Imbalanced Data Sets. Springer International Publishing, 2018
+[318] (Normal) 2
+[319] (Normal) Oversampling Methods
+[320] (Normal) In machine learning, we often don’t have enough samples of the minority class. One solution might be to gather more samples of such a class. For example, in the problem of detecting whether a patient has cancer or not, if we don’t have enough samples of the cancer class, we can wait for some time to
+[321] (Normal) In this chapter, we will introduce the concept of oversampling, discuss when to use it, and the various techniques to perform it. We will also demonstrate how to utilize these techniques through the imbalanced-learn library APIs and compare their performance using some classical machine learning mod
+[322] (Normal) In this chapter, we will cover the following topics:
+[323] (Normal) Random oversampling
+[324] (Normal) SMOTE
+[325] (Normal) SMOTE variants
+[326] (Normal) ADASYN
+[327] (Normal) Model performance comparison of various oversampling methods
+[328] (Normal) Guidance for using various oversampling techniques
+[329] (Normal) Oversampling in multi-class classification
+[330] (Normal) Technical requirements
+[331] (Normal) In this chapter, we will utilize common libraries such as numpy, scikit-learn, and imbalanced-learn. The code and notebooks for this chapter are available on GitHub at https://github.com/PacktPublishing/Machine-Learning-for-Imbalanced-Data/tree/master/chapter02. You can just fire up the GitHub noteb
+[332] (Normal) What is oversampling?
+[333] (Normal) Sampling involves selecting a subset of observations from a larger set of observations. In this chapter, we’ll initially focus on binary classification problems with two classes: the positive class and the negative class. The minority class has significantly fewer instances than the majority class. 
+[334] (Normal) Oversampling is a data balancing technique that generates more samples of the minority class. However, this can be easily scaled to work for any number of classes where there are multiple classes with an imbalance. Figure 2.1 shows how samples of minority and majority classes are imbalanced (a) init
+[335] (Normal) [IMG]
+[336] (Normal) Figure 2.1 – An increase in the number of minority class samples after oversampling
+[337] (Normal) Why is oversampling needed, you ask? It is required so that we give the model enough samples of the minority class to learn from it. If we offer too few instances of the minority class, the model may choose to ignore these minority class examples and focus solely on the majority class examples. This
+[338] (Normal) Let’s generate a two-class imbalanced dataset with a 1:99 ratio using the sklearn library’s make_classification API, which creates a normally distributed set of points for each class. This will generate an imbalanced dataset of two classes: one being the minority class with label 1 and the other bei
+[339] (Normal) from collections import Counter
+[340] (Normal) from sklearn.datasets import make_classification
+[341] (Normal) X, y = make_classification(n_samples=10000, n_features=2,\
+[342] (Normal) n_redundant=0, n_classes=2, flip_y=0, n_clusters_per_class=2,\
+[343] (Normal) class_sep=0.79, weights=[0.99], random_state=81)
+[344] (Normal) This code generates 100 examples of class 1 and 9,900 examples of class 0 with an imbalance ratio of 1:99. By plotting the dataset, we can see how the examples are distributed:
+[345] (Normal) [IMG]
+[346] (Normal) Figure 2.2 – The dataset with an imbalance ratio of 1:99
+[347] (Normal) In this section, we understood the need for oversampling. We also generated a synthetic imbalanced binary classification dataset to demonstrate the application of various oversampling techniques.
+[348] (Normal) Random oversampling
+[349] (Normal) The simplest strategy to balance the imbalance in a dataset is to randomly choose samples of the minority class and repeat or duplicate them. This is also called random oversampling with replacement.
+[350] (Normal) To increase the number of minority class observations, we can replicate the minority class data observations enough times to balance the two classes. Does this sound too trivial? Yes, but it works. By increasing the number of minority class samples, random oversampling reduces the bias toward the ma
+[351] (Normal) We will use random oversampling from the imbalanced-learn library. The fit_resample API from the RandomOverSampler class resamples the original dataset and balances it. The sampling_strategy parameter is used to specify the new ratio of various classes. For example, we could say sampling_strategy=1.
+[352] (Normal) There are various ways to specify sampling_strategy, such as a float value, string value, or dict – for example, {0: 50, 1: 50}:
+[353] (Normal) from imblearn.over_sampling import RandomOverSampler
+[354] (Normal) ros = RandomOverSampler(sampling_strategy=1.0, random_state=42)
+[355] (Normal) X_res, y_res = ros.fit_resample(X, y)
+[356] (Normal) print('Resampled dataset shape %s' % Counter(y_res))
+[357] (Normal) Here is the output:
+[358] (Normal) Resampled dataset shape Counter({0: 9900, 1: 9900})
+[359] (Normal) So, we went from a ratio of 1:99 to 1:1, which is what we expected with sampling_strategy=1.0.
+[360] (Normal) Let’s plot the oversampled dataset:
+[361] (Normal) [IMG]
+[362] (Normal) Figure 2.3 – Dataset oversampled using RandomOverSampler (label 1 examples appear unchanged due to overlap)
+[363] (Normal) After applying random oversampling, the examples with label 1 overlap each other, creating the impression that nothing has changed. Repeating the same data point over and over can cause the model to memorize the specific data points and not be able to generalize to new, unseen examples. The shrinkag
+[364] (Normal) The value of the shrinkage parameter has to be greater than or equal to 0 and can be float or dict. If a float data type is used, the same shrinkage factor will be used for all classes. If a dict data type is used, the shrinkage factor will be specific for each class.
+[365] (Normal) In Figure 2.4, we can observe the impact of random oversampling with shrinkage=0.2:
+[366] (Normal) [IMG]
+[367] (Normal) Figure 2.4 – Result of applying random oversampling with shrinkage=0.2
+[368] (Normal) Toward the end of this chapter, we will compare the performance of random oversampling with various other oversampling techniques across multiple models and datasets. This will provide insights into their effectiveness in real-world applications.
+[369] (Normal) 🚀 Random oversampling in production at Grab
+[370] (Normal) Grab, a ride-hailing and food delivery service in Southeast Asia, developed an image collection platform [1] for storing and retrieving imagery and map data. A key feature of this platform was its ability to automatically detect and blur Personally Identifiable Information (PII), such as faces and l
+[371] (Normal) To address the data imbalance, Grab employed the random oversampling technique to increase the number of positive samples, thereby enhancing the performance of their machine learning model.
+[372] (Normal) Problems with random oversampling
+[373] (Normal) Random oversampling can often lead to overfitting of the model since the generated synthetic observations get repeated, and the model sees the same observations again and again. Shrinkage tries to handle that in some sense, but it may be challenging to come up with an apt value of shrinkage, and shr
+[374] (Normal) In the previous section, we learned about the most basic and practical technique for applying oversampling to balance a dataset and reduce bias toward the majority class. Many times, random oversampling itself might give us such a high boost to our model’s performance that we may not even need to ap
+[375] (Normal) In the subsequent sections, we will explore some alternative techniques, such as SMOTE and ADASYN, which adopt a different approach to oversampling and alleviate some of the problems associated with the random oversampling technique.
+[376] (Normal) SMOTE
+[377] (Normal) The main problem with random oversampling is that it duplicates the observations from the minority class. This can often cause overfitting. Synthetic Minority Oversampling Technique (SMOTE) [2] solves this problem of duplication by using a technique called interpolation.
+[378] (Normal) Interpolation involves creating new data points in the range of known data points. Think of interpolation as being similar to the process of reproduction in biology. In reproduction, two individuals come together to produce a new individual with traits of both of them. Similarly, in interpolation, w
+[379] (Normal) We oversample the minority class by interpolating synthetic examples. That prevents the duplication of minority samples while generating new synthetic observations similar to the known points. Figure 2.5 depicts how SMOTE works:
+[380] (Normal) [IMG]
+[381] (Normal) Figure 2.5 – Working of SMOTE
+[382] (Normal) Here, we can see the following:
+[383] (Normal) The majority and minority class samples are plotted (left)
+[384] (Normal) The synthetic samples are generated by taking a random point on the line joining a minority sample to two nearest neighbor majority class samples (right)
+[385] (Normal) SMOTE was originally designed for continuous inputs. To keep the explanations simple, we’ll start with continuous inputs and discuss other kinds of inputs later.
+[386] (Normal) First, we will examine the functioning of SMOTE and explore any potential disadvantages associated with this technique.
+[387] (Normal) How SMOTE works
+[388] (Normal) The SMOTE algorithm works as follows:
+[389] (Normal) It considers only the samples from the minority class.
+[390] (Normal) It trains KNN on the minority samples. A typical value of k is 5.
+[391] (Normal) For each minority sample, a line is drawn between the point and each of its KNN examples.
+[392] (Normal) For each such line segment, a point on the segment is randomly picked to create a new synthetic example.
+[393] (Normal) Let’s use SMOTE using APIs from the imbalanced-learn library:
+[394] (Normal) from imblearn.over_sampling import SMOTE
+[395] (Normal) sm = SMOTE(random_state=0)
+[396] (Normal) X_res, y_res = sm.fit_resample(X, y)
+[397] (Normal) print('Resampled dataset shape %s' % Counter(y_res))
+[398] (Normal) Here is the output:
+[399] (Normal) Resampled dataset shape Counter({0: 9900, 1: 9900})
+[400] (Normal) The oversampled dataset looks like this:
+[401] (Normal) [IMG]
+[402] (Normal) Figure 2.6 – Oversampling using SMOTE
+[403] (Normal) 🚀 Oversampling techniques in production at Microsoft
+[404] (Normal) In a real-world application at Microsoft [3], machine learning was employed to forecast Live Site Incidents (LSIs) for early detection and escalation of incidents for engineering teams. Every day, a high volume of incidents was being generated, most of which started as low-severity issues. Due to li
+[405] (Normal) To address this, Microsoft employed machine learning to forecast which LSIs could escalate into severe problems, aiming for proactive identification and early resolution. The challenge was the data imbalance in the training set: out of approximately 40,000 incidents, fewer than 2% escalated to high 
+[406] (Normal) Next, we will look at the limitations of using SMOTE.
+[407] (Normal) Problems with SMOTE
+[408] (Normal) SMOTE has its pitfalls – for example, it can add noise to an already noisy dataset. It can also lead to class overlap issues as follows:
+[409] (Normal) SMOTE generates minority class samples without considering the majority class distribution, which may increase the overlap between the classes. In Figure 2.7, we’re plotting the binary classification imbalanced dataset before and after applying SMOTE. We can see a lot of overlap between the two clas
+[410] (Normal) [IMG]
+[411] (Normal) Figure 2.7 – Binary classification dataset before (left) and after (right) applying SMOTE (see the overlap between two classes on the right)
+[412] (Normal) The other case may be that you have a huge amount of data, and running SMOTE may increase the runtime of your pipeline.
+[413] (Normal) Problem 1 can be solved by using the SMOTE variant Borderline-SMOTE (discussed in the next section).
+[414] (Normal) In this section, we learned about SMOTE, which uses the nearest neighbor technique to generate synthetic samples of the minority class. Sometimes, SMOTE may perform better than random oversampling since it exploits the proximity to other minority class samples to generate new samples.
+[415] (Normal) SMOTE variants
+[416] (Normal) Now, let’s look at some of the SMOTE variants, such as Borderline-SMOTE, SMOTE-NC, and SMOTEN. These variants apply the SMOTE algorithm to samples of a certain kind and may not always be applicable.
+[417] (Normal) Borderline-SMOTE
+[418] (Normal) Borderline-SMOTE [4] is a variation of SMOTE that generates synthetic samples from the minority class samples that are near the classification boundary, which divides the majority class from the minority class.
+[419] (Normal) Why consider samples on the classification boundary?
+[420] (Normal) The idea is that the examples near the classification boundary are more prone to misclassification than those far away from the decision boundary. Producing more such minority samples along the boundary would help the model learn better about the minority class. Intuitively, it is also true that the
+[421] (Normal) Here’s a step-by-step algorithm for Borderline-SMOTE:
+[422] (Normal) We run a KNN algorithm over the whole dataset.
+[423] (Normal) Then, we divide the minority class points into three categories:
+[424] (Normal) Noise points are minority class examples that have all the neighbors from the majority class. These points are buried among majority-class neighbors. They are likely outliers and can safely be ignored as “noise.”
+[425] (Normal) Safe points have more minority-class neighbors than majority-class neighbors. Such observations don’t contain much information and can be safely ignored.
+[426] (Normal) Danger points have more majority-class neighbors than minority-class neighbors. This implies that such observations are on or close to the boundary between the two classes.
+[427] (Normal) Then, we train a KNN model only on the minority class examples.
+[428] (Normal) Finally, we apply the SMOTE algorithm to the Danger points. Note that the neighbors of these Danger points may or may not be marked as Danger.
+[429] (Normal) As shown in Figure 2.8, Borderline-SMOTE focuses on the danger class points for synthetic data generation:
+[430] (Normal) [IMG]
+[431] (Normal) Figure 2.8 – The Borderline-SMOTE algorithm uses only danger points to generate synthetic samples. Danger points have more majority-class neighbors than minority-class ones
+[432] (Normal) Figure 2.9 shows how Borderline-SMOTE focuses on the minority class samples that are near the classification boundary, which separates the majority and minority classes:
+[433] (Normal) [IMG]
+[434] (Normal) Figure 2.9 – Illustrating Borderline-SMOTE
+[435] (Normal) Here, we can see the following:
+[436] (Normal) a) Plots of majority and minority class samples
+[437] (Normal) b) Synthetic samples generated using neighbors near the classification boundary
+[438] (Normal) Let’s see how we can use Borderline-SMOTE from the imbalanced-learn library to perform oversampling of the data:
+[439] (Normal) print("Before: ", sorted(Counter(y).items()))
+[440] (Normal) from imblearn.over_sampling import BorderlineSMOTE
+[441] (Normal) X_resampled, y_resampled = BorderlineSMOTE().fit_resample(X, y)
+[442] (Normal) print("After: ", sorted(Counter(y_resampled).items()))
+[443] (Normal) Here is the output:
+[444] (Normal) Before: [(0, 9900), (1, 100)]
+[445] (Normal) After:  [(0, 9900), (1, 9900)]
+[446] (Normal) Can you guess the problem with focusing solely on data points on the decision boundary of the two classes?
+[447] (Normal) Since this technique focuses so heavily on a very small number of points on the boundary, the points inside the minority class clusters are not sampled at all:
+[448] (Normal) [IMG]
+[449] (Normal) Figure 2.10 – The Borderline-SMOTE algorithm utilizing danger points, with more majority- than minority-class neighbors, to generate synthetic samples
+[450] (Normal) In this section, we learned about Borderline-SMOTE, which generates synthetic minority class samples by focusing on the samples that are close to the classification boundary of the majority and minority classes, which, in turn, may help in improving the discrimination power of the model.
+[451] (Normal) 🚀 Oversampling techniques in production at Amazon
+[452] (Normal) In a real-world application, Amazon used machine learning to optimize packaging types for products, aiming to reduce waste while ensuring product safety [5]. In their training dataset, which featured millions of product and package combinations, Amazon faced a significant class imbalance, with as fe
+[453] (Normal) To tackle this imbalance, Amazon used various oversampling techniques:
+[454] (Normal) - Borderline-SMOTE oversampling, which resulted in a 4%-7% increase in PR-AUC but increased the training time by 25%-35%.
+[455] (Normal) - A hybrid of random oversampling and random undersampling, where they randomly oversampled the minority class and undersampled the majority class. It led to a 6%-10% improvement in PR-AUC and increased the training time by up to 25%.
+[456] (Normal) The best-performing technique was two-phase learning with random undersampling (discussed in Chapter 7, Data-Level Deep Learning Methods), which improved PR-AUC by 18%-24% with no increase in training time.
+[457] (Normal) They mentioned that the effectiveness of a technique in dealing with dataset imbalance is both domain- and dataset-specific. This real-world example underscores the effectiveness of oversampling techniques in tackling class imbalance issues.
+[458] (Normal) Next, we will learn about another oversampling technique, called ADASYN, that oversamples examples near boundaries and in other low-density regions without completely ignoring data points that do not lie on the boundary.
+[459] (Normal) ADASYN
+[460] (Normal) While SMOTE doesn’t distinguish between the density distribution of minority class samples, Adaptive Synthetic Sampling (ADASYN) [6] focuses on harder-to-classify minority class samples since they are in a low-density area. ADASYN uses a weighted distribution of the minority class based on the diffi
+[461] (Normal) [IMG]
+[462] (Normal) Figure 2.11 – Illustration of how ADASYN works
+[463] (Normal) Here, we can see the following:
+[464] (Normal) a) The majority and minority class samples are plotted
+[465] (Normal) b) Synthetic samples are generated depending on the hardness factor (explained later)
+[466] (Normal) While SMOTE uses all samples from the minority class for oversampling uniformly, in ADASYN, the observations that are harder to classify are used more often.
+[467] (Normal) Another difference between the two techniques is that, unlike SMOTE, ADASYN also uses the majority class observations while training KNN. It then decides the hardness of samples based on how many majority observations are its neighbors.
+[468] (Normal) Working of ADASYN
+[469] (Normal) ADASYN follows a simple algorithm. Here is the step-by-step working of ADASYN:
+[470] (Normal) First, it trains a KNN on the entire dataset.
+[471] (Normal) [IMG]For each observation of the minority class, we find the hardness factor. This factor tells us how difficult it is to classify that data point. The hardness factor, denoted by , is the ratio of the number of majority class neighbors with the total number of neighbors. Here,  _ K , where  is the count
+[472] (Normal) For each minority observation, we generate synthetic samples proportional to the hardness factor by drawing a line between the minority observation and its neighbors (neighbors could be from the majority class or minority class). The harder it is to classify a data point, the more synthetic samples 
+[473] (Normal) Let’s see how we can use the ADASYN API from the imbalanced-learn library to perform oversampling of the data:
+[474] (Normal) from imblearn.over_sampling import ADASYN
+[475] (Normal) X_resampled, y_resampled = ADASYN().fit_resample(X, y)
+[476] (Normal) print(sorted(Counter(y_resampled).items()))
+[477] (Normal) Here is the output:
+[478] (Normal) [(0, 9900), (1, 9900)]
+[479] (Normal) [IMG]
+[480] (Normal) Figure 2.12 – ADASYN prioritizes harder samples and incorporates majority class examples in KNN to assess sample hardness
+[481] (Normal) [IMG]
+[482] (Normal) Figure 2.13 – A memory aid summarizing various oversampling techniques
+[483] (Normal) In this section, we learned about ADASYN. Next, let’s see how we can deal with cases when our data contains categorical features.
+[484] (Normal) Categorical features and SMOTE variants (SMOTE-NC and SMOTEN)
+[485] (Normal) What if your data contains categorical features? A categorical feature can take one of a limited or fixed number of possible values, and it’s a parallel to enumerations (enums) in computer science. These could be nominal categorical features that lack a natural order (for example, hair color, ethnic
+[486] (Normal) [IMG]
+[487] (Normal) Figure 2.14 – Categorical data and its types with examples
+[488] (Normal) For ordinal features, we can just encode them via sklearn’s OrdinalEncoder, which assigns the categories to the values 0, 1, 2, and so on.
+[489] (Normal) For nominal features, none of the SMOTE variants we have learned so far will work. However, RandomOverSampler can handle nominal features too:
+[490] (Normal) from imblearn.over_sampling import RandomOverSampler
+[491] (Normal) X_cat_mix = np.array([["abc", 1], ["def", 2],\
+[492] (Normal) ["ghi", 3]], dtype=object)
+[493] (Normal) y_cat_mix = np.array([0, 0, 1])
+[494] (Normal) print('X_cat_mix:', X_cat_mix, '\n y_cat_mix: ', y_cat_mix)
+[495] (Normal) X_resampled, y_resampled = RandomOverSampler().fit_resample(\
+[496] (Normal) X_cat_mix, y_cat_mix)
+[497] (Normal) print('X_resampled:', X_resampled, '\n y_resampled: ',\
+[498] (Normal) y_resampled)
+[499] (Normal) Here is the output:
+[500] (Normal) X_cat_mix: [['abc' 1]
+[501] (Normal) ['def' 2]
+[502] (Normal) ['ghi' 3]]
+[503] (Normal) y_cat_mix:  [0 0 1]
+[504] (Normal) X_resampled: [['abc' 1]
+[505] (Normal) ['def' 2]
+[506] (Normal) ['ghi' 3]
+[507] (Normal) ['ghi' 3]]
+[508] (Normal) y_resampled:  [0 0 1 1]
+[509] (Normal) However, SMOTE, by default, works only on continuous data and cannot be directly used on categorical data. Why? That’s because SMOTE works by generating a random point on the line joining two different data points of the minority class (also called interpolation). If our data is categorical and has 
+[510] (Normal) Also, we cannot use the shrinkage parameter in RandomOverSampler with categorical data because this parameter is designed only for continuous values.
+[511] (Normal) However, two variants of SMOTE can deal with categorical features:
+[512] (Normal) Synthetic Minority Oversampling TEchnique-Nominal Continuous (SMOTE-NC) [1] is used when we have both categorical (nominal – for example, T-shirt size, hair color, and so on) and numerical (continuous – for example, age, salary, and so on) features in the data. However, it’s important to note that S
+[513] (Normal) Let’s use the SMOTENC API from imbalanced-learn to oversample our dataset. The first item in the dataset is categorical, and the second item is continuous:
+[514] (Normal) from imblearn.over_sampling import SMOTENC
+[515] (Normal) X_cat_mix = np.array([["small", 1],\
+[516] (Normal) ["medium", 2],\
+[517] (Normal) ["large", 3],\
+[518] (Normal) ["large", 4],\
+[519] (Normal) ["large", 5]], dtype=object)
+[520] (Normal) y_cat_mix = np.array([0, 0, 1, 0, 1])
+[521] (Normal) print('X_cat_mix:', X_cat_mix, '\n y_cat_mix: ', y_cat_mix)
+[522] (Normal) X_resampled, y_resampled = SMOTENC(
+[523] (Normal) categorical_features=[0], k_neighbors=1, random_state=1
+[524] (Normal) ).fit_resample(X_cat_mix, y_cat_mix)
+[525] (Normal) print('X_resampled:', X_resampled, '\ny_resampled: ', \
+[526] (Normal) y_resampled)
+[527] (Normal) Here is the output:
+[528] (Normal) X_cat_mix: [['small' 1]
+[529] (Normal) ['medium' 2]
+[530] (Normal) ['large' 3]
+[531] (Normal) ['large' 4]
+[532] (Normal) ['large' 5]]
+[533] (Normal) y_cat_mix: [0 0 1 0 1]
+[534] (Normal) X_resampled: [['small' 1.0]
+[535] (Normal) ['medium' 2.0]
+[536] (Normal) ['large' 3.0]
+[537] (Normal) ['large' 4.0]
+[538] (Normal) ['large' 5.0]
+[539] (Normal) ['large' 3.005630378122263]]
+[540] (Normal) y_resampled:  [0 0 1 0 1 1]
+[541] (Normal) Synthetic Minority Oversampling Technique for Nominal (SMOTEN) is used for nominal categorical data. SMOTEN performs the majority vote similar to SMOTE-NC for all the features. It considers all features as nominal categorical, and the feature value of new samples is decided by taking the most freque
+[542] (Normal) Let’s look at some example code that uses SMOTEN:
+[543] (Normal) from imblearn.over_sampling import SMOTEN
+[544] (Normal) X_original = np.array([["abc"], \
+[545] (Normal) ["def"], \
+[546] (Normal) ["ghi"], \
+[547] (Normal) ["ghi"], \
+[548] (Normal) ["ghi"]], dtype=object)
+[549] (Normal) y_original = np.array([0, 0, 1, 1, 1])
+[550] (Normal) print('X_original:', X_original, '\ny_original: ', y_original)
+[551] (Normal) X_resampled, y_resampled = \
+[552] (Normal) SMOTEN(k_neighbors=1).fit_resample(X_original, y_original)
+[553] (Normal) print('X_resampled:', X_resampled, '\ny_resampled:', \
+[554] (Normal) y_resampled)
+[555] (Normal) Here is the output:
+[556] (Normal) X_original: [['abc']
+[557] (Normal) ['def']
+[558] (Normal) ['ghi']
+[559] (Normal) ['ghi']
+[560] (Normal) ['ghi']]
+[561] (Normal) y_original:  [0 0 1 1 1]
+[562] (Normal) X_resampled: [['abc']
+[563] (Normal) ['def']
+[564] (Normal) ['ghi']
+[565] (Normal) ['ghi']
+[566] (Normal) ['ghi']
+[567] (Normal) ['abc']]
+[568] (Normal) y_resampled:  [0 0 1 1 1 0]
+[569] (Normal) In Table 2.1, we can see SMOTE, SMOTEN, and SMOTENC, with a few examples for each technique to demonstrate the difference between them:
+[570] (Normal) Table 2.1 – SMOTE and some of its common variants with example data
+[571] (Normal) In summary, we should use SMOTENC when we have a mix of categorical and continuous data types, while SMOTEN can only be used when all the columns are categorical. You might be curious about how the various oversampling methods compare with each other in terms of model performance. We’ll explore this
+[572] (Normal) Model performance comparison of various oversampling methods
+[573] (Normal) Let’s examine how some popular models perform with the different oversampling techniques we’ve discussed. We’ll use two datasets for this comparison: one synthetic and one real-world dataset. We’ll evaluate the performance of four oversampling techniques, as well as no sampling, using logistic regre
+[574] (Normal) You can find all the related code in this book’s GitHub repository. In Figure 2.15 and Figure 2.16, we can see the average precision score values for both models on the two datasets:
+[575] (Normal) [IMG]
+[576] (Normal) Figure 2.15 – Performance comparison of various oversampling techniques on a synthetic dataset
+[577] (Normal) [IMG]
+[578] (Normal) Figure 2.16 – Performance comparison of various oversampling techniques on the thyroid_sick dataset
+[579] (Normal) Based on these plots, we can draw some useful conclusions:
+[580] (Normal) Effectiveness of oversampling: In general, using oversampling techniques seems to improve the average precision score compared to not using any sampling (NoSampling).
+[581] (Normal) Algorithm sensitivity: The effectiveness of oversampling techniques varies depending on the machine learning algorithm used. For example, random forest seems to benefit more from oversampling techniques than logistic regression, especially on synthetic data.
+[582] (Normal) Data sensitivity: The effectiveness also depends on the type of data. For instance, all oversampling techniques performed similarly on the thyroid_sick dataset but showed variations in the synthetic data.
+[583] (Normal) Best performers:
+[584] (Normal) For logistic regression, all the oversampling techniques had a similar performance on the thyroid_sick data
+[585] (Normal) For random forest, Borderline-SMOTE had the highest average precision score on synthetic data
+[586] (Normal) Borderline-SMOTE special case: Borderline-SMOTE performed exceptionally well with random forest on synthetic data but was on par with other techniques on the thyroid_sick data.
+[587] (Normal) No clear winner: There is no single oversampling technique that outperforms all others across all conditions. The choice of technique may depend on the specific algorithm and dataset being used.
+[588] (Normal) Please note that the models used here are not tuned with the best hyperparameters.
+[589] (Normal) Tuning the hyperparameters of random forest and logistic regression models may improve the models' performance further.
+[590] (Normal) In general, there is no single technique that will always do better than the rest. We have multiple variables at play here, namely the “model” and the “data.” Most of the time, the only way to know is to try out a bunch of these techniques and find the one that works the best for our model and data.
+[591] (Normal) Guidance for using various oversampling techniques
+[592] (Normal) Now, let’s review some guidelines on how to navigate through the various oversampling techniques we went over and how these techniques differ from each other:
+[593] (Normal) Train a model without applying any sampling techniques. This will be our model with baseline performance. Any oversampling technique we apply is expected to give a boost to this performance.
+[594] (Normal) Start with random oversampling and add some shrinkage too. We may have to play with some values of shrinkage to see if the model’s performance improves.
+[595] (Normal) When we have categorical features, we have a couple of options:
+[596] (Normal) Convert all categorical features into numerical features first using one-hot encoding, label encoding, feature hashing, or other feature transformation techniques.
+[597] (Normal) (Only for nominal categorical features) Use SMOTENC and SMOTEN directly on the data.
+[598] (Normal) Apply various oversampling techniques – random oversampling, SMOTE, Borderline-SMOTE, and ADASYN – and measure the model’s performance on metrics applicable to your problem, such as the average precision score, ROC-AUC, precision, recall, F1 score, and more.
+[599] (Normal) Since oversampling alters the distribution of the training dataset, which is not the case for the test set or the real world, using oversampling can potentially generate biased predictions. After using oversampling, it can be essential to recalibrate our model’s probability scores depending on the a
+[600] (Normal) When to avoid oversampling
+[601] (Normal) In Chapter 1, Introduction to Data Imbalance in Machine Learning, we discussed scenarios where data imbalance may not be a concern. Those considerations should be revisited before you opt for oversampling techniques. Despite criticisms, the applicability of oversampling should be evaluated on a case
+[602] (Normal) Computational cost: Oversampling increases the dataset’s size, leading to higher computational demands in terms of processing time and hardware resources.
+[603] (Normal) Data quality: If the minority class data is noisy or has many outliers, oversampling can introduce more noise, reducing model reliability.
+[604] (Normal) Classifier limitations: In scenarios with system constraints, such as extremely low latency, or when dealing with legacy systems, the use of strong classifiers (complex and more accurate models) may not be feasible. In these cases, we may be limited to using weak classifiers. Weak classifiers are si
+[605] (Normal) Consider these factors when deciding whether to use oversampling methods for imbalanced datasets.
+[606] (Normal) Table 2.2 summarizes the key ideas, pros, and cons of various oversampling techniques. This can help you better evaluate which oversampling method to choose:
+[607] (Normal) Table 2.2 – Summarizing the various oversampling techniques that were discussed in this chapter
+[608] (Normal) In this section, we looked at some general guidelines to apply the various oversampling techniques we learned about in this chapter and the pros and cons of using them. Next, we will look at how to extend the various oversampling methods to multi-class classification problems.
+[609] (Normal) Oversampling in multi-class classification
+[610] (Normal) In multi-class classification problems, we have more than two classes or labels to be predicted, and hence more than one class may be imbalanced. This adds some more complexity to the problem. However, we can apply the same techniques to multi-class classification problems as well. The imbalanced-le
+[611] (Normal) Keys as the class labels
+[612] (Normal) Values as the number of samples of that class
+[613] (Normal) Here are the built-in strategies for sampling_strategy when using the parameter as a string:
+[614] (Normal) The minority strategy resamples only the minority class.
+[615] (Normal) The not minority strategy resamples all classes except the minority class. This may be helpful in the case of multi-class imbalance, where we have more than two classes and multiple classes are imbalanced, but we don’t want to touch the minority class.
+[616] (Normal) The not majority strategy resamples all classes except the majority class.
+[617] (Normal) The all strategy resamples all classes.
+[618] (Normal) The auto strategy is the same as the not majority strategy.
+[619] (Normal) The following code shows the usage of SMOTE for multi-class classification using various sampling strategies.
+[620] (Normal) First, let’s create a dataset containing 100 samples with three classes that have weights of 0.1, 0.4, and 0.5:
+[621] (Normal) X, y = make_classification(n_classes=3, class_sep=2, \
+[622] (Normal) weights=[0.1, 0.4, 0.5], n_clusters_per_class=1, \
+[623] (Normal) n_samples=100, random_state=10)
+[624] (Normal) print('Original dataset shape %s' % Counter(y))
+[625] (Normal) Here is the output:
+[626] (Normal) Original dataset shape Counter({2: 50, 1: 40, 0: 10})
+[627] (Normal) As expected, our dataset contains the three classes in the ratio 10:40:50 for classes 0, 1, and 2, respectively.
+[628] (Normal) Now, let’s apply SMOTE with the “minority” sampling strategy. This will oversample the class with the least number of samples:
+[629] (Normal) over_sampler = SMOTE(sampling_strategy='minority')
+[630] (Normal) X_res, y_res = over_sampler.fit_resample(X, y)
+[631] (Normal) print('Resampled dataset shape using minority strategy: %s'% \
+[632] (Normal) Counter(y_res))
+[633] (Normal) Here is the output:
+[634] (Normal) Resampled dataset shape using minority strategy: Counter({0: 50, 2: 50, 1: 40})
+[635] (Normal) Since class 0 previously had the least number of samples, the “minority” sampling strategy only oversampled class 0, making the number of samples equal to the number of samples in the majority class.
+[636] (Normal) In the following code, we’re using a dictionary for oversampling. Here, for each class label (0, 1, or 2) as key in the sampling_strategy dictionary, we have the number of desired samples for each targeted class as value:
+[637] (Normal) print('Original dataset shape %s' % Counter(y))
+[638] (Normal) over_sampler = SMOTE(sampling_strategy={
+[639] (Normal) 0 : 40,
+[640] (Normal) 1 : 40,
+[641] (Normal) 2 : 50})
+[642] (Normal) X_res, y_res = over_sampler.fit_resample(X, y)
+[643] (Normal) print('Resampled dataset shape using dict strategy: %s\n'% \
+[644] (Normal) Counter(y_res))
+[645] (Normal) Here is the output:
+[646] (Normal) Original dataset shape Counter({2: 50, 1: 40, 0: 10})
+[647] (Normal) Resampled dataset shape using dict strategy:
+[648] (Normal) Counter({2: 50, 0: 40, 1: 40})
+[649] (Normal) Tip
+[650] (Normal) Please note that when using dict within sampling_strategy, the number of desired samples for each class should be greater than or equal to the original number of samples. Otherwise, the fit_resample API will throw an exception.
+[651] (Normal) In this section, we saw how to extend oversampling strategies to handle cases when we have imbalanced datasets with more than two classes. Most of the time, the “auto” sampling_strategy would be good enough and would balance all the classes.
+[652] (Normal) Summary
+[653] (Normal) In this chapter, we went through various oversampling techniques for dealing with imbalanced datasets and applied them using Python’s imbalanced-learn library (also called imblearn). We also saw the internal workings of some of the techniques by implementing them from scratch. While random oversampl
+[654] (Normal) We applied them to some of the synthesized and publicly available datasets and benchmarked their performance and effectiveness. We saw how different oversampling techniques may lead to model performance on a varying scale, so it becomes crucial to try a few different oversampling techniques to decid
+[655] (Normal) If you feel intrigued by the prospect of discovering oversampling approaches relevant to deep learning models, we invite you to check out Chapter 7, Data-Level Deep Learning Methods, where we’ll discuss data-level techniques within the realm of deep learning.
+[656] (Normal) In the next chapter, we will go over various undersampling techniques.
+[657] (Normal) Exercises
+[658] (Normal) Explore the two variants of SMOTE, namely KMeans-SMOTE and SVM-SMOTE, from the imbalanced-learn library, not discussed in this chapter. Compare their performance with vanilla SMOTE, Borderline-SMOTE, and ADASYN using the logistic regression and random forest models.
+[659] (Normal) For a classification problem with two classes, let’s say the minority class to majority class ratio is 1:20. How should we balance this dataset? Should we apply the balancing technique at test or evaluation time? Please provide a reason for your answer.
+[660] (Normal) Let’s say we are trying to build a model that can estimate whether a person can be granted a bank loan or not. Out of the 5,000 observations we have, only 500 people got the loan approved. To balance the dataset, we duplicate the approved people data and then split it into train, test, and validatio
+[661] (Normal) Data normalization helps in dealing with data imbalance. Is this true? Why or why not?
+[662] (Normal) Explore the various oversampling APIs available from the imbalanced-learn library here: https://imbalanced-learn.org/stable/references/over_sampling.html. Pay attention to the various parameters of each of the APIs.
+[663] (Normal) References
+[664] (Normal) Protecting Personal Data in Grab’s Imagery (2021), https://engineering.grab.com/protecting-personal-data-in-grabs-imagery.
+[665] (Normal) N. V. Chawla, K. W. Bowyer, L. O. Hall, and W. P. Kegelmeyer, SMOTE: Synthetic Minority Over-sampling Technique, jair, vol. 16, pp. 321–357, Jun. 2002, doi: 10.1613/jair.953.
+[666] (Normal) Live Site Incident escalation forecast (2023), https://medium.com/data-science-at-microsoft/live-site-incident-escalation-forecast-566763a2178.
+[667] (Normal) H. Han, W.-Y. Wang, and B.-H. Mao, Borderline-SMOTE: A New Over-Sampling Method in Imbalanced Data Sets Learning, in Advances in Intelligent Computing, D.-S. Huang, X.-P. Zhang, and G.-B. Huang, Eds., in Lecture Notes in Computer Science, vol. 3644. Berlin, Heidelberg: Springer Berlin Heidelberg, 20
+[668] (Normal) P. Meiyappan and M. Bales, Position Paper: Reducing Amazon’s packaging waste using multimodal deep learning, (2021), article: https://www.amazon.science/latest-news/deep-learning-machine-learning-computer-vision-applications-reducing-amazon-package-waste, paper: https://www.amazon.science/publicatio
+[669] (Normal) Haibo He, Yang Bai, E. A. Garcia, and Shutao Li, ADASYN: Adaptive synthetic sampling approach for imbalanced learning, in 2008 IEEE International Joint Conference on Neural Networks (IEEE World Congress on Computational Intelligence), Hong Kong, China: IEEE, Jun. 2008, pp. 1322–1328. doi: 10.1109/IJ
+[670] (Normal) Y. Elor and H. Averbuch-Elor, To SMOTE, or not to SMOTE?, arXiv, May 11, 2022. Accessed: Feb. 19, 2023. [Online]. Available at http://arxiv.org/abs/2201.08528.
+[672] (Normal) 5
+[673] (Normal) Cost-Sensitive Learning
+[674] (Normal) So far, we have studied various sampling techniques and ways to oversample or undersample data. However, both of these techniques have their own unique set of issues. For example, oversampling can easily lead to overfitting of the model due to the exact or very similar examples being seen repeatedly
+[675] (Normal) Cost-sensitive learning is an effective strategy to tackle imbalanced data. We will go through this technique and learn why it can be useful. This will help us understand some of the details of cost functions and how machine learning models are not designed to deal with imbalanced datasets by defaul
+[676] (Normal) We will cover the following topics:
+[677] (Normal) The concept of cost-sensitive learning (CSL)
+[678] (Normal) Understanding costs in practice
+[679] (Normal) Cost-sensitive learning for logistic regression
+[680] (Normal) Cost-sensitive learning for decision trees
+[681] (Normal) Cost-sensitive learning using scikit-learn and XGBoost models
+[682] (Normal) MetaCost – making any classification model cost-sensitive
+[683] (Normal) Threshold adjustment
+[684] (Normal) By the end of this chapter, you will understand what cost means in the context of classification problems, how to adjust model parameters to account for such costs, and how to prioritize minority class predictions to mitigate the cost of misclassification. We will also look at a generic meta-algorit
+[685] (Normal) Technical requirements
+[686] (Normal) Similar to prior chapters, we will continue to utilize common libraries such as numpy, scikit-learn, xgboost, and imbalanced-learn. The code and notebooks for this chapter are available on GitHub at https://github.com/PacktPublishing/Machine-Learning-for-Imbalanced-Data/tree/main/chapter05. You can 
+[687] (Normal) The concept of Cost-Sensitive Learning
+[688] (Normal) Cost-Sensitive Learning (CSL) is a technique where the cost function of a machine learning model is changed to account for the imbalance in data. The key insight behind CSL is that we want our model’s cost function to reflect the relative importance of the different classes.
+[689] (Normal) Let’s try to understand cost functions in machine learning and various types of CSL.
+[690] (Normal) Costs and cost functions
+[691] (Normal) A cost function estimates the difference between the actual outcome and the predicted outcome from a model. For example, the cost function of the logistic regression model is given by the log loss function:
+[692] (Normal) [IMG]
+[693] (Normal) [IMG]Here, N is the total number of observations,  is the true label (0 or 1), and  is the probability value (between 0 and 1) predicted from the model.
+[694] (Normal) One type of cost is called the cost of misclassification errors [1] – that is, the cost of predicting the majority class instead of the minority class or vice versa.
+[695] (Normal) In practice, there can be other types of costs that we may incur, such as the following:
+[696] (Normal) Cost of labeling the dataset
+[697] (Normal) Cost of training or evaluating the model
+[698] (Normal) Cost of training data collection
+[699] (Normal) Let’s consider the confusion matrix:
+[700] (Normal) Table 5.1 – Confusion matrix for understanding the cost of classification errors
+[701] (Normal) Psychological studies have suggested that loss hurts twice as much as gain. Similarly, in machine learning, the “cost” captures whenever the model makes a mistake (False Positive and False Negative) and does not worry about when it’s right (True Positive and True Negative). This cost is the cost of 
+[702] (Normal) Not all misclassifications are created equal. For instance, suppose we’re attempting to predict whether a patient has cancer. If our model incorrectly indicates that the patient has cancer (a false positive), this could lead to additional testing. However, if our model incorrectly suggests that the 
+[703] (Normal) Unfortunately, most models treat the majority and minority classes equally by default. However, modern ML frameworks such as scikit-learn, Keras/TensorFlow, and PyTorch provide a way to weigh the various classes differently across a variety of learning algorithms.
+[704] (Normal) Types of cost-sensitive learning
+[705] (Normal) There are two major types of CSL approaches, namely weighting and meta-learning. In weighting approaches, we update the cost function of the machine learning model to reflect the importance of the different classes. In meta-learning, we can make the model cost-sensitive without changing its cost fun
+[706] (Normal) In MetaCost, a type of meta-learning technique, for example, we alter the labels of training instances to minimize expected misclassification costs. Similarly, in the threshold adjustment method, we determine a probability threshold that minimizes total misclassification costs for predictions. Figur
+[707] (Normal) [IMG]
+[708] (Normal) Figure 5.1 – Categorization of cost-sensitive learning methods
+[709] (Normal) Difference between CSL and resampling
+[710] (Normal) The key difference between previously discussed data-level techniques and CSL is that the data-level techniques adjust the frequency of the different error types, but they treat all misclassification errors the same. In certain cases, as we encountered earlier, the cost of misclassifying observation
+[711] (Normal) However, resampling techniques may be problematic in certain cases, as we will discuss in the next section. In such cases, CSL can be more practical:
+[712] (Normal) [IMG]
+[713] (Normal) Figure 5.2 – Comic re-emphasizing the idea of misclassification errors
+[714] (Normal) Problems with rebalancing techniques
+[715] (Normal) In the previous chapters, we briefly touched on why in some cases, we would prefer not to apply any data sampling techniques. This could be because of the following reasons:
+[716] (Normal) We already have too much training data, and it might be quite expensive to deal with more data, or the training time can increase by many folds due to having more training data.
+[717] (Normal) Sometimes, we may not get the best results using sampling or data rebalancing techniques because of the dataset we are using.
+[718] (Normal) An additional consideration is that upon rebalancing the dataset, our model’s predictive scores may become miscalibrated, necessitating a recalibration process. We will cover this topic in Chapter 10, Model Calibration, where we will learn about various model calibration techniques.
+[719] (Normal) Rebalancing techniques can lead to model overfitting or underfitting issues. Overfitting can especially happen when using oversampling since they produce repeated or similar training examples. Similarly, the model may be underfitted when using undersampling because the model did not get trained on t
+[720] (Normal) Next, let’s try to understand what costs really mean.
+[721] (Normal) Understanding costs in practice
+[722] (Normal) We need to understand the various types of costs involved while creating weights for different classes. These costs change on a case-by-case basis. Let’s discuss an example of cost calculations to understand what we should consider while thinking about cost calculations.
+[723] (Normal) Let’s take the example of pediatric pneumonia. According to UNICEF, a child dies of pneumonia every 43 seconds [4]. Imagine we are creating a new test for pediatric pneumonia – how will we decide the cost of different errors?
+[724] (Normal) Let’s review the confusion matrix from Table 5.1. There will usually be no extra cost for True Negatives and True Positives. But using a False Negative – that is, when a child has pneumonia and predicting the child to be healthy – will have a very high cost. On the flip side, when a healthy child is
+[725] (Normal) The cost can vary depending on the duration of the symptoms. Consider it this way: if we make an error and misdiagnose a child who has only had flu symptoms for a day, it’s not ideal, but it’s not disastrous. However, if that child has been enduring flu symptoms for 2 weeks, that’s a different scena
+[726] (Normal) While we’ve discussed real-world problems so far, this chapter will pivot to utilize a synthetic dataset. This approach is intended to reinforce concepts and methods in a controlled environment, thus enhancing the learning process:
+[727] (Normal) X, y = make_classification(
+[728] (Normal) n_samples=50000, n_features=2, n_redundant=0, class_sep=2,\
+[729] (Normal) weights=[0.99], random_state=1, n_clusters_per_class=1)
+[730] (Normal) X_train, X_test, y_train, y_test = train_test_split(X, y,\
+[731] (Normal) test_size = 0.2, random_state = 0, stratify=y)
+[732] (Normal) print('y_train: ', Counter(y_train))
+[733] (Normal) print('y_test: ', Counter(y_test))
+[734] (Normal) plot_dataset(X_train, y_train)
+[735] (Normal) The make_classification function produces some overlapping points that we cleaned up. To keep things simple, we’ve omitted that cleanup code here. You can refer to the full notebook on GitHub.
+[736] (Normal) The preceding code produces the following output and scatter plot (Figure 5.3):
+[737] (Normal) y_train:  Counter({0: 39404, 1: 596})
+[738] (Normal) y_test:  Counter({0: 9851, 1: 149})
+[739] (Normal) [IMG]
+[740] (Normal) Figure 5.3 – Scatter plot showing the training dataset’s distribution
+[741] (Normal) We’ll dive into how to apply CSL to logistic regression models next.
+[742] (Normal) Cost-Sensitive Learning for logistic regression
+[743] (Normal) Logistic regression is a simple classification algorithm. We train a model as a linear combination of the features. Then, we pass the result of that linear combination into a sigmoid function to predict the class probabilities for different classes.
+[744] (Normal) The sigmoid function (also called a logit function) is a mathematical tool capable of converting any real number into a value between 0 and 1. This value can be interpreted as a probability estimate:
+[745] (Normal) import numpy as np
+[746] (Normal) def sigmoid(x):
+[747] (Normal) s = 1/(1+np.exp(-x))
+[748] (Normal) return s
+[749] (Normal) The graph of the sigmoid function has an S-shaped curve, and it appears like this:
+[750] (Normal) [IMG]
+[751] (Normal) Figure 5.4 – Sigmoid function
+[752] (Normal) The class with the highest predicted probability is taken as the prediction for a given sample.
+[753] (Normal) Let’s say we have an email to be classified as spam or non-spam, and our logistic regression model outputs the probabilities of 0.25 for non-spam and 0.75 for spam. Here, the class with the highest predicted probability is “spam” (1) since 0.75 is greater than 0.25. Therefore, the model would predic
+[754] (Normal) [IMG]
+[755] (Normal) Figure 5.5 – Higher class probability determining the class for binary classification
+[756] (Normal) For two-class classification, we just predict the probability of one class. The probability of the other class is one minus the probability of the first class.
+[757] (Normal) The logistic regression model is trained using a loss function. The loss function for one example from a dataset with two classes would look like this:
+[758] (Normal) [IMG]
+[759] (Normal) [IMG]For true positives and true negatives, this loss will be very low. For a false positive, y, the actual value would be 0; therefore, the first term will be 0, but the second term will be very high as the class probability approaches 1, and the term will approach negative infinity (since, ). Since the
+[760] (Normal) [IMG]
+[761] (Normal) [IMG]As discussed earlier, we don’t want to weigh the two types of costs equally. So, all we do is add weights,  and  for the respective costs:
+[762] (Normal) [IMG]
+[763] (Normal) This is the crux of CSL with logistic regression. To get the overall costs of the model, we take the average cost across all the data points:
+[764] (Normal) lr = LogisticRegression(random_state=0, max_iter=150).fit(
+[765] (Normal) X_train, y_train)
+[766] (Normal) plot_decision_boundary(X_train, y_train, lr, 'LogisticRegression')
+[767] (Normal) plt.show()
+[768] (Normal) PrecisionRecallDisplay.from_estimator(
+[769] (Normal) lr, X_test, y_test, ax = plt.gca(),name = "LogisticRegression")
+[770] (Normal) When all errors are equally costly, the model’s decision boundary and the model’s Precision-Recall (PR) curve will look like this:
+[771] (Normal) [IMG]
+[772] (Normal) Figure 5.6 – The decision boundary (left) and PR curve (right) of the baseline regression model
+[773] (Normal) compute_scores(lr, X_test, y_test)
+[774] (Normal) The previous code outputs the following F2 score, precision, and recall values:
+[775] (Normal) f2-score: 0.921 precision: 0.926 recall: 0.919
+[776] (Normal) In this chapter, we will use the F2 score as our primary metric. What is the F2 score? In Chapter 1, Introduction to Data Imbalance in Machine Learning, we studied the F-beta score. The F2 score is the F-beta score with beta=2, while the F1 score is the F-beta score with beta=1. It’s useful when rec
+[777] (Normal) [IMG]
+[778] (Normal) LogisticRegression from the scikit-learn library provides a class_weight parameter. When the value of this parameter is set to “balanced,” the weight of each class is automatically computed by the following formula:
+[779] (Normal) [IMG]
+[780] (Normal) For example, we have 100 examples in the dataset – 80 in class 0 and 20 in class 1. The weights of each class are computed as follows:
+[781] (Normal) Weight for class 0 = 100/(2*80) = 0.625
+[782] (Normal) Weight for class 1 = 100/(2*20) = 2.5
+[783] (Normal) Given that the number of class 0 examples is four times that of class 1, the weight of class 1 is 2.5, which is four times the weight of class 0 – that is, 0.625. This makes sense since we would want to give more weight to class 1, which is smaller in number.
+[784] (Normal) We can mention class_weight as a dictionary as well:
+[785] (Normal) LogisticRegression(class_weight={0: 0.5, 1:0.5})
+[786] (Normal) Let’s try to use the class_weight parameter in the LogisticRegression function:
+[787] (Normal) lr_weighted = LogisticRegression(class_weight='balanced', \
+[788] (Normal) random_state=0, max_iter=150).fit(X_train, y_train)
+[789] (Normal) plot_decision_boundary(X_train, y_train, lr_weighted, \
+[790] (Normal) 'LogisticRegression')
+[791] (Normal) plt.show()
+[792] (Normal) PrecisionRecallDisplay.from_estimator(lr_weighted, X_test,\
+[793] (Normal) y_test, ax = plt.gca(),name = "LogisticRegressionWeighted")
+[794] (Normal) [IMG]
+[795] (Normal) Figure 5.7 – The decision boundary (left) and PR curve (right) of the “balanced” class-weighted logistic regression model
+[796] (Normal) Let’s calculate the F2 score, precision, and recall scores:
+[797] (Normal) compute_scores(lr_weighted, X_test, y_test)
+[798] (Normal) The scores of the “balanced” class-weighted logistic regression model are as follows:
+[799] (Normal) f2-score: 0.873 precision: 0.587 recall: 0.993
+[800] (Normal) Upon analyzing the results, we can see a decision boundary that correctly classifies most of the positive class examples. The precision comes down while the recall goes up. The decline in the F2 score can be attributed to changes in the recall and precision values. The model exhibits an improvement 
+[801] (Normal) Let’s try to tune the class_weight parameter using a grid search that optimizes our F2 score. We can always try to optimize any other objective, such as average precision, precision, or recall, and so on. The np.linspace(0.05, 0.95, 20) function is a numpy function that generates an array of 20 even
+[802] (Normal) from sklearn.metrics import make_scorer, fbeta_score
+[803] (Normal) def f2_func(y_true, y_pred):
+[804] (Normal) f2_score = fbeta_score(y_true, y_pred, beta=2.)
+[805] (Normal) return f2_score
+[806] (Normal) def f2_scorer():
+[807] (Normal) return make_scorer(f2_func)
+[808] (Normal) # Define the parameter grid
+[809] (Normal) param_grid = {
+[810] (Normal) 'class_weight': [
+[811] (Normal) {0: x, 1: 1.0-x} for x in np.linspace(0.05, 0.95, 20)]
+[812] (Normal) }
+[813] (Normal) # Instantiate the grid search model
+[814] (Normal) grid_search =GridSearchCV(
+[815] (Normal) LogisticRegression(),param_grid,\
+[816] (Normal) cv=3, scoring=f2_scorer(), n_jobs=-1
+[817] (Normal) )
+[818] (Normal) # Fit the grid search to the data
+[819] (Normal) grid_search.fit(X_train, y_train)
+[820] (Normal) # Get the best parameters
+[821] (Normal) best_params = grid_search.best_params_
+[822] (Normal) best_params
+[823] (Normal) This produces the following output:
+[824] (Normal) {'class_weight': {0: 0.14473684210526316, 1: 0.8552631578947368}}
+[825] (Normal) Our standard metrics are as follows:
+[826] (Normal) f2-score: 0.930 precision: 0.892 recall: 0.940
+[827] (Normal) After incorporating these class weights, our decision boundary attempts to strike a better balance between misclassifying positive and negative class examples, as illustrated in Figure 5.8. This results in a superior F2 score of 0.93, increasing the precision value while maintaining a modest recall:
+[828] (Normal) [IMG]
+[829] (Normal) Figure 5.8 – The decision boundary (left) and PR curve (right) of the class-weighted logistic regression model
+[830] (Normal) 🚀 Cost-sensitive learning in production at Microsoft
+[831] (Normal) In a practical application at Microsoft, the primary objective was to improve the Click-Through Rate (CTR) prediction for Bing ads [5]. Achieving accurate CTR prediction is vital for optimizing both user experience and revenue streams. A marginal improvement of just 0.1% in prediction accuracy has t
+[832] (Normal) For the training dataset, 56 million samples were randomly chosen from a month’s log data, each containing hundreds of statistical features. To reduce training expenses, non-click cases were downsampled by 50% and assigned a class weight of 2 to maintain the original distribution. Model performance 
+[833] (Normal) In the next section, we will discuss how to do CSL with decision trees.
+[834] (Normal) Cost-Sensitive Learning for decision trees
+[835] (Normal) Decision trees are binary trees that use conditional decision-making to predict the class of the samples. Every tree node represents a set of samples corresponding to a chain of conditional statements based on the features. We divide the node into two children based on a feature and a threshold valu
+[836] (Normal) This way, we can create a tree by successively choosing features and threshold values. Every leaf node of the tree will contain nodes from only one class, respectively.
+[837] (Normal) A question often arises during the construction of a decision tree: “Which feature and threshold pair should be selected to partition the set of samples at a given node?” The answer is straightforward: we opt for the pair that produces the most uniform (or homogeneous) subsets of data. Ideally, the 
+[838] (Normal) The degree to which the nodes have a mixture of samples from different classes is known as the impurity of the node, which can be considered to be a measure of loss for decision trees. The more the impurity, the more heterogeneous the set of samples. Here are the two most common ways of calculating 
+[839] (Normal) Gini coefficient
+[840] (Normal) Entropy
+[841] (Normal) [IMG]Let’s look at the formula for the Gini coefficient and entropy for two classes,  and :
+[842] (Normal) [IMG]
+[843] (Normal) We will get the following:
+[844] (Normal) [IMG]
+[845] (Normal) [IMG]
+[846] (Normal) To do CSL with decision trees, we just multiply the class weights with the terms for each of the classes in the calculation of the Gini and entropy. If the weights for the two classes are W 1and W 2, Gini and entropy will look as follows:
+[847] (Normal) [IMG]
+[848] (Normal) [IMG]
+[849] (Normal) [IMG]
+[850] (Normal) Now, the model prioritizes the class with a higher weight over the class with a lower weight. If we give more weight to the minority class, the model will make the decision that will prioritize nodes with homogeneous minority class samples.
+[851] (Normal) In this section, we got some idea of how class weights can be accommodated into the loss function of decision trees to account for the misclassification error. In the next section, we will see how scikit-learn simplifies this process by integrating it into the model creation API, eliminating the nee
+[852] (Normal) Cost-Sensitive Learning using scikit-learn and XGBoost models
+[853] (Normal) scikit-learn provides a class_weight hyperparameter to adjust the weights of various classes for most models. This parameter can be specified in various ways for different learning algorithms in scikit-learn. However, the main idea is that this parameter specifies the weights to use for each class i
+[854] (Normal) Similar to the LogisticRegression function, for DecisionTreeClassifier, we could use DecisionTreeClassifier(class_weight='balanced') or DecisionTreeClassifier(class_weight={0: 0.5, 1: 0.5}).
+[855] (Normal) Regarding SVM, it can even be extended to multi-class classification by specifying a weight value for each class label:
+[856] (Normal) svm.SVC(class_weight= {-1: 1.0, 0: 1.0, 1: 1.0})
+[857] (Normal) The general guidance about coming up with the class_weight values is to use the inverse of the ratio of the majority class to the minority class. We can find even more optimal class_weight values by performing hyperparameter tuning using the GridSearch algorithm (use the GridSearchCV function from s
+[858] (Normal) Similarly, XGBoost has the scale_pos_weight parameter to control the balance of positive and negative weights:
+[859] (Normal) XGBClassifier(scale_pos_weight)
+[860] (Normal) The default value of scale_pos_weight is 1. A recommended scale_pos_weight value is sum(negative_instances)/sum(positive_instances), which can be computed as float(np.sum(label == 0)) / np.sum(label==1).
+[861] (Normal) XGBoost has a few other parameters, such as max_delta_step and min_child_weight, that can be tuned for imbalanced datasets. During the optimization process, max_delta_step determines the step size of updates, affecting learning speed and stability. min_child_weight controls overfitting and enhances 
+[862] (Normal) First, let’s use DecisionTreeClassifier to solve our classification problem:
+[863] (Normal) from sklearn.tree import DecisionTreeClassifier
+[864] (Normal) from sklearn.metrics import PrecisionRecallDisplay
+[865] (Normal) dt_clf = DecisionTreeClassifier(random_state=0, max_depth=6).fit(
+[866] (Normal) X_train, y_train)
+[867] (Normal) plot_decision_boundary(X,y,dt_clf,'DecisionTreeClassifier')
+[868] (Normal) plt.show()
+[869] (Normal) PrecisionRecallDisplay.from_estimator(
+[870] (Normal) dt_clf, X_test, y_test, ax = plt.gca(),\
+[871] (Normal) name = "DecisionTreeClassifier")
+[872] (Normal) print(classification_report_imbalanced(
+[873] (Normal) y_test,\
+[874] (Normal) dt_clf.predict(X_test), \
+[875] (Normal) target_names=['class 0', 'class 1']
+[876] (Normal) )
+[877] (Normal) )
+[878] (Normal) computescores(dt_clf, X_test, y_test)
+[879] (Normal) The output decision boundary is more complex than that of logistic regression (Figure 5.9), separating the two classes better and giving an F2 score of 0.932:
+[880] (Normal) [IMG]
+[881] (Normal) Figure 5.9 – The decision boundary (left) and PR curve (right) of the decision tree classifier model
+[882] (Normal) We have reproduced the decision boundary and PR curve of the logistic regression model for comparison in Figure 5.10:
+[883] (Normal) [IMG]
+[884] (Normal) Figure 5.10 – The decision boundary (left) and PR curve (right) of logistic regression (for comparison)
+[885] (Normal) Our standard metrics for the decision tree classifier are as follows:
+[886] (Normal) f2-score: 0.932 precision: 0.892 recall: 0.94
+[887] (Normal) Next, let’s use the class_weight='balanced' parameter:
+[888] (Normal) dt_clf_tuned = DecisionTreeClassifier(
+[889] (Normal) class_weight = 'balanced', random_state=0, max_depth=6
+[890] (Normal) ).fit(X_train, y_train)
+[891] (Normal) After utilizing the code from before to plot the decision boundary, the PR curve, and compute the scores, the outputs are as follows:
+[892] (Normal) [IMG]
+[893] (Normal) Figure 5.11 – The decision boundary (left) and PR curve (right) of the decision tree classifier model
+[894] (Normal) f2-score: 0.934 precision: 0.770 recall: 0.987
+[895] (Normal) The tuned weights improve the F2 score and recall values.
+[896] (Normal) Popular frameworks such as scikit-learn also let us specify sample_weight as a list of weights for each observation in the dataset. The sample_weight and class_weight parameters can be quite confusing, and their purpose may not be very clear from their documentation on when to use what. The followin
+[897] (Normal) Table 5.2 – sample_weight versus class_weight in the scikit-learn library
+[898] (Normal) Warning
+[899] (Normal) If we use sample_weight along with class_weight, both will be multiplied, and we will see the effect of both parameters. The two can still be used together to balance class importance and individual instance importance with their intended purposes.
+[900] (Normal) Using numpy makes it easier to create the list of weight values that are required by sample_weight: sample_weight = np.where(label==1, 80, 20). However, scikit-learn has a function called sklearn.utils.class_weight.compute_sample_weight() that can be used to estimate the value of sample_weight autom
+[901] (Normal) class_weight can also be a dict of values for each label or balanced. If we set it to balanced, class weights are determined by n_samples/(n_classes * np.bincount(y)).
+[902] (Normal) The returned value from class_weight is a dictionary: {class_label: weight} for each class_label value.
+[903] (Normal) Similarly, you can use sklearn.utils.class_weight.compute_sample_weight if you have to do multi-label classification.
+[904] (Normal) 🚀 Cost-sensitive learning in production at Airbnb
+[905] (Normal) In a real-world application at Airbnb [6], the main problem to solve was improving the search and discoverability as well as personalization of their Experiences (handcrafted activities) platform. As the number of experiences grew, it became crucial to effectively rank these experiences to match use
+[906] (Normal) Airbnb aimed to improve its search ranking to provide users with the most relevant and high-quality experiences. To promote the quality of their ranking model, they used sample weights (discussed in the previous section) in their objective function.
+[907] (Normal) The data imbalance in terms of quality tiers was addressed by using sample weighting (discussed in the previous section) in the training data. High-quality experiences were given higher weights, and low-quality experiences were given lower weights in the objective function. This was done to promote 
+[908] (Normal) Airbnb iteratively developed and tested its machine learning model, eventually integrating it into its production system to rank “Experiences” in real time. They went through multiple stages, from building a strong baseline to personalization and online scoring to handle various business rules.
+[909] (Normal) In the next section, we will learn about a technique that can convert any model into its cost-sensitive version without us knowing about its loss function or the inner workings of the model.
+[910] (Normal) MetaCost – making any classification model cost-sensitive
+[911] (Normal) MetaCost was first introduced in a paper by Pedro Domingos [7] in 1999. MetaCost acts as a wrapper around machine learning algorithms that converts the underlying algorithm into a cost-sensitive version of itself. It treats the underlying algorithm as a black box and works best with unstable algorit
+[912] (Normal) Unstable algorithms
+[913] (Normal) An algorithm is called unstable [8] if a slight change in its initial conditions (for example, training data or initial weights) can create a big change in the model. Assume you are given a dataset of 1,000 items. A stable model such as a K-Nearest Neighbor (KNN) will not change much if you remove o
+[914] (Normal) Let’s delve into the mechanics of the MetaCost algorithm, as illustrated in Figure 5.12:
+[915] (Normal) [IMG]
+[916] (Normal) Figure 5.12 – The MetaCost algorithm
+[917] (Normal) MetaCost works by combining the concept of bagging with a misclassification cost matrix:
+[918] (Normal) First, we create multiple bootstrap samples of the original data.
+[919] (Normal) We train one new copy of the given model for each bootstrap sample. So far, the process is the same as bagging. You can see the first two steps in Figure 5.12 on the left-hand side. First, we create bootstrap samples S1, S2, and S3 from the original data. Then, we train models L1, L2, and L3 on the 
+[920] (Normal) Next, we send the original data, S, into the ensemble of L1, L2, and L3.
+[921] (Normal) We multiply the misclassification costs obtained from the cost matrix with the class probabilities predicted by the ensemble to get the actual cost. This is shown on the right-hand side of Figure 5.12.
+[922] (Normal) Then, we relabel the data so that the new class labels minimize the actual cost.
+[923] (Normal) Finally, we train a new copy of the model on the relabeled data. This copy of the model is used as the final model.
+[924] (Normal) We can see the process of relabeling data using MetaCost in Figure 5.13:
+[925] (Normal) [IMG]
+[926] (Normal) Figure 5.13 – Process of relabeling data using MetaCost
+[927] (Normal) On the left of Figure 5.13, we have the original data. Stars are the minority class examples and squares are the majority class examples. Here, all the samples inside the oval are predicted as stars, and all the samples outside it are predicted as squares. The oval on the left is drawn by assuming t
+[928] (Normal) To save space, we have omitted the implementation of the MetaCost algorithm. You can find it in the GitHub repository for this chapter.
+[929] (Normal) We will apply the algorithm to the logistic regression model. MetaCost uses a cost matrix, which is a hyperparameter. The values in the cost matrix correspond to the weight or cost of items in the confusion matrix (the transpose of the confusion matrix from Table 5.1):
+[930] (Normal) [IMG]
+[931] (Normal) Let’s say we use a cost matrix with equal costs for false positives and false negatives (that is, an identity matrix):
+[932] (Normal) C = np.array([[0, 1], [1, 0]])
+[933] (Normal) Figure 5.14 shows the decision boundary and metrics, which are very close to the ones from the logistic regression classifier (Figure 5.10):
+[934] (Normal) [IMG]
+[935] (Normal) Figure 5.14 – The decision boundary (left) and PR curve (right) of the MetaCost variant of the logistic regression model with an identity cost matrix
+[936] (Normal) We can estimate the cost matrix based on the imbalance ratio of the training data:
+[937] (Normal) C = np.array([[0, 66], [1, 0]])
+[938] (Normal) Figure 5.15 shows the output decision function and PR curve:
+[939] (Normal) [IMG]
+[940] (Normal) Figure 5.15 – The decision boundary (left) and PR curve (right) of the MetaCost variant of the logistic regression model with a more optimal cost matrix
+[941] (Normal) Although the F2 score dropped compared to the baseline, the recall did improve drastically.
+[942] (Normal) The various steps in the MetaCost algorithm, such as relabeling the whole training set, can be quite an expensive operation, and that might deter us from using this technique when our training dataset is large.
+[943] (Normal) Cost-sensitive ensemble techniques
+[944] (Normal) AdaCost [9], AdaUBoost [10], and AsymBoost [11] are cost-sensitive modifications of the AdaBoost model. AdaCost minimizes misclassification costs during iterative training. AdaUBoost handles imbalanced datasets by emphasizing the minority class. AsymBoost focuses on reducing the costliest misclassif
+[945] (Normal) The underlying principle behind these algorithms is that besides allocating high initial weights to instances where the cost of misclassification is large, the rule for updating weights should also consider costs. This means that the weights of expensive misclassifications should be increased while 
+[946] (Normal) In the next section, we will learn about another cost-sensitive meta-learning technique, called threshold adjustment.
+[947] (Normal) Threshold adjustment
+[948] (Normal) The decision threshold is a very important concept to keep track of. By default, we have the following:
+[949] (Normal) Prediction probability >= 0.5 implies Class 1
+[950] (Normal) Prediction probability < 0.5 implies Class 0
+[951] (Normal) However, the threshold is a powerful meta-parameter that we are free to adjust. Table 5.3 shows predictions from a model versus the true labels.
+[952] (Normal) If we use the default threshold of 0.5, the accuracy is 2/4 = 50%. If, on the other hand, the threshold chosen is 0.80, the accuracy is 100%. This shows how important the chosen threshold can be:
+[953] (Normal) Table 5.3 – A table showing the predicted output from a model versus the true output (labels)
+[954] (Normal) Most of the metrics, such as accuracy, precision, recall, and F1 score, are all threshold-dependent metrics.
+[955] (Normal) On the other hand, metrics such as the ROC curve and the PR curve are threshold-independent, which means that these plots evaluate the performance of a model at all possible thresholds rather than a single, fixed threshold.
+[956] (Normal) When dealing with machine learning metrics such as F1 or accuracy, it’s important to understand the role of the threshold value. These metrics, by default, utilize a threshold of 0.5. Therefore, a misconception arises, particularly among novice and intermediate machine learning practitioners, that t
+[957] (Normal) However, this can lead to an inaccurate interpretation of the model’s performance, particularly in scenarios involving imbalanced datasets. The selection of the metric and the decision threshold are separate choices and should be treated as such. Establishing an appropriate threshold is a crucial st
+[958] (Normal) Furthermore, relying solely on the default threshold of 0.5 can be misleading. The threshold should be set based on the specific requirements of the project and the nature of the data. Therefore, it’s integral that machine learning practitioners understand the interplay between the threshold and the
+[959] (Normal) In binary classification, altering the threshold will easily change the threshold-dependent metrics such as accuracy, F1 score, TPR, or FPR. Many pieces of research [12][13] have mentioned the value of threshold adjustment, especially in the case when training data is imbalanced. A paper by Provost 
+[960] (Normal) Many times, we would want to find the threshold that optimizes our threshold-dependent metric, say F1 score. Here, find the threshold at which the F1 score is the maximum (Figure 5.16):
+[961] (Normal) [IMG]
+[962] (Normal) Figure 5.16 – A PR curve with the best threshold that finds the max F1 score (see the notebook in this chapter’s GitHub repository)
+[963] (Normal) Figure 5.17 presents a plot that illustrates the impact of modifying the decision threshold on various classification metrics for an imbalanced dataset: True Positive Rate (TPR or recall), True Negative Rate (TNR), False Positive Rate (FPR), and precision. The model that was used was logistic regres
+[964] (Normal) [IMG]
+[965] (Normal) Figure 5.17 – A plot of the different classification metrics (TPR, TNR, FPR, precision, F1 score, and accuracy) as a function of the decision threshold
+[966] (Normal) Here are some observations about these plots:
+[967] (Normal) [IMG]Precision: If the threshold is increased, precision  typically goes up as well. Why? Because as the threshold is increased, the total number of positive predictions would come down, and hence, as the denominator decreases, precision increases. Similarly, the opposite is true as well: if the threshol
+[968] (Normal) [IMG]Recall: Let’s see the impact of threshold change on recall. The recall is defined as and the denominator is a constant value. As the threshold is lowered, TP may increase and would typically increase the recall.
+[969] (Normal) True Negative Rate (TNR): TNR measures the proportion of actual negatives that are correctly identified as such. In imbalanced datasets, where the negative class is the majority, a naive or poorly performing classifier might have a high TNR simply because it predicts the majority class for all or mo
+[970] (Normal) False Positive Rate (FPR): This is the rate at which negative instances are incorrectly classified as positive. In imbalanced datasets, a naive classifier that predicts everything as the majority (negative) class would have an FPR close to 0.
+[971] (Normal) Usually, we have a trade-off between TPR and TNR that must be taken into account while selecting an optimal decision threshold, as shown in the plot in Figure 5.17.
+[972] (Normal) 🚀 Cost-sensitive learning in production at Shopify
+[973] (Normal) In a real-world application at Shopify [16], the platform faced the challenge of categorizing products for millions of merchants selling a diverse array of items. Accurate product categorization was vital for functionalities such as enhanced search and discovery, as well as providing personalized ma
+[974] (Normal) To address the issue of data imbalance, class weights were implemented. By assigning the class weights, the model could impose higher penalties for incorrect predictions in underrepresented classes, effectively mitigating the lack of data in those categories. The model was fine-tuned to strike a bal
+[975] (Normal) Next, we’ll look at various ways of tuning these thresholds.
+[976] (Normal) Methods for threshold tuning
+[977] (Normal) Most of the time, we aim to optimize specific business metrics or standard machine learning metrics, requiring us to select a threshold that maximizes the metric of interest. In literature, various methods for threshold tuning are discussed, such as setting a threshold equal to the priority probabil
+[978] (Normal) [IMG]
+[979] (Normal) Figure 5.18 – Popular ways of tuning the threshold
+[980] (Normal) We will discuss these methods one by one.
+[981] (Normal) We will continue to use the same dataset we created earlier. The following code block fits a logistic regression model and obtains predicted probabilities for the test set:
+[982] (Normal) lr = LogisticRegression(max_iter=1000)
+[983] (Normal) lr.fit(X_train, y_train)
+[984] (Normal) y_pred = lr.predict_proba(X_test)
+[985] (Normal) y_pred = y_pred[:, 1]
+[986] (Normal) Threshold tuning using the prior threshold
+[987] (Normal) An obvious threshold that can be used is equal to the probability of the positive class in the training dataset [10]. Let’s implement this idea:
+[988] (Normal) num_pos, num_neg = Counter(y)[1], Counter(y)[0]
+[989] (Normal) prior_threshold = num_pos /(num_pos + num_neg)
+[990] (Normal) print('Prior threshold=%f'% prior_threshold)
+[991] (Normal) # Find the closest threshold from thresholds from ROC curve
+[992] (Normal) fpr, tpr, thresholds = roc_curve(y_test, y_pred)
+[993] (Normal) min_threshold_index = np.absolute( \
+[994] (Normal) thresholds-prior_threshold).argmin()
+[995] (Normal) print('Best threshold using prior threshold from ROC \
+[996] (Normal) function=%f'% thresholds[min_threshold_index])
+[997] (Normal) print("TPR at threshold=%f" % tpr[min_threshold_index])
+[998] (Normal) print("FPR at threshold=%f" % fpr[min_threshold_index])
+[999] (Normal) print("TNR at threshold=%f" % (1-fpr[min_threshold_index]))
+[1000] (Normal) This prints the following threshold:
+[1001] (Normal) Prior threshold=0.014900
+[1002] (Normal) Best threshold using prior threshold from ROC function=0.014232
+[1003] (Normal) TPR value at the threshold=0.675676
+[1004] (Normal) FPR value at the threshold=0.147990
+[1005] (Normal) TNR value at the threshold=0.852010
+[1006] (Normal) Threshold tuning using the ROC curve
+[1007] (Normal) For the ROC curve, Youden’s J statistic [17] can be used to find the optimal threshold. Youden’s J statistic has roots in the clinical field and is a single statistic that captures the performance of a diagnostic test. In the context of binary classification, the statistic, J, is defined as follows:
+[1008] (Normal) [IMG]
+[1009] (Normal) Its value can range from -1 (TPR=0 and TNR=0 – that is, always wrong results) to 1 (TPR=1 and FPR=0 – that is, perfect results). This is a common choice for selecting a threshold in an ROC analysis since it balances both sensitivity (TPR) and specificity (TNR). Please note that TNR = 1-FPR.
+[1010] (Normal) The reason that maximizing Youden’s J is equivalent to choosing the optimal threshold is that it essentially finds the point on the ROC curve that is farthest from the line of no discrimination (the diagonal). This means that it selects a threshold that achieves a balance between TPR and FPR, which 
+[1011] (Normal) The “optimal” threshold can depend heavily on the cost of false positives versus false negatives in our specific application. The following code block identifies the optimal classification threshold using the Youden index, which is calculated from the ROC curve:
+[1012] (Normal) fpr, tpr, thresholds = roc_curve(y_test, y_pred)
+[1013] (Normal) youden_index = tpr - fpr
+[1014] (Normal) max_youden_index = np.argmax(youden_index)
+[1015] (Normal) best_thresh = thresholds[max_youden_index]
+[1016] (Normal) print('Best threshold using Youden index=%f'% best_thresh)
+[1017] (Normal) print('Max Youden index value=%f'% youden_index[max_youden_index])
+[1018] (Normal) print("TPR value at the threshold=%f" % tpr[max_youden_index])
+[1019] (Normal) print("FPR value at the threshold=%f" % fpr[max_youden_index])
+[1020] (Normal) print("TNR value at the threshold=%f" % (1-fpr[max_youden_index]))
+[1021] (Normal) This outputs the following values:
+[1022] (Normal) Best threshold using Youden index=0.098879
+[1023] (Normal) Max Youden index value=0.622143
+[1024] (Normal) TPR value at the threshold=0.635135
+[1025] (Normal) FPR value at the threshold=0.012992
+[1026] (Normal) TNR value at the threshold=0.987008
+[1027] (Normal) Another threshold adjustment method that uses ROC curves that’s often used in literature is maximizing the geometric mean of TPR (also known as sensitivity) and TNR (also known as specificity):
+[1028] (Normal) [IMG]
+[1029] (Normal) Maximizing the geometric mean is equivalent to finding a good balance between TPR and TNR. The following code block calculates the best threshold for classification using the G-mean metric, along with its corresponding TPR, FPR, and TNR values. We import roc_curve from sklearn.metrics:
+[1030] (Normal) fpr, tpr, thresholds = roc_curve(y_test, y_pred)
+[1031] (Normal) gmean = np.sqrt(tpr*(1-fpr))
+[1032] (Normal) max_gmean_index = np.argmax(gmean)
+[1033] (Normal) best_thresh = thresholds[max_gmean_index]
+[1034] (Normal) print('Best threshold using G-mean=%f'% (best_thresh))
+[1035] (Normal) print('Max G-mean value=%f'% (gmean[max_gmean_index]))
+[1036] (Normal) print("TPR value at the threshold=%f" % tpr[max_gmean_index])
+[1037] (Normal) print("FPR value at the threshold=%f" % fpr[max_gmean_index])
+[1038] (Normal) print("TNR value at the threshold=%f" % (1 - fpr[max_youden_index]))
+[1039] (Normal) This outputs the following optimal values:
+[1040] (Normal) Best threshold using G-mean=0.098879
+[1041] (Normal) Max G-mean value=0.791760
+[1042] (Normal) TPR value at the threshold=0.635135
+[1043] (Normal) FPR value at the threshold=0.012992
+[1044] (Normal) TNR value at the threshold=0.987008
+[1045] (Normal) Threshold tuning using the PR curve
+[1046] (Normal) As we discussed in Chapter 1, Introduction to Data Imbalance in Machine Learning, the PR curve is generally preferred over ROC curves for imbalanced datasets when the positive class is more important than the negative class. As a reminder, the simple reason for this is that the PR curve ignores the 
+[1047] (Normal) We want the maximum possible values for both precision and recall, ideally both being 1. Thus, the point of optimality on a PR curve is (1,1).
+[1048] (Normal) When we move away from this point of optimality, both the precision and recall values decrease, and we are less optimal.
+[1049] (Normal) One measure that captures this trade-off between precision and recall is the F1 score. The F1 score is defined as the harmonic mean of the precision and recall:
+[1050] (Normal) [IMG]F1 = 2 * (Precision * Recall) / (Precision + Recall)
+[1051] (Normal) If we analyze this equation, we will see that the F1 score is highest (reaching its maximum at 1) when both precision and recall are 1, which is exactly the optimal point we defined on the PR curve.
+[1052] (Normal) Therefore, optimizing for the maximum F1 score would ensure that we are striving to maximize both precision and recall, effectively pushing us toward the optimal point on the PR curve.
+[1053] (Normal) Maximizing the F1 score is a common and effective method for determining the optimal threshold. The following code block calculates the best threshold using the F1 score metric derived from the PR curve:
+[1054] (Normal) from numpy import argmax
+[1055] (Normal) from sklearn.metrics import precision_recall_curve
+[1056] (Normal) precision, recall, thresholds = precision_recall_curve(y_test, y_pred)
+[1057] (Normal) fscore = 2*precision*recall/(precision+recall)
+[1058] (Normal) max_fscore_idx = argmax(fscore)
+[1059] (Normal) print('max_fscore_idx==%d' % max_fscore_idx)
+[1060] (Normal) print('best threshold using PR curve=%f' % thresholds[max_fscore_idx])
+[1061] (Normal) This outputs the following optimal values:
+[1062] (Normal) max_fscore_idx==4950
+[1063] (Normal) best threshold using PR curve=0.258727
+[1064] (Normal) max(fscore)= 0.661290
+[1065] (Normal) Let’s plot the PR curve with the optimal threshold value:
+[1066] (Normal) pyplot.plot(recall, precision, marker='.', \
+[1067] (Normal) label='precision vs recall for various thresholds')
+[1068] (Normal) result = pyplot.scatter(recall[max_fscore_idx], \
+[1069] (Normal) precision[max_fscore_idx], \
+[1070] (Normal) marker='x', color='red', \
+[1071] (Normal) label='Best threshold with highest\
+[1072] (Normal) f1-score')
+[1073] (Normal) plt.legend(handles=result.legend_elements()[0], \
+[1074] (Normal) labels="legend", loc='upper center', \
+[1075] (Normal) bbox_to_anchor=(1, 1))
+[1076] (Normal) pyplot.xlabel('recall')
+[1077] (Normal) pyplot.ylabel('precision')
+[1078] (Normal) The PR curve looks like this:
+[1079] (Normal) [IMG]
+[1080] (Normal) Figure 5.19 – The PR curve with the best F1 score threshold value
+[1081] (Normal) General threshold tuning
+[1082] (Normal) As a general method, we may have to optimize any metric, such as average precision, accuracy, and so on, or any other business metric. In such cases, we can write a function to optimize that metric directly. Let’s take the example of the Index of Union (IU) metric defined by I. Unal et al. in their 
+[1083] (Normal) [IMG]IU(c) = (|Sensitivity(c) − ROC _ AUC| + |Specificity(c) − ROC _ AUC|)
+[1084] (Normal) Here, Sensitivity(c) is the sensitivity at c, Specificity is the specificity at c, and ROC _ AUC is the Area Under the Curve (AUC) of the ROC plot.
+[1085] (Normal) Let’s implement the IU metric, as defined here, as a custom metric to find the optimal threshold that minimizes it:
+[1086] (Normal) from sklearn.metrics import f1_score, auc
+[1087] (Normal) def custom_metric(y_test, y_pred):
+[1088] (Normal) fpr, tpr, thresholds = roc_curve(y_test, y_pred)
+[1089] (Normal) sensitivity = tpr
+[1090] (Normal) specificity = 1-fpr #same as tnr
+[1091] (Normal) roc_auc = auc(fpr, tpr)
+[1092] (Normal) index_of_union = abs(sensitivity-roc_auc) + \
+[1093] (Normal) abs(specificity-roc_auc)
+[1094] (Normal) return index_of_union
+[1095] (Normal) scores = custom_metric(y_test, y_pred)
+[1096] (Normal) min_score_idx = np.argmin(scores)
+[1097] (Normal) print('max_score_idx=%d' % min_score_idx)
+[1098] (Normal) print('best threshold=%f'% thresholds[min_score_idx])
+[1099] (Normal) print('minimum IU-value at the best threshold=%f' % \
+[1100] (Normal) scores[min_score_idx])
+[1101] (Normal) This produces the following optimal values:
+[1102] (Normal) max_score_idx=34
+[1103] (Normal) best threshold=0.000042
+[1104] (Normal) minimum IU-value at the best threshold=0.112514
+[1105] (Normal) This wraps up our discussion on classical modeling techniques. We are now ready to venture into studying data imbalance in the realm of deep learning. We’ll explore how the insights gained from the general techniques learned from previous chapters can be adapted to enhance our deep learning models w
+[1106] (Normal) Summary
+[1107] (Normal) In this chapter, we delved into CSL, an alternative to oversampling and undersampling. Unlike data-level techniques that treat all misclassification errors equally, CSL adjusts the cost function of a model to account for the significance of different classes. It includes class weighting and meta-lea
+[1108] (Normal) Libraries such as scikit-learn, Keras/TensorFlow, and PyTorch support cost-sensitive learning. For instance, scikit-learn offers a class_weight hyperparameter to adjust class weights in loss calculation. XGBoost has a scale_pos_weight parameter for balancing positive and negative weights. MetaCost t
+[1109] (Normal) Experiments with various data sampling and CSL techniques can help determine the best approach. We’ll extend these concepts to deep learning models in Chapter 8, Algorithm-Level Deep Learning Techniques. This concludes our discussion of classical machine learning models, and we have graduated to mov
+[1110] (Normal) Questions
+[1111] (Normal) Apply the CSL technique to the SVM model from scikit-learn while utilizing the dataset that was used in this chapter. Use the class_weight and sample_weight parameters, similar to how we used them for other models in this chapter. Compare the performance of this model with the ones that we already e
+[1112] (Normal) LightGBM is another gradient-boosting framework similar to XGBoost. Apply the cost-sensitive learning technique to a LightGBM model while utilizing the dataset we used in this chapter. Use the class_weight and sample_weight parameters similar to how we used them for other models in this chapter. Com
+[1113] (Normal) AdaCost [10] is a variant of AdaBoost that combines boosting with CSL. It updates the training distribution for successive boosting rounds by utilizing the misclassification cost. Extend AdaBoostClassifier from scikit-learn to implement the AdaCost algorithm. Compare the performance of AdaCost with 
+[1114] (Normal) Tune the hyperparameters, specifically max_depth, max_delta_step, and min_child_weight, for the XGBoost model using the dataset that we used in this chapter. After tuning, evaluate whether the weighted XGBoost model outperforms the non-weighted version.
+[1115] (Normal) References
+[1116] (Normal) P. Turney, Types of cost in inductive concept learning, Proc. Workshop on CostSensitive Learning at the 17th Int. Conf. Mach. Learn., Stanford University, CA (2000), pp. 15–21.
+[1117] (Normal) C. X. Ling and V. S. Sheng, Cost-Sensitive Learning and the Class Imbalance Problem.
+[1118] (Normal) Sheng, V. S., & Ling, C. X. (2006). Thresholding for making classifiers cost-sensitive. AAAI’06: Proceedings of the 21st national conference on artificial intelligence, vol. 6, pp. 476–481.
+[1119] (Normal) Pneumonia in Children Statistics – UNICEF data: https://data.unicef.org/topic/child-health/pneumonia/.
+[1120] (Normal) X. Ling, W. Deng, C. Gu, H. Zhou, C. Li, and F. Sun, Model Ensemble for Click Prediction in Bing Search Ads, in Proceedings of the 26th International Conference on World Wide Web Companion – WWW ’17 Companion, Perth, Australia: ACM Press, 2017, pp. 689–698. doi: 10.1145/3041021.3054192.
+[1121] (Normal) Machine Learning-Powered Search Ranking of Airbnb Experiences (2019), https://medium.com/airbnb-engineering/machine-learning-powered-search-ranking-of-airbnb-experiences-110b4b1a0789.
+[1122] (Normal) P. Domingos, MetaCost: A general method for making classifiers cost-sensitive, in Proceedings of International Conference on Knowledge Discovery and Data Mining, pp. 155–164, 1999.
+[1123] (Normal) Unstable Learner. In: Sammut, C., Webb, G.I. (eds) Encyclopedia of Machine Learning and Data Mining. Springer, Boston, MA. doi: https://doi.org/10.1007/978-1-4899-7687-1_866.
+[1124] (Normal) W. Fan, S. J. Stolfo, J. Zhang, and P. K. Chan, AdaCost: Misclassiﬁcation Cost-sensitive Boosting.
+[1125] (Normal) G. I. Karakoulas and J. Shawe-Taylor, Optimizing Classifiers for Imbalanced Training Sets.
+[1126] (Normal) P. Viola and M. Jones, Fast and Robust Classification using Asymmetric AdaBoost and a Detector Cascade.
+[1127] (Normal) J. M. Johnson and T. M. Khoshgoftaar, Output Thresholding for Ensemble Learners and Imbalanced Big Data, in 2021 IEEE 33rd International Conference on Tools with Artificial Intelligence (ICTAI), Washington, DC, USA: IEEE, Nov. 2021, pp. 1449–1454. doi: 10.1109/ICTAI52525.2021.00230.
+[1128] (Normal) J. M. Johnson and T. M. Khoshgoftaar, Deep Learning and Thresholding with Class-Imbalanced Big Data, in 2019 18th IEEE International Conference On Machine Learning And Applications (ICMLA), Boca Raton, FL, USA, Dec. 2019, pp. 755–762. doi: 10.1109/ICMLA.2019.00134.
+[1129] (Normal) F. Provost, Machine Learning from Imbalanced Data Sets 101.
+[1130] (Normal) M. Buda, A. Maki, and M. A. Mazurowski, A systematic study of the class imbalance problem in convolutional neural networks, Neural Networks, vol. 106, pp. 249–259, Oct. 2018, doi: 10.1016/j.neunet.2018.07.011.
+[1131] (Normal) Using Rich Image and Text Data to Categorize Products at Scale (2021), https://shopify.engineering/using-rich-image-text-data-categorize-products.
+[1132] (Normal) W. J. Youden, Index for rating diagnostic tests, Cancer, vol. 3, no. 1, pp. 32–35, 1950, doi: 10.1002/1097-0142(1950)3:1<32::AID-CNCR2820030106>3.0.CO;2-3.
+[1133] (Normal) I. Unal, Defining an Optimal Cut-Point Value in ROC Analysis: An Alternative Approach, Computational and Mathematical Methods in Medicine, vol. 2017, pp. 1–14, 2017, doi: 10.1155/2017/3762651.
+[1134] (Normal) X. Ling, W. Deng, C. Gu, H. Zhou, C. Li, and F. Sun, Model Ensemble for Click Prediction in Bing Search Ads, in Proceedings of the 26th International Conference on World Wide Web Companion – WWW ’17 Companion, Perth, Australia: ACM Press, 2017, pp. 689–698. doi: 10.1145/3041021.3054192.

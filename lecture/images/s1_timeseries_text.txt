@@ -1,0 +1,978 @@
+[0] (Normal) 3
+[1] (Normal) Preprocessing Time-Series
+[2] (Normal) Preprocessing is a crucial step in machine learning that is nonetheless often neglected. Many books don't cover preprocessing in any depth or skip preprocessing entirely. When presenting to outsiders about a machine learning project, curiosity is naturally attracted to the algorithm rather than the 
+[3] (Normal) One reason for the relative silence on preprocessing could be that it's less glamorous than machine learning itself. It is, however, often the step that takes the most time, sometimes estimated at around 98% of the whole machine learning process. And it is often in preprocessing that relatively easy
+[4] (Normal) Preprocessing includes curating and screening the data, something that overlaps with the analysis process covered in the previous chapter, Chapter 2, Time-Series Analysis with Python. The expected output of the preprocessing is a dataset on which it is easier to conduct machine learning. This can me
+[5] (Normal) You can find the code for this chapter as a Jupyter notebook in the book's GitHub repository.
+[6] (Normal) We're going to cover the following topics:
+[7] (Normal) What Is Preprocessing?
+[8] (Normal) Feature Transforms
+[9] (Normal) Feature Engineering
+[10] (Normal) Python Practice
+[11] (Normal) We'll start off by discussing the basics of preprocessing.
+[12] (Normal) What Is Preprocessing?
+[13] (Normal) Anyone who's ever worked in a company on a machine learning project knows that real-world data is messy. It's often aggregated from multiple sources or using multiple platforms or recording devices, and it's incomplete and inconsistent. In preprocessing, we want to improve the data quality to succes
+[14] (Normal) Data preprocessing includes the following set of techniques:
+[15] (Normal) Feature transforms
+[16] (Normal) Scaling
+[17] (Normal) Power/log transforms
+[18] (Normal) Imputation
+[19] (Normal) Feature engineering
+[20] (Normal) These techniques fall largely into two classes: either they tailor to the assumptions of the machine learning algorithm (feature transforms) or they are concerned with constructing more complex features from multiple underlying features (feature engineering). We'll only deal with univariate feature 
+[21] (Normal) Missing values are a common problem in machine learning, so we will discuss replacing missing values (imputation) in this chapter as well.
+[22] (Normal) We'll be talking about features as the elementary units of preprocessing. We want to create input features for our machine learning process that make the model easier to train, easier to evaluate, or to improve the quality of model predictions. Our goal is to have features that are predictive of the
+[23] (Normal) Although we'll mostly deal with feature engineering, we'll also mention target transformations. We could refer to target transformations more specifically as target engineering; however, since methods applied on targets are the same methods as those applied to features, I've included them under the 
+[24] (Normal) Please note that we define the main goal of our preprocessing as increasing the predictiveness of our features, or, in other words, we want to elevate the quality of our machine learning model predictions. We could have alternatively defined data quality in terms of accuracy, completeness, and consi
+[25] (Normal) In this chapter, we are pragmatically reducing the scope of the treatment here to usefulness in machine learning. If our model is not fit for purpose, we might want to repeat or improve data collection, do more feature engineering, or build a better model. This again emphasizes the point that data a
+[26] (Normal) Binning or discretization can be a part of preprocessing as well, but can also be used for grouping data points by their similarity. We'll be discussing discretization together with other clustering techniques in Chapter 6, Unsupervised Methods for Time-Series.
+[27] (Normal) Before we continue, let's go through some of the basics of preprocessing time-series datasets with Python. This will cover the theory behind operations with time-series data as an introduction.
+[28] (Normal) Feature Transforms
+[29] (Normal) Many models or training processes depend on the assumption that the data is distributed according to the normal distribution. Even the most widely used descriptors, the arithmetic mean and standard deviation, are largely useless if your dataset has a skew or several peaks (multi-modal). Unfortunatel
+[30] (Normal) When data is non-normal, transformations of data are applied to make the data as normal-like as possible and, thus, increase the validity of the associated statistical analyses.
+[31] (Normal) Often it can be easier to eschew traditional machine learning algorithms of dealing with time-series data and, instead, use newer, so-called non-linear methods that are not dependent on the distribution of the data.
+[32] (Normal) As a final remark, while all the following transformations and scaling methods can be applied to features directly, an interesting spin with time-series datasets is that they change over time, and we might not have full knowledge of the time-series. Many of these transformations have online variants
+[33] (Normal) In the next section, we'll look at scaling, which is a general issue in regression.
+[34] (Normal) Scaling
+[35] (Normal) Some features have natural bounds such as the age of a person or the year of production of a product. If these ranges differ between features, some model types (again, mostly linear models) struggle with this, preferring similar ranges, and similar means.
+[36] (Normal) Two very common scaling methods are min-max scaling and z-score normalization.
+[37] (Normal) Min-max scaling involves restricting the range of the feature within two constants, a and b. This is defined as follows:
+[38] (Normal) [IMG]
+[39] (Normal) In the special case that a is 0 and b is 1, this restricts the range of the feature within 0 and 1.
+[40] (Normal) Z-score normalization is setting the mean of the feature to 0 and the variance to 1 (unit variance) like this:
+[41] (Normal) [IMG]
+[42] (Normal) [IMG]In the case that x comes from a Gaussian distribution,  is a standard normal distribution.
+[43] (Normal) In the next section, we'll look at log and power transformations. These transformations are quite important, especially for the traditional time-series models that we'll come across in Chapter 5, Time-Series Forecasting with Moving Averages and Autoregressive Models.
+[44] (Normal) Log and Power Transformations
+[45] (Normal) Both log and power transformations can compress values that spread over large magnitudes into a narrow range of output values. A log transformation is a feature transformation in which each value x gets replaced by log(x).
+[46] (Normal) [IMG]The log function is the inverse of the exponential function, and it's important to remember that the range between 0 and 1 gets mapped to negative numbers ( while numbers x>=1 get compressed in the positive range. The choice of the logarithm is usually between the natural and base 10 but can be anyt
+[47] (Normal) Log transformation is, arguably, one of the most popular among the different types of transformations applied to take the distribution of the data closer to a Gaussian distribution. Log transformation can be used to reduce the skew of a distribution. In the best scenario, if the feature follows a lo
+[48] (Normal) Generally, I'd recommend exercising caution with data transformations. You should always inspect your data before and after the transformation. You want the variance of your feature to capture that of the target, so you should make sure you are not losing resolution. Further, you might want to check
+[49] (Normal) Power transformations are often applied to transform the data from its original distribution to something that's more like a normal distribution. As discussed in the introduction, this can make a huge difference to the machine learning algorithm's ability to find a solution.
+[50] (Normal) Power transforms are transformations preserving the original order (this property is called monotonicity) using power functions. A power function is a function of this form:
+[51] (Normal) [IMG]
+[52] (Normal) [IMG]where .
+[53] (Normal) [IMG]When n is an integer and bigger than 1, we can make two major distinctions depending on whether n is odd or even. If it is even, the function  will tend toward positive infinity with large x, either positive or negative.
+[54] (Normal) If it is odd, f(x) will tend toward positive infinity with increasing x, but toward negative infinity with x.
+[55] (Normal) A power transformation is generally defined like this:
+[56] (Normal) [IMG]
+[57] (Normal) where GM(x) is the geometric mean of x:
+[58] (Normal) [IMG]
+[59] (Normal) [IMG]This reduces the transformation to the optimal choice of the parameter . For practical purposes, two power transformations are most commonly used:
+[60] (Normal) Box-Cox transformation
+[61] (Normal) Yeo–Johnson
+[62] (Normal) For Box-Cox transformation, there are two variants, the one-parameter variant and the two-parameter variant. One-parameter Box–Cox transformations are defined like this:
+[63] (Normal) [IMG]
+[64] (Normal) [IMG]The value of the parameter  can be via different optimization methods such as the maximum likelihood that the transformed feature is Gaussian.
+[65] (Normal) [IMG]So the value of lambda corresponds to the exponent of the power operation, for example,  with  or with .
+[66] (Normal) Fun fact: Box-Cox transformation is named after statisticians George E.P Box and David Cox, who decided they had to work together because Box-Cox would sound good.
+[67] (Normal) [IMG]Yeo–Johnson transformation is an extension of Box-Cox transformation that allows zero and negative values of x.  can be any real number, where  =1 produces the identity transformation. The transformation is defined as:
+[68] (Normal) [IMG]
+[69] (Normal) Finally, quantile transformation can map a feature to the uniform distribution based on an estimate of the cumulative distribution function. Optionally, this can then be mapped in a second step to normal distribution. The advantage of this transform, similar to other transformations that we've talke
+[70] (Normal) In the next section, we'll look at imputation, which literally means the assignment of values by inference, but in machine learning, often is more narrowly meant to refer to replacing missing values.
+[71] (Normal) Imputation
+[72] (Normal) Imputation is the replacement of missing values. This is important for any machine learning algorithm that can't handle missing values. Generally, we can distinguish the following types of imputation techniques:
+[73] (Normal) Unit imputation – where missing values are replaced by a constant such as the mean or 0
+[74] (Normal) Model-based imputation – where missing values are replaced with predictions from a machine learning model
+[75] (Normal) Unit imputation is by far the most popular imputation technique, partly because it's very easy to do, and because it's less heavy on computational resources than model-based imputation.
+[76] (Normal) We'll do imputation in the practice section of this chapter. In the next section, we'll talk about feature engineering.
+[77] (Normal) Feature Engineering
+[78] (Normal) Machine learning algorithms can use different representations of the input features. As we've mentioned in the introduction, the goal of feature engineering is to produce new features that can help us in the machine learning process. Some representations or augmentations of features can boost perfor
+[79] (Normal) We can distinguish between hand-crafted and automated feature extraction, where hand-crafted means that we look through the data and try to come up with representations that could be useful, or we can use a set of features that have been established from the work of researchers and practitioners bef
+[80] (Normal) Another distinction is between interpretable and non-interpretable features. Interpretable features could be summary features such as the mean, max, min, and others. These could be pooled within time periods, windows, to give us more features.
+[81] (Normal) In features for time-series, a few preprocessing methods come with their recommended machine learning model. For example, a ROCKET model is a linear model on top of the ROCKET features.
+[82] (Normal) Taken to the extreme, this can be a form of model stacking, where the outcomes of models serve as the inputs to other models. This can be an effective way of decomposing the learning problem by training less complex (fewer features, fewer parameters) models in a supervised setting and using their ou
+[83] (Normal) Please note it is important that any new feature depends only on past and present inputs. In signal processing, this kind of operation is called a causal filter. The word causal indicates that the filter output for a value at time t only uses information available at time t and doesn't peek into the
+[84] (Normal) We should take great care in training and testing that any statistics extracted and applied in preprocessing are carefully considered – at best, the model performance will be overly optimistic if it relies on data that shouldn't be available during prediction. We'll discuss leakage in the next chapt
+[85] (Normal) If we have many features, we might want to simplify our model building process by pruning the available features and using only a subset (feature selection), or instead, using a new set of features that describe the essential quality of the features (dimensionality reduction).
+[86] (Normal) We can distinguish the following types of features with time-series:
+[87] (Normal) Date- and time-related features
+[88] (Normal) Calendar features (date-related)
+[89] (Normal) Time-related features
+[90] (Normal) Window-based features
+[91] (Normal) Calendar- and time-related features are very similar, so we'll discuss them in the same section.
+[92] (Normal) Window-based features are features that integrate features within a (rolling) window, that is, within a time period. Examples of these are averages over 15-minute windows or sales within 7 days. Since we dealt with rolling windows in Chapter 2, Time-Series Analysis with Python, in this chapter, we'l
+[93] (Normal) Many preprocessing algorithms are implemented in sktime. Another handy library is tsfresh, which calculates an enormous number of interpretable features for time-series. In the code in this chapter, we've accessed tsfresh features through feature tools.
+[94] (Normal) Let's do some more time-series preprocessing in Python! We'll discuss date- and time-related features next.
+[95] (Normal) Date- and Time-Related Features
+[96] (Normal) Date and time variables contain information about dates, time, or a combination (datetime). We saw several examples in the previous chapter, Chapter 2, Time-Series Analysis with Python – one of them was the year corresponding to pollution. Other examples could be the birth year of a person or the da
+[97] (Normal) If we want to feed these fields into a machine learning model, we need to derive relevant information. We could feed the year as an integer, for example, but there are many more examples of extracted features from datetime variables, which we'll deal with in this section. We can significantly improv
+[98] (Normal) Workalendar is a Python module that provides classes able to handle calendars, including lists of bank and religious holidays, and it offers working-day-related functions. Python-holidays is a similar library, but here we'll go with workalendar.
+[99] (Normal) In the next section, we'll discuss ROCKET features.
+[100] (Normal) ROCKET
+[101] (Normal) The research paper ROCKET: Exceptionally fast and accurate time-series classification using random convolutional kernels (Angus Dempster, François Petitjean, Geoffrey I. Webb; 2019) presents a novel methodology for convolving time-series data with random kernels that can result in higher accuracy an
+[102] (Normal) We will go into more details of this paper. ROCKET, short for RandOm Convolutional KErnel Transform, is based on convolutions, so let's start with convolutions.
+[103] (Normal) Convolutions are a very important transformation, especially in image processing, and are one of the most important building blocks of deep neural networks in image recognition. Convolutions consist of feedforward connections, called filters or kernels, that are applied to rectangular patches of the
+[104] (Normal) A sharpening kernel can look like this:
+[105] (Normal) [IMG]
+[106] (Normal) If we multiply this kernel to all local neighborhoods in turn, we get a sharper image as illustrated below (original on the left, sharpened on the right):
+[107] (Normal) [IMG]
+[108] (Normal) Figure 3.1: Sharpening filter
+[109] (Normal) This picture is a gray version of "A woman divided into two, representing life and death" (owned by the Wellcome Collection, a museum and exhibition center in London; licensed under CC BY 4.0).
+[110] (Normal) The sharpening kernel emphasizes differences in adjacent pixel values. You can see that the picture on the right is much grainier or vivid – a result of the convolution.
+[111] (Normal) We can apply kernels not only to images but also to vectors or matrices, and this brings us back to ROCKET. ROCKET computes two aggregate features from each kernel and feature convolution. The two features are created using the well-known methodology global/average max pooling and a novel methodolog
+[112] (Normal) Global max pooling outputs the maximum value from the result of convolution and max pooling takes the maximum value within a pool size. For example, if the result of the convolution is 0,1,2,2,5,1,2, global max pooling returns 5, whereas max pooling with pool size 3 outputs the maxima within windows
+[113] (Normal) Positive Proportion Value (PPV), the methodology from the paper, is the proportion (percentage) of values from the convolution that are positive (or above a bias threshold).
+[114] (Normal) We can improve machine learning accuracy from time-series by applying transformations with convolutional kernels. Each feature gets transformed by random kernels, the number of which is a parameter to the algorithm. This is set to 10,000 by default. The transformed features can now be fed as input i
+[115] (Normal) The idea of ROCKET is very similar to Convolutional Neural Networks (CNNs), which we'll discuss in chapter 10, Deep Learning for Time-Series, however, two big differences are:
+[116] (Normal) ROCKET doesn't use any hidden layers or non-linearities
+[117] (Normal) The convolutions are applied independently for each feature
+[118] (Normal) In the next section, we'll be discussing shapelets.
+[119] (Normal) Shapelets
+[120] (Normal) Shapelets for time-series were presented in the research paper Time-Series Shapelets: A New Primitive for Data Mining (Lexiang Ye and Eamonn Keogh, 2009). The basic idea of shapelets is decomposing time-series into discriminative subsections (shapelets).
+[121] (Normal) In the first step, the shapelets are learned. The algorithm calculates the information gain of possible candidates and picks the best candidates to create a shapelet dictionary of discriminating subsections. This can be quite expensive. Then, based on the shapelet decomposition of the features, a de
+[122] (Normal) Shapelets have several advantages over other methods:
+[123] (Normal) They can provide interpretable results
+[124] (Normal) The application of shapelets can be very fast – only depending on the matching of features against the dictionary of shapelets
+[125] (Normal) The performance of machine learning algorithms on top of shapelets is usually very competitive
+[126] (Normal) It's time that we go through Python exercises with actual datasets.
+[127] (Normal) Python Practice
+[128] (Normal) NumPy and SciPy offer most of the functionality that we need, but we might need a few more libraries.
+[129] (Normal) In this section, we'll use several libraries, which we can quickly install from the terminal, the Jupyter Notebook, or similarly from Anaconda Navigator:
+[130] (Normal) pip install -U tsfresh workalendar astral "featuretools[tsfresh]" sktime
+[131] (Normal) All of these libraries are quite powerful and each of them deserves more than the space we can give to it in this chapter.
+[132] (Normal) Let's start with log and power transformations.
+[133] (Normal) Log and Power Transformations in Practice
+[134] (Normal) Let's create a distribution that's not normal, and let's log-transform it. We'll plot the original and transformed distribution for comparison, and we'll apply a statistical test for normality.
+[135] (Normal) Let's first create the distribution:
+[136] (Normal) from scipy.optimize import minimize
+[137] (Normal) import numpy as np
+[138] (Normal) np.random.seed(0)
+[139] (Normal) pts = 10000
+[140] (Normal) vals = np.random.lognormal(0, 1.0, pts)
+[141] (Normal) Values are sampled from a lognormal distribution. I've added a call to the random number generator seed function to make sure the result is reproducible for readers.
+[142] (Normal) We can visualize our array as a histogram:
+[143] (Normal) [IMG]
+[144] (Normal) Figure 3.2: An array sampled from a lognormal distribution
+[145] (Normal) I've used a log scale on the y-axis. We can see that the values spread over a number of orders of magnitude.
+[146] (Normal) We can apply the standard normalization to z-scores. We can also apply a statistical normality test on one of the transformed distributions:
+[147] (Normal) from sklearn.preprocessing import StandardScaler
+[148] (Normal) from scipy.stats import normaltest
+[149] (Normal) scaler = StandardScaler()
+[150] (Normal) vals_ss = scaler.fit_transform(vals.reshape(-1, 1))
+[151] (Normal) _, p = normaltest(vals_ss)
+[152] (Normal) print(f"significance: {p:.2f}")
+[153] (Normal) The null hypothesis of this statistical test is that the sample comes from a normal distribution. Therefore significance values (p-values) lower than a threshold, typically set to 0.05 or 0.01, would let us reject the null hypothesis.
+[154] (Normal) We are getting this output: significance: 0.00.
+[155] (Normal) We can conclude from the test that we are not getting a null distribution from our transformation by standard scaling.
+[156] (Normal) This should be obvious, but let's get it out of the way: we are getting the same significance for the minmax transformed values:
+[157] (Normal) from sklearn.preprocessing import minmax_scale
+[158] (Normal) vals_mm = minmax_scale(vals)
+[159] (Normal) _, p = normaltest(vals_mm.squeeze())
+[160] (Normal) print(f"significance: {p:.2f}")
+[161] (Normal) We therefore reach the same conclusion: the minmax transformation hasn't helped us get a normal-like distribution.
+[162] (Normal) We can plot the original and the standard scaled distribution against each other. Unsurprisingly, visually, the two distributions look the same except for the scale.
+[163] (Normal) [IMG]
+[164] (Normal) Figure 3.3: The linear transformation against the original values
+[165] (Normal) We can see everything lies on the diagonal.
+[166] (Normal) Let's use a log transformation:
+[167] (Normal) log_transformed = np.log(vals)
+[168] (Normal) _, p = normaltest(log_transformed)
+[169] (Normal) print(f"significance: {p:.2f}")
+[170] (Normal) We are getting a significance of 0.31. This lets us conclude that we can't reject the null hypothesis. Our distribution is similar to normal. In fact, we get a standard deviation close to 1.0 and a mean close to 0.0 as we would expect with a normal distribution.
+[171] (Normal) We can see that the log-normal distribution is a continuous probability distribution whose logarithm is normally distributed, so it's not entirely surprising that we get this result.
+[172] (Normal) We can plot the histogram of the log-transformed distribution:
+[173] (Normal) [IMG]
+[174] (Normal) Figure 3.4: Log-transformed lognormal array
+[175] (Normal) The log transform looks much more normal-like as we can appreciate.
+[176] (Normal) We can also apply Box-Cox transformation:
+[177] (Normal) from scipy.stats import boxcox
+[178] (Normal) vals_bc = boxcox(vals, 0.0)
+[179] (Normal) We are getting a significance of 0.46. Again, we can conclude that our Box-Cox transform is normal-like. We can also see this in a plot of the Box-Cox transformed distribution:
+[180] (Normal) [IMG]
+[181] (Normal) Figure 3.5: Box-Cox transformed lognormal array
+[182] (Normal) Again, this looks very much like a normal distribution. This plot looks pretty much the same as the previous one of the log transformation, which shouldn't be surprising given that the log operation corresponds to a lambda parameter of 0 in the Box-Cox transformation.
+[183] (Normal) This is a small selection of transformations that can help us reconcile our data with the common normality assumption in classical forecasting methods.
+[184] (Normal) Let's look at imputation in practice.
+[185] (Normal) Imputation
+[186] (Normal) It is rather uncommon for machine learning algorithms to be able to deal with missing values directly. Rather, we'll either have to replace missing values with constants or infer probable values given the other features.
+[187] (Normal) The scikit-learn documentation lists a simple example of unit imputation:
+[188] (Normal) import numpy as np
+[189] (Normal) from sklearn.impute import SimpleImputer
+[190] (Normal) imp_mean = SimpleImputer(missing_values=np.nan, strategy='mean')
+[191] (Normal) imp_mean.fit([[7, 2, 3], [4, np.nan, 6], [10, 5, 9]])
+[192] (Normal) SimpleImputer()
+[193] (Normal) df = [[np.nan, 2, 3], [4, np.nan, 6], [10, np.nan, 9]]
+[194] (Normal) print(imp_mean.transform(df))
+[195] (Normal) We are again using (similar to the standard scaler before) the scikit-learn transformers, which come with fit() and transform() methods.
+[196] (Normal) We get the following imputed values:
+[197] (Normal) [[ 7.   2.   3. ]
+[198] (Normal) [ 4.   3.5  6. ]
+[199] (Normal) [10.   3.5  9. ]]
+[200] (Normal) The missing values are replaced with the mean of the columns.
+[201] (Normal) Let's look at annotating holidays as derived date features.
+[202] (Normal) Holiday Features
+[203] (Normal) If we want to get the holidays for the United Kingdom, we can do this:
+[204] (Normal) from workalendar.europe.united_kingdom import UnitedKingdom
+[205] (Normal) UnitedKingdom().holidays()
+[206] (Normal) We get the following holidays:
+[207] (Normal) [(datetime.date(2021, 1, 1), 'New year'),
+[208] (Normal) (datetime.date(2021, 4, 2), 'Good Friday'),
+[209] (Normal) (datetime.date(2021, 4, 4), 'Easter Sunday'),
+[210] (Normal) (datetime.date(2021, 4, 5), 'Easter Monday'),
+[211] (Normal) (datetime.date(2021, 5, 3), 'Early May Bank Holiday'),
+[212] (Normal) (datetime.date(2021, 5, 31), 'Spring Bank Holiday'),
+[213] (Normal) (datetime.date(2021, 8, 30), 'Late Summer Bank Holiday'),
+[214] (Normal) (datetime.date(2021, 12, 25), 'Christmas Day'),
+[215] (Normal) (datetime.date(2021, 12, 26), 'Boxing Day'),
+[216] (Normal) (datetime.date(2021, 12, 27), 'Christmas Shift'),
+[217] (Normal) (datetime.date(2021, 12, 28), 'Boxing Day Shift')]
+[218] (Normal) We can generate holidays by year and then look up holidays by date.
+[219] (Normal) Similarly, we can get holidays for other places, for example, California, USA. We can also extract lists of holidays, and add custom holidays:
+[220] (Normal) from typing import List
+[221] (Normal) from dateutil.relativedelta import relativedelta, TH
+[222] (Normal) import datetime
+[223] (Normal) from workalendar.usa import California
+[224] (Normal) def create_custom_holidays(year: int) -> List:
+[225] (Normal) custom_holidays = California().holidays()
+[226] (Normal) custom_holidays.append((
+[227] (Normal) (datetime.datetime(year, 11, 1) + relativedelta(weekday=TH(+4)) + datetime.timedelta(days=1)).date(),
+[228] (Normal) "Black Friday"
+[229] (Normal) ))
+[230] (Normal) return {k: v for (k, v) in custom_holidays}
+[231] (Normal) custom_holidays = create_custom_holidays(2021)
+[232] (Normal) This gives us our custom holidays for the year 2021:
+[233] (Normal) {datetime.date(2021, 1, 1): 'New year',
+[234] (Normal) datetime.date(2021, 1, 18): 'Birthday of Martin Luther King, Jr.',
+[235] (Normal) datetime.date(2021, 2, 15): "Washington's Birthday",
+[236] (Normal) datetime.date(2021, 3, 31): 'Cesar Chavez Day',
+[237] (Normal) datetime.date(2021, 5, 31): 'Memorial Day',
+[238] (Normal) datetime.date(2021, 7, 4): 'Independence Day',
+[239] (Normal) datetime.date(2021, 7, 5): 'Independence Day (Observed)',
+[240] (Normal) datetime.date(2021, 9, 6): 'Labor Day',
+[241] (Normal) datetime.date(2021, 11, 11): 'Veterans Day',
+[242] (Normal) datetime.date(2021, 11, 25): 'Thanksgiving Day',
+[243] (Normal) datetime.date(2021, 11, 26): 'Thanksgiving Friday',
+[244] (Normal) datetime.date(2021, 12, 24): 'Christmas Day (Observed)',
+[245] (Normal) datetime.date(2021, 12, 25): 'Christmas Day',
+[246] (Normal) datetime.date(2021, 12, 31): 'New Years Day (Observed)',
+[247] (Normal) datetime.date(2016, 11, 25): 'Black Friday'}
+[248] (Normal) Please note that we are using type hints in the code segment above. We are declaring the signature of our function like this:
+[249] (Normal) def create_custom_holidays(year: int) -> List:
+[250] (Normal) This means we are expecting an integer called year and we are expecting a List as an output. Annotations are optional and they are not getting checked (if you don't invoke mypy), but they can make code in Python much clearer.
+[251] (Normal) Now we can implement a simple lookup like this:
+[252] (Normal) def is_holiday(current_date: datetime.date):
+[253] (Normal) """Determine if we have a holiday."""
+[254] (Normal) return custom_holidays.get(current_date, False)
+[255] (Normal) today = datetime.date(2021, 4, 11)
+[256] (Normal) is_holiday(today)
+[257] (Normal) I am getting a False even though I wish it were a holiday.
+[258] (Normal) This can be a very useful feature for a machine learning model. For example, we could imagine a different profile of users who apply for loans on bank holidays or on a weekday.
+[259] (Normal) Date Annotation
+[260] (Normal) The calendar module offers lots of methods, for example, monthrange() - calendar.monthrange returns the first weekday of the month and the number of days in a month for a given year and month. The day of the week is given as an integer, where Monday is 0 and Sunday is 6.
+[261] (Normal) import calendar
+[262] (Normal) calendar.monthrange(2021, 1)
+[263] (Normal) We should be getting (4, 31). This means the first weekday of 2021 was a Friday. January 2021 had 31 days.
+[264] (Normal) We can also extract features relevant to the day with respect to the year. The following function provides the number of days since the end of the previous year and to the end of the current year:
+[265] (Normal) from datetime import date
+[266] (Normal) def year_anchor(current_date: datetime.date):
+[267] (Normal) return (
+[268] (Normal) (current_date - date(current_date.year, 1, 1)).days,
+[269] (Normal) (date(current_date.year, 12, 31) - current_date).days,
+[270] (Normal) )
+[271] (Normal) year_anchor(today)
+[272] (Normal) This feature could provide a general idea of how far into the year we are. This can be useful both for estimating a trend and for capturing cyclic variations.
+[273] (Normal) Similarly, we can extract the number of days from the first of the month and to the end of the month:
+[274] (Normal) def month_anchor(current_date: datetime.date):
+[275] (Normal) last_day = calendar.monthrange(current_date.year, current_date.month)[0]
+[277] (Normal) return (
+[278] (Normal) (current_date - datetime.date(current_date.year, current_date.month, 1)).days,
+[279] (Normal) (current_date - datetime.date(current_date.year, current_date.month, last_day)).days,
+[280] (Normal) )
+[281] (Normal) month_anchor(today)
+[282] (Normal) A feature like this could also provide some useful information. I am getting (10, 8).
+[283] (Normal) In retail, it is very important to predict the spending behavior of customers. Therefore, in the next section, we'll write annotation for pay days.
+[284] (Normal) Paydays
+[285] (Normal) We could imagine that some people get paid in the middle or at the end of the month, and would then access our website to buy our products.
+[286] (Normal) Most people would get paid on the last Friday of the month, so let's write a function for this:
+[287] (Normal) def get_last_friday(current_date: datetime.date, weekday=calendar.FRIDAY):
+[288] (Normal) return max(week[weekday]
+[289] (Normal) for week in calendar.monthcalendar(
+[290] (Normal) current_date.year, current_date.month
+[291] (Normal) ))
+[292] (Normal) get_last_friday(today)
+[293] (Normal) I am getting 30 as the last Friday.
+[294] (Normal) Seasons can also be predictive.
+[295] (Normal) Seasons
+[296] (Normal) We can get the season for a specific date:
+[297] (Normal) YEAR = 2021
+[298] (Normal) seasons = [
+[299] (Normal) ('winter', (date(YEAR,  1,  1),  date(YEAR,  3, 20))),
+[300] (Normal) ('spring', (date(YEAR,  3, 21),  date(YEAR,  6, 20))),
+[301] (Normal) ('summer', (date(YEAR,  6, 21),  date(YEAR,  9, 22))),
+[302] (Normal) ('autumn', (date(YEAR,  9, 23),  date(YEAR, 12, 20))),
+[303] (Normal) ('winter', (date(YEAR, 12, 21),  date(YEAR, 12, 31)))
+[304] (Normal) ]
+[305] (Normal) def is_in_interval(current_date: datetime.date, seasons):
+[306] (Normal) return next(season for season, (start, end) in seasons
+[307] (Normal) if start <= current_date.replace(year=YEAR) <= end)
+[309] (Normal) is_in_interval(today, seasons)
+[310] (Normal) We should be getting spring here, but the reader is encouraged to try this with different values.
+[311] (Normal) The Sun and Moon
+[312] (Normal) The Astral module offers information about sunrise, moon phases, and more. Let's get the hours of sunlight for a given day in London:
+[313] (Normal) from astral.sun import sun
+[314] (Normal) from astral import LocationInfo
+[315] (Normal) CITY = LocationInfo("London", "England", "Europe/London", 51.5, -0.116)
+[316] (Normal) def get_sunrise_dusk(current_date: datetime.date, city_name='London'):
+[317] (Normal) s = sun(CITY.observer, date=current_date)
+[318] (Normal) sunrise = s['sunrise']
+[319] (Normal) dusk = s['dusk']
+[320] (Normal) return (sunrise - dusk).seconds / 3600
+[321] (Normal) get_sunrise_dusk(today)
+[322] (Normal) I am getting 9.788055555555555 hours of daylight.
+[323] (Normal) It can often be observed that the more hours of daylight, the more business activity. We could speculate that this feature could be helpful in predicting the volume of our sales.
+[324] (Normal) Business Days
+[325] (Normal) Similarly, if a month has more business days, we could expect more sales for our retail store. On the other hand, if we are selling windsurfing lessons, we might want to know the number of holidays in a given month. The following function extracts the number of business days and weekends/holidays in
+[326] (Normal) def get_business_days(current_date: datetime.date):
+[327] (Normal) last_day = calendar.monthrange(current_date.year, current_date.month)[1]
+[328] (Normal) rng = pd.date_range(current_date.replace(day=1), periods=last_day, freq='D')
+[329] (Normal) business_days = pd.bdate_range(rng[0], rng[-1])
+[330] (Normal) return len(business_days), last_day - len(business_days)
+[331] (Normal) get_business_days(date.today())
+[332] (Normal) We should be getting (22, 9) – 22 business days and 9 weekend days and holidays.
+[333] (Normal) Automated Feature Extraction
+[334] (Normal) We can also use automated feature extraction tools from modules like featuretools. Featuretools calculates many datetime-related functions. Here's a quick example:
+[335] (Normal) import featuretools as ft
+[336] (Normal) from featuretools.primitives import Minute, Hour, Day, Month, Year, Weekday
+[337] (Normal) data = pd.DataFrame(
+[338] (Normal) {'Time': ['2014-01-01 01:41:50',
+[339] (Normal) '2014-01-01 02:06:50',
+[340] (Normal) '2014-01-01 02:31:50',
+[341] (Normal) '2014-01-01 02:56:50',
+[342] (Normal) '2014-01-01 03:21:50'],
+[343] (Normal) 'Target': [0, 0, 0, 0, 1]}
+[344] (Normal) )
+[345] (Normal) data['index'] = data.index
+[346] (Normal) es = ft.EntitySet('My EntitySet')
+[347] (Normal) es.entity_from_dataframe(
+[348] (Normal) entity_id='main_data_table',
+[349] (Normal) index='index',
+[350] (Normal) dataframe=data,
+[351] (Normal) time_index='Time'
+[352] (Normal) )
+[353] (Normal) fm, features = ft.dfs(
+[354] (Normal) entityset=es,
+[355] (Normal) target_entity='main_data_table',
+[356] (Normal) trans_primitives=[Minute, Hour, Day, Month, Year, Weekday]
+[357] (Normal) )
+[358] (Normal) Our features are Minute, Hour, Day, Month, Year, and Weekday. Here's our DataFrame, fm:
+[359] (Normal) [IMG]
+[360] (Normal) Figure 3.6: Featuretools output
+[361] (Normal) We could extract many more features. Please see the featuretools documentation for more details.
+[362] (Normal) The tsfresh module also provides automated functionality for feature extraction:
+[363] (Normal) from tsfresh.feature_extraction import extract_features
+[364] (Normal) from tsfresh.feature_extraction import ComprehensiveFCParameters
+[365] (Normal) settings = ComprehensiveFCParameters()
+[366] (Normal) extract_features(data, column_id='Time', default_fc_parameters=settings)
+[367] (Normal) Please note that tsfresh optimizes features using statsmodels' autoregression, and (last I checked) still hasn't been updated to use statsmodels.tsa.AutoReg instead of statsmodels.tsa.AR, which has been deprecated.
+[368] (Normal) We get 1,574 features that describe our time object. These features could help us in machine learning models.
+[369] (Normal) Let's demonstrate how to extract ROCKET features from a time-series.
+[370] (Normal) ROCKET
+[371] (Normal) We'll be using the implementation of ROCKET in the sktime library.
+[372] (Normal) The sktime library represents data in a nested DataFrame. Each column stands for a feature, as expected, however, what may be surprising is that each row is an instance of a time-series. Each cell contains an array of all values for a given feature over time. In other words, each cell has a nested o
+[373] (Normal) This structure makes sense, because it allows us to store multiple instances of time-series in the same DataFrame, however, it's not intuitive at first. Fortunately, SkTime provides utility functions to unnest the SkTime datasets, as we will see.
+[374] (Normal) If we want to load an example time-series in SkTime, we can do this:
+[375] (Normal) from sktime.datasets import load_arrow_head
+[376] (Normal) from sktime.utils.data_processing import from_nested_to_2d_array
+[377] (Normal) X_train, y_train = load_arrow_head(split="train", return_X_y=True)
+[378] (Normal) from_nested_to_2d_array(X_train).head()
+[379] (Normal) We get an unnested DataFrame like this:
+[380] (Normal) [IMG]
+[381] (Normal) Figure 3.7: ROCKET features
+[382] (Normal) Again, each row is a time-series. There's only one feature, called dim_0. The time-series has 251 measurements.
+[383] (Normal) We can import ROCKET, and then create the ROCKET features. We'll first have to learn the features and then apply them. This is a typical pattern for machine learning. In scitkit-learn, we'd use the fit() and predict() methods for models, where fit() is applied on the training data and predict() give
+[384] (Normal) The learning step should only ever be applied to the training set. One of the parameters in ROCKET is the number of kernels. We'll set it to 1,000 here, but we can set it to a higher number as well. 10,000 kernels is the default:
+[385] (Normal) from sktime.transformations.panel.rocket import Rocket
+[386] (Normal) rocket = Rocket(num_kernels=1000)
+[387] (Normal) rocket.fit(X_train)
+[388] (Normal) X_train_transform = rocket.transform(X_train)
+[389] (Normal) The returned dataset is not nested, and it contains 2,000 columns. Each column describes the whole time-series but is the result from a different kernel.
+[390] (Normal) In the next section, we'll do a shapelets exercise.
+[391] (Normal) Shapelets in Practice
+[392] (Normal) Let's create shapelets for the dataset we used before when we looked at ROCKET. We'll again use SkTime:
+[393] (Normal) from sktime.transformations.panel.shapelets import ContractedShapeletTransform
+[394] (Normal) shapelets_transform = ContractedShapeletTransform(
+[395] (Normal) time_contract_in_mins=1,
+[396] (Normal) num_candidates_to_sample_per_case=10,
+[397] (Normal) verbose=0,
+[398] (Normal) )
+[399] (Normal) shapelets_transform.fit(X_train, y_train)
+[400] (Normal) The training could take a few minutes. We'll get some output about the candidates that are being examined.
+[401] (Normal) We can again transform our time-series using our shapelet transformer. This works as follows:
+[402] (Normal) X_train_transform = shapelets_transform.transform(X_train)
+[403] (Normal) This gives us a transformed dataset that we can use in machine learning models. We encourage the reader to play around with these feature sets.
+[404] (Normal) This concludes our Python practice.
+[405] (Normal) Summary
+[406] (Normal) Preprocessing is a crucial step in machine learning that is often neglected. Many books don't cover preprocessing as a topic or skip preprocessing entirely. However, it is often in preprocessing that relatively easy wins can be achieved. The quality of the data determines the outcome.
+[407] (Normal) Preprocessing includes curating and screening the data. The expected output of the preprocessing is a dataset on which it is easier to conduct machine learning. This can mean that it is more reliable and less noisy than the original dataset.
+[408] (Normal) We've talked about feature transforms and feature engineering approaches to time-series data, and we've talked about automated approaches as well.
+[409] (Normal) In the next chapters, we'll explore how we can use these extracted features in a machine learning model. We'll discuss combinations of features and modeling algorithms in the next chapter, Chapter 4, Introduction to Machine Learning for Time-Series. In Chapter 5, Time-Series Forecasting with Moving 
+[411] (Normal) 4
+[412] (Normal) Introduction to Machine Learning for Time-Series
+[413] (Normal) In previous chapters, we've talked about time-series, time-series analysis, and preprocessing. In this chapter, we'll talk about machine learning for time-series. Machine learning is the study of algorithms that improve through experience. These algorithms or models can make systematic, repeatable, 
+[414] (Normal) We'll go through different kinds of problems and applications of machine learning in time-series, and types of analyses relevant to machine learning and time-series analysis. We'll explain the main machine learning problems with time-series, such as forecasting, classification, regression, segmentat
+[415] (Normal) We're going to cover the following topics:
+[416] (Normal) Machine learning with time-series
+[417] (Normal) Supervised, unsupervised, and reinforcement learning
+[418] (Normal) History of Machine Learning
+[419] (Normal) Machine learning workflow
+[420] (Normal) Cross-validation
+[421] (Normal) Error metrics for time-series
+[422] (Normal) Comparing time-series
+[423] (Normal) Machine learning algorithms for time-series
+[424] (Normal) We'll start with a general introduction to machine learning with time-series.
+[425] (Normal) Machine learning with time-series
+[426] (Normal) In this section, I'll give an introduction to applications and the main categories of machine learning with time-series.
+[427] (Normal) Machine learning approaches for time-series are crucial in domains such as economics, medicine, meteorology, demography, and many others. Time-Series datasets are ubiquitous and occur in domains as diverse as healthcare, economics, social sciences, Internet-of-Things applications, operations managem
+[428] (Normal) The technical applications within machine learning for time-series abound in techniques. A few applications are as follows:
+[429] (Normal) Curve fitting
+[430] (Normal) Regression
+[431] (Normal) Classification
+[432] (Normal) Forecasting
+[433] (Normal) Segmentation/clustering
+[434] (Normal) Anomaly detection
+[435] (Normal) Reinforcement learning
+[436] (Normal) We will examine these technical applications in this book. These different applications have different statistical methods and models behind them that can overlap.
+[437] (Normal) Let's go briefly through some of these applications for an overview of what to expect in the chapters to come.
+[438] (Normal) Curve fitting is the task of fitting a mathematical function (a curve) to a series of points. The mathematical function is defined by parameters, and the parameters are adapted to fit the time-series through optimization. Curve fitting can be employed as a visual aid on graphs or for inference (extr
+[439] (Normal) Regression is an umbrella term for statistical approaches for finding relationships between independent variables (features) and independent variables (targets). For instance, we could be predicting the exact temperature based on the release of carbon dioxide and methane. If there's more than one ou
+[440] (Normal) When the problem is assigning labels to a time-series (or a part of it), this is called classification. The main difference to regression is that the prediction is categorical rather than continuous. The model that's used for classification is often referred to as a classifier. Classification can be
+[441] (Normal) Making predictions about the future is called forecasting. Forecasting can be based only on the time-series values itself or on other variables. The techniques can range from curve fitting to extrapolating, from analysis of the current trends and variability to complex machine learning techniques. F
+[442] (Normal) Segmentation, or clustering, is the process of grouping parts of the time-series into clusters (or segments) of different regimes, behaviors, or baselines. An example would be different activity levels in brain waves.
+[443] (Normal) Within the context of time-series, anomaly detection, also known as outlier detection, is the task of identifying events that are rare or outside the norm. These could be novel, changes of regime, noise, or just exceptions. A rather crude example would be an outage of the electricity grid detectable
+[444] (Normal) Finally, reinforcement learning is the practice of learning based on maximizing expected rewards from a series of decisions. Reinforcement learning algorithms are employed in environments where there's a high level of uncertainty. This could mean that the conditions are unstable (high variation) or 
+[445] (Normal) Let's dive into a bit more detail about what these terms mean.
+[446] (Normal) Supervised, unsupervised, and reinforcement learning
+[447] (Normal) Machine learning can be broadly categorized into supervised, unsupervised, and reinforcement learning, as this diagram shows:
+[448] (Normal) [IMG]
+[449] (Normal) Figure 4.1: Dividing machine learning into categories
+[450] (Normal) [IMG]In supervised learning, the features are mapped to outcomes in a process called prediction (sometimes inference).
+[451] (Normal) In the supervised case, parameters are estimated from labeled observations. We need to have the outcome available for each observation as the target column (or columns, in the plural).
+[452] (Normal) Therefore, the machine learning algorithm finds a mapping from X to Y.
+[453] (Normal) [IMG]
+[454] (Normal) [IMG]The function  is just one possible mapping or model of the input distribution X to the output distribution Y.
+[455] (Normal) Supervised machine learning can be categorized into classification and regression. In regression, our targets are continuous, and the goal is to predict the value.
+[456] (Normal) [IMG]
+[457] (Normal) The target Y can be real-valued, either a single value or a higher dimensionality (multioutput).
+[458] (Normal) The labels match the dataset in length, but there can be several labels for each observation as well (multi-output).
+[459] (Normal) An example would be the number of products sold in a shop on a specific day or the amount of oil coming through a pipeline over the next month. The features could include current sales, demand, or day of the week.
+[460] (Normal) [IMG]In classification, the goal is to predict the class of the observation. In this case,  could be drawn from a categorical distribution, a distribution consisting of ordinal values, for example, integers as in .
+[461] (Normal) Sometimes, we want to find a function that would give us probabilities or scores for given observations:
+[462] (Normal) [IMG]
+[463] (Normal) In practical terms, regression and classification are very similar problems, and often regression and classification algorithms can be applied interchangeably. However, understanding the distinction is crucial to dealing with any specific problem in an appropriate manner.
+[464] (Normal) In time-series forecasting, the historical values are extrapolated into the future. The only features are the past values. For example, we could be estimating the calls into a call center over the next month based on calls during the last 2 years. The forecasting task could be univariate, relying on
+[465] (Normal) In unsupervised learning, the algorithm's task is to categorize observations based on their features. Examples of unsupervised learning are clustering or recommender algorithms.
+[466] (Normal) In most of the book, we'll be talking about supervised algorithms, although we'll also talk about unsupervised tasks such as change detection and clustering.
+[467] (Normal) [IMG]The mapping function, f, predicts an outcome Each function is specified by a set of parameters, and the optimization results in a set of parameters that minimizes the mismatch between Y and . Usually, this is done heuristically.
+[468] (Normal) [IMG]The match (mismatch) between Y and  is measured by an error function, , so the optimization consists of estimating parameters  for the function f that minimizes the error:
+[469] (Normal) [IMG]
+[470] (Normal) [IMG]In this formula, since the error function is part of the optimization,  is called the objective function.
+[471] (Normal) In reinforcement learning, an agent is interacting with the environment through actions and gets feedback in the shape of rewards. You can find out more about reinforcement learning for time-series in Chapter 11, Reinforcement Learning for Time-Series.
+[472] (Normal) Contrary to the situation in supervised learning, no labeled data is available, but rather the environment is explored and exploited based on the expectation of cumulative rewards.
+[473] (Normal) Machine learning, the study of algorithms that improve with experience, can be traced back to the 1960s when statistical methods (discussed in Chapter 1, Time-Series with Python) were discovered. Let's start with a brief history of machine learning to give some context. This will provide some more t
+[474] (Normal) History of machine learning
+[475] (Normal) Biological neural networks were conceptualized as a mathematical model by Warren McCulloch and Walter Pitts in 1943 in what was the foundation of artificial neural networks.
+[476] (Normal) Frank Rosenblatt developed the so-called perceptron in 1958, which is a fully connected feed-forward neural network in today's terms. This schematic shows a perceptron with two input neurons and a single output neuron (based on an image on Wikimedia Commons):
+[477] (Normal) [IMG]
+[478] (Normal) Figure 4.3: Perceptron
+[479] (Normal) The connections to the output neuron y have weights w1 and w2. This is a simple linear model.
+[480] (Normal) Another important step was how errors can be propagated backward through the network. The basics of backpropagation were published by Henry J. Kelley shortly afterward (1960) as a mechanism for training these networks.
+[481] (Normal) This research was dealt a severe blow, however, when, in 1969, Marvin Minsky and Seymour Papert published the book "Perceptrons", which included a simple proof that linear functions (as in the 2-layer perceptron) could not model non-linear functions. According to the authors, this meant that percept
+[482] (Normal) The nearest neighbor algorithm was described by Evelyn Fix and Joseph Hodges in 1951, and then expanded in 1967 by Thomas Cover and Peter E. Hart. The nearest neighbor algorithm can be applied to both classification and regression. It works by retrieving the k most similar instances between a new da
+[483] (Normal) Another important milestone was the development of the decision tree algorithm. The ID3 decision tree algorithm (Iterative Dichotomiser 3) was published by Ross Quinlan in a 1979 paper and is the precursor to decision trees used today.
+[484] (Normal) The CART algorithm (Classification And Regression Tree) was published by Leo Breiman in 1984. The C4.5 algorithm, a descendant of ID3, came out in 1992 (Ross Quinlan) and is regarded today as a landmark in machine learning.
+[485] (Normal) What was revolutionary about the decision tree is that it consists of step functions that partition the feature space of the data points into pockets that have a similar outcome. While many machine learning algorithms struggle when there are many interactions to consider, decision trees thrive in th
+[486] (Normal) [IMG]
+[487] (Normal) Figure 4.4: Decision tree
+[488] (Normal) Each node or split in the tree is a single question based on the value of a feature. At each iteration during the tree construction, a statistical function called a split criterion is applied to decide on the best feature to query. Typical choices for a split criterion are the Gini impurity or infor
+[489] (Normal) Decision trees, in turn, form the basis of ensemble techniques such as the random forest or gradient boosted trees. There are two main ensemble techniques: boosting and bagging. Boosting was invented by Robert Schapire in 1990, and consists of incrementally adding base learners in a cascade. A base 
+[490] (Normal) This means that in each iteration, the algorithm comes to grips with more and more samples that it struggles with, leading to higher precision with each new addition of a base learner.
+[491] (Normal) This formed the basis for AdaBoost, an adaptive boosting algorithm, which won its inventors, Yoav Freund and Robert Schapire, the Gödel Prize, a prestigious recognition for outstanding papers in the area of theoretical computer science.
+[492] (Normal) This illustration (from Wikipedia) shows how each base classifier is trained subsequently on different subsets of the dataset, where weights are changed for each new training:
+[493] (Normal) [IMG]
+[494] (Normal) Figure 4.5: Boosting
+[495] (Normal) Bagging is the basis for the random forest, and was invented in 1994 by Leo Breiman. Bagging consists of two parts, the bootstrap and aggregation. Bootstrapping is sampling with replacements from the training set. A separate model can be trained on each sample in isolation. These models together for
+[496] (Normal) The following diagram (source: Wikipedia) shows how a bagged ensemble is trained and used for prediction. This is how a random forest (Leo Breiman, 2001) learns with the decision tree as a base learner.
+[497] (Normal) [IMG]
+[498] (Normal) Figure 4.6: Bagging
+[499] (Normal) The following table shows the main differences between bagging and boosting:
+[500] (Normal) Figure 4.7: Differences between bagging and boosting
+[501] (Normal) Gradient boosting (developed by Friedman and others) is a further extension of boosting with Unhyphenate. In gradient boosting, new weak learners are added in a fashion that they are maximally correlated with the negative gradient of the loss function. These are some popular implementations for grad
+[502] (Normal) CatBoost (by Andrey Gulin and others at Yandex)
+[503] (Normal) Light Gradient Boosting Machine (LightGBM, at Microsoft)
+[504] (Normal) XGBoost
+[505] (Normal) Backpropagation was rediscovered in 1986 by David Rumelhart, Geoffrey Hinton, and Ronald J. Williams. Shortly after, deeper networks were developed that could be applied to more interesting problems that attracted attention.
+[506] (Normal) Between 1995 and 1997, Sepp Hochreiter and Jürgen Schmidhuber proposed a recurrent neural network architecture, the long short-term memory (LSTM). For many years, LSTMs constituted the state-of-the-art for many applications in voice recognition, translation, and more. Today, recurrent neural network
+[507] (Normal) Support Vector Machines (SVMs) were developed in the early 1990s at AT&T Bell Laboratories by Vladimir Vapnik and colleagues based on statistical learning frameworks described by Vapnik and Chervonenkis. In classification, SVMs maximize the distance between the two categories in a projected space. A
+[508] (Normal) In the next section, we'll go through the basics of machine learning modeling and scientific practices in model validation.
+[509] (Normal) Machine learning workflow
+[510] (Normal) In the next section, we'll go through the basics of time-series and machine learning.
+[511] (Normal) [IMG]Machine learning mostly deals with numerical data that is in tabular form as a matrix of size . The layout is generally in a way that each row  represents an observation, and each column  represents a feature.
+[512] (Normal) In time-series problems, the column related to time doesn't necessarily serve as a feature, but rather as an index to slice and order the dataset. Time columns can, however, be transformed into features, as we'll see in Chapter 3, Preprocessing time-series.
+[513] (Normal) Each observation is described by a vector of M features. Although a few machine learning algorithms can deal with non-numerical data internally, typically, each feature is either numerical or gets converted to numbers before feeding it into a machine learning algorithm. An example of a conversion is
+[514] (Normal) [IMG]
+[515] (Normal) The machine learning workflow can be separated into three processes, as shown in the following diagram. I've added data loading and time-series analysis, which informs machine learning.
+[516] (Normal) [IMG]
+[517] (Normal) Figure 4.8: Machine learning workflow
+[518] (Normal) We first must transform (or preprocess) our data, train or fit a model, and then we can apply the trained model to new data. This diagram, very simplistic perhaps, puts the focus on the three different stages of the machine learning process. Each stage comes with its own challenges and particulariti
+[519] (Normal) This can also help to think about the data flow from input to transform to training to prediction. We should keep in mind the available historical data and its limitations, as well as the future data points that are to be used for predictions.
+[520] (Normal) In the next section, we'll discuss the general principles of cross-validation.
+[521] (Normal) Cross-validation
+[522] (Normal) Here's a well-known saying in machine learning attributed to George Box, whom we've encountered several times already in this book: "All models are wrong, but some are useful."
+[523] (Normal) Machine learning algorithms make repeatable decisions and, given the correct controls, these decisions can be free from the cognitive biases that underlie much of human decision making. The point is to make sure that our model is useful by validating performance. In machine learning, the process of 
+[524] (Normal) To ensure that parameters estimated on a dataset of limited size are still valid for more data, we must go through a validation that makes sure that the quality holds up. For validation, we usually split the dataset into at least two parts, the training set and the test set. We estimate parameters o
+[525] (Normal) [IMG]
+[526] (Normal) Figure 4.9: Cross-validation
+[527] (Normal) Usually, in machine learning we would shuffle points randomly before splitting between training and test. However, in time-series, we would take older data points for training and newer points for testing. For instance, having 1 year of data available on the email opening propensities of customers, 
+[528] (Normal) The use of validation and test can be seen as a nested process in the sense that the test set checks the main testing process that involves the validation dataset. Often, the separation of validation and test sets is omitted, so the dataset is split only into training and test sets.
+[529] (Normal) A note about terminology: while a loss function is part of the optimization for training your model, a metric is used to evaluate your model. The evaluation can be post-hoc, after training, or during training as additional information. In this section, we'll discuss both metrics and loss functions.
+[530] (Normal) It is good practice to start a project with an assessment of how to measure performance. We need to choose how to measure performance to translate the business problem into a metric or a loss. Some algorithms allow flexibility in the choice of objective functions, others don't, but we can measure pe
+[531] (Normal) Next, we'll be discussing error and loss metrics for regression and classification.
+[532] (Normal) Error metrics for time-series
+[533] (Normal) Time-series data is defined as a set of data points containing details about different points in time. Generally, time-series data contains data points sampled or observed at an equal interval of time.
+[534] (Normal) For the different applications that we discussed earlier, we need to be able to quantify the performance of the model, be it a regression, classification, or another type of model, and choose a metric that captures the performance we want to achieve. Once we have chosen a metric for our model, we ca
+[535] (Normal) In this section, we'll discuss commonly used performance measures and their properties. Generally, for an error measure, the smaller the values, the better the prediction (or the forecast). In changing the parameters of our model, we want to reduce the error.
+[536] (Normal) There's not just a single metric that's apt for the purpose of any arbitrary application or dataset. Depending on the dataset, you might have to search and try different error metrics and see which one best captures your objective. In some circumstances, you might even want to define your own metric
+[537] (Normal) Regression
+[538] (Normal) Time-Series regression is the task of identifying patterns and signals in the features in relation to the behavior of time-series, for example, how skill improves with the time invested in practice.
+[539] (Normal) During training, when your regression model gives a result on the training set, we can utilize a metric that compares the model output to the training set values, and during validation, we can calculate the same measure to know how good our regression predictions line up to the validation set target
+[540] (Normal) [IMG]If  is a prediction of the model for time step t, and the actual target value is yt, intuitively, for a particular point, t, of our dataset, the forecast error (also prediction error or residual) is the difference between the actual values of the target and the values our model predicts:
+[541] (Normal) [IMG]
+[542] (Normal) [IMG]This compares the actual target Y to the predicted targets . According to this formula, the error is negative if the prediction is higher than the actual target value. The sum of squares of the residuals (SS, also residual sum of squares) ignores the direction of the error:
+[543] (Normal) [IMG]
+[544] (Normal) While both the residual and the squared residual could already be used to measure the performance of predictions over a time-series, they are not commonly used as a regression metric or loss.
+[545] (Normal) Let's start with the most commonly used metric for regression: the coefficient of determination. This is a relatively simple formula based on a ratio of the sum of the squares of the residuals, SS, and the total sum of squares, TSS, a measure of the variability:
+[546] (Normal) [IMG]
+[547] (Normal) In this fraction, the nominator is the sum of the squares of the residuals, SS, the unexplained variance.
+[548] (Normal) [IMG]The denominator is TSS, the total sum of squares. This is defined as , where  is the mean of the series, . The total sum of squares represents the explained variance of the time-series.
+[549] (Normal) Basically, we are measuring the summed squares of residuals in relation to the total variance of the time-series. This fraction, between 0 and 1, where 0 is best – no error at all, is inverted by subtracting from 1, so that finally 0 is worst and 1 is best.
+[550] (Normal) When expanded, this looks as follows:
+[551] (Normal) [IMG]
+[552] (Normal) [IMG]expresses the proportion of the variance in the dependent variable that is predictable from the independent variable. As mentioned, it is bounded between 0 and 1, where 1 means there's a perfect relationship, and 0 means there's no relationship at all.
+[553] (Normal) [IMG]The coefficient of determination, , is not an error measure since an error measure expresses the distribution of residuals so that high is bad and low is good. We could, however, express an error measure, let's call it the r-error (RE), very similar to the above, as:
+[554] (Normal) [IMG]
+[555] (Normal) This is rarely used in practice. An error measure very similar to RE is the mean relative absolute error (MRAE), which we'll discuss further ahead.
+[556] (Normal) Naively, we could take the average error, where we just take the mean over the forecast error – the mean error:
+[557] (Normal) [IMG]
+[558] (Normal) Here, N is the number of points (or the number of discrete time steps). We calculate the error for each point and then take the mean over all these errors.
+[559] (Normal) If the ME is positive, the model systematically underestimates the targets, if it's positive, it overestimates the targets on the whole. While this can be useful, it's a serious problem for an error metric, however, because the effects of positive and negative errors cancel each other out. Therefore
+[560] (Normal) Furthermore, most regression models include a constant term that is equal to the mean of the target, so this value would be exactly 0. In conclusion, our naïve measure is useless in practical settings.
+[561] (Normal) I've included the ME for discussion of why most measures that are commonly used discard the direction of the error and for highlighting the importance of the main components of the basic error metrics:
+[562] (Normal) The residual operation
+[563] (Normal) The integration
+[564] (Normal) In the case of the ME, the residual operation is the identify function, which means the residual doesn't change. More often, the square or absolute functions are used. The integration of the errors is often the (arithmetic) mean, but sometimes the median; however, it can be a more complex operation.
+[565] (Normal) In practice, the most popular error metrics are the mean squared error (MSE), mean absolute error (MAE), and the root mean squared error (RMSE). These most important error metrics are defined in the following table:
+[566] (Normal) Figure 4.10: Popular regression metrics
+[567] (Normal) With the mean squared error (MSE), we calculate the residual for each point, then square them, so positive and negative errors don't cancel each other out. Then we take the mean over these squared errors. An MSE of 0 indicates perfect performance. This can happen with toy datasets that you can play 
+[568] (Normal) The mean absolute error (MAE) is very similar to the MSE, only instead of squaring the residuals, we take their absolute values. As opposed to the MSE, all errors contribute in linear proportion (rather than being squared).
+[569] (Normal) A major difference between taking the absolute versus taking the square is in how outliers or extreme values are treated. The square function forces a higher weight on values that are very different. With the MSE, the error grows quadratically instead of linearly as is the case with the MAE. This me
+[570] (Normal) Another common metric is the root mean squared error (RMSE), or root mean square deviation (RMSD), which, as the name suggests, is the square root of the MSE. In that sense, RMSE is a scaled version of the MSE. Which one to take between the two is a presentation choice – both of them would lead to t
+[571] (Normal) What makes the RMSE interesting as a choice is that it comes in the same units and scale as the predicted variable, which makes it more intuitive. Finally, the RMSE is equivalent to the standard deviation or the error. This connection between standard deviation and the distribution of errors is quit
+[572] (Normal) There are many more metrics and they all have their purpose. The following table sums up a few more popular error metrics in time-series modeling:
+[573] (Normal) Figure 4.11: More metrics for regression
+[574] (Normal) The median absolute error (MdAE) is similar to the MAE. However, instead of the mean operation for integration, a different average, the median, is employed. Since the median is unaffected by values at the tails, this measure is even more robust than the MAE.
+[575] (Normal) The mean percentage error (MAPE) is the mean average error normalized by the target. 0 represents a perfect model, and higher than 1 means the model's predictions are systematically higher than the targets. The MAPE doesn't have an upper bound. Additionally, since it deals with percentages in terms 
+[576] (Normal) The common choice for the denominator is the target; however, you can also scale by the mean of the prediction and target. This is called the symmetric mean absolute percentage error (SMAPE). The SMAPE has not only a lower bound but also an upper bound, which makes the percentage much easier to inte
+[577] (Normal) Scaling can have different benefits as well. If you want to compare models validated on different datasets, the measures presented before wouldn't be helpful. The split between training, validation, and test sets is randomized, so when you compare model performances, any of these measures would conf
+[578] (Normal) Therefore, the normalized mean squared error (NMSE) is particularly intuitive as a presentation choice over the MSE because it scales the model's performance with the deviation. The NMSE normalizes the MSE obtained after dividing it by the target variance.
+[579] (Normal) There are lots of other error measures. Some error measures compare predictions against predictions of a naïve model that returns the average target value.
+[580] (Normal) The prediction performance of this naïve model is:
+[581] (Normal) [IMG]
+[582] (Normal) We can normalize prediction errors by dividing the prediction error by this naïve prediction error.
+[583] (Normal) This way, we can define several other measures:
+[584] (Normal) Figure 4.12: Normalized regression metrics
+[585] (Normal) All these measures should be intuitive if you have the idea of the naïve model in mind and you want to compare the performance of the naïve model with the same error metric by dividing.
+[586] (Normal) The mean relative absolute error (MRAE) is very similar to the coefficient of determination, with the only difference being that the MRAE takes the averages rather than the sums.
+[587] (Normal) Another error is the root mean squared logarithmic error (RMSLE).
+[588] (Normal) Figure 4.13: Root mean squared logarithmic error
+[589] (Normal) In the case of the RMSLE, you take the log of the residuals as the basic operation. This is to avoid penalizing large differences in the error when both predicted and true values are very high values. Because of the inflection point of the logarithm at 1, the RMLSE has the unique property that it pe
+[590] (Normal) We could extend the number of metrics if we take into account metrics based on entropy, such as Theil's Uncertainty. Theil's U is a normalized measure of the total prediction error. U is between 0 and 1, where 0 means a perfect fit. It is based on the concept of conditional entropy, and can also be 
+[591] (Normal) As these headers say, the first two concentrate on quantifying the performance of models. The last section is useful for distance-based models, which are often used as a solid baseline for performance.
+[592] (Normal) Let's switch over to error metrics for classification tasks.
+[593] (Normal) Classification
+[594] (Normal) Many metrics are specific to more binary classification (where there are exactly two classes), although some of them can be extended to the case of multi-class classification, where the number of classes is bigger than two.
+[595] (Normal) In binary classification, we can contrast the prediction against the actual outcome in a confusion matrix, where predictions and actual outcomes are cross-tabulated like this:
+[596] (Normal) Figure 4.14: Confusion matrix
+[597] (Normal) This is a crucial visualization for classification tasks, and many measures are based on summarizing this.
+[598] (Normal) Two of the most important metrics for classification are precision and recall. Recall is the ratio of the number of correctly predicted positive instances across all positive instances. We can also state this in terms of the confusion matrix as follows:
+[599] (Normal) [IMG]
+[600] (Normal) Recall is also called the true positive rate or sensitivity. It focuses on the true predictions, ignoring the negative instances; however, we might also want to know how accurate the positive predictions are. This is precision defined as:
+[601] (Normal) [IMG]
+[602] (Normal) We can visualize these two metrics as follows:
+[603] (Normal) [IMG]
+[604] (Normal) Figure 4.15: False positives (FP), true positives (TP), and false negatives (FN)
+[605] (Normal) In this graph, false positives (FP), true positives (TP), and false negatives (FN) are shown. You can see instances that are actually true, instances that are classified as true by the model, and the intersection of the two – instances that are true and that the model classifies as true.
+[606] (Normal) [IMG]We can quickly count and calculate precision and recall. We have four true positives and six false positives. The precision for this example is therefore .
+[607] (Normal) [IMG]We have four false negatives. The recall is .
+[608] (Normal) [IMG]Both recall and precision are obviously important, so why not integrate them? The  score is the harmonic mean of precision and sensitivity:
+[609] (Normal) [IMG]
+[610] (Normal) [IMG]We can also parametrize the relative importance of recall and precision. This is a generalized version of the  score, the  score:
+[611] (Normal) [IMG]
+[612] (Normal) Another very useful metric comes from the receiver operator curve (ROC), which plots the true positive rate (TPR) against the false positive rate (FPR) at various threshold settings. The false positive rate, also called the false alarm ratio, is defined analogously to the true positive rate (recall)
+[613] (Normal) [IMG]
+[614] (Normal) An ROC graph shows the relationship between sensitivity and specificity, with the general idea being that it is very hard to do both and find all positive instances (sensitivity) and to do them correctly. More often than not, you have to compromise between sensitivity and specificity. This plot illu
+[615] (Normal) Another less common metric is the Correlation Ratio, which was introduced by Karl Pearson as a measure of categorical-continuous association:
+[616] (Normal) [IMG]
+[617] (Normal) [IMG]where  is the number of observations in category x, and we define:
+[618] (Normal) [IMG]
+[619] (Normal) [IMG]The correlation ratio is based on the variance within individual categories and the variance across the whole population.  is in the range [0,1] where 0 means a category is not associated, and 1 means a category is associated with absolute certainty.
+[620] (Normal) In the next section, we'll examine similarity measures between time-series.
+[621] (Normal) Comparing time-series
+[622] (Normal) Similarity measures have applications in time-series indexing for retrieval in search, clustering, forecasting, regression, and classification, but if we want to decide whether two temporal sequences are similar, how do we measure the similarity?
+[623] (Normal) The simplest would be to use the Pearson correlation coefficient; however, other measures can be more informative.
+[624] (Normal) We'll go through a series of measures to compare a pair of time-series:
+[625] (Normal) Euclidean distance
+[626] (Normal) Dynamic time warping
+[627] (Normal) Granger causality
+[628] (Normal) The Euclidean distance, a generic distance, is applicable to any pair of vectors, including time-series:
+[629] (Normal) [IMG]
+[630] (Normal) The Euclidean distance can be useful; however, in practice, for time-series you can do better. You can take the Euclidean distance over the time-series that has been transformed by the fast Fourier transformed to a frequency domain.
+[631] (Normal) Intuitively, the exact time position and its duration of events in time-series can vary. Dynamic time warping (DTW) is one of the algorithms for measuring similarity between two temporal sequences, which may vary in speed. Intuitively, the exact time position and its duration of events in time-serie
+[632] (Normal) In general, DTW is a method that calculates an optimal match between two given time sequences with certain restrictions and rules according to a heuristic. Basically, it attempts to match indexes from the first sequence to indexes from the other sequence. DTW is an edit distance – it expresses the c
+[633] (Normal) DTW has been applied to automatic speech recognition because of its ability to cope with different speeds. DTW, however, fails at quantifying dissimilarity between non-matching sequences.
+[634] (Normal) [IMG]DTW is applied to each feature dimension independently and then the distances can be summed up. Alternatively, the warping can cover all features simultaneously by calculating the distance between two points as the Euclidean distance across all dimensions. Thus, this Dependent Warping () is a multiv
+[635] (Normal) Granger causality determines if a time-series can help to forecast another time-series. Although the question of true causality in the measure is debatable, the measure considers values of one series prior in time to values of the other, and it can be argued that the measure shows a temporal relatio
+[636] (Normal) Granger causality is quite intuitive in both its idea and its formulation. Its two principles are (simplified):
+[637] (Normal) The cause must precede the effect
+[638] (Normal) The cause has a unique effect on the result
+[639] (Normal) Therefore, if we can fit a model that shows that X and Y have a relationship in which Y systematically follows X, this is taken to mean that X Granger causes Y.
+[640] (Normal) Machine learning algorithms for time-series
+[641] (Normal) An important distinction in machine learning for time-series is the one between univariate and multivariate, in which algorithms are univariate, which means that they can only work with a single feature, or multi-variate, which means that they work with many features.
+[642] (Normal) In univariate datasets, each case has a single series and a class label. Earlier models (classical modeling) focused on univariate datasets and applications. This is also reflected in the availability of datasets.
+[643] (Normal) One of the most important repositories for time-series datasets, the UCR (University of California, Riverside) archive, which was released first in 2002, has provided a valuable resource for univariate time-series. It now contains about 120 datasets, but is lacking multivariate datasets. Furthermore
+[644] (Normal) Multivariate time-series are datasets that have multiple feature dimensions. Many real-life datasets are inherently multivariate – multivariate cases are much more frequent in practice than univariate. Examples include human activity recognition, diagnoses based on an electrocardiogram (ECG), electr
+[645] (Normal) Only recently (Anthony Bagnall and others, 2018) created the UAE (University of East Anglia) archive with 30 multivariate datasets. Another archive for multivariate datasets is the MTS archive.
+[646] (Normal) In the next section, we'll briefly discuss distance-based approaches.
+[647] (Normal) Distance-based approaches
+[648] (Normal) In the k-nearest-neighbor approaches (kNN for short), which we mentioned earlier, training examples are stored, and then, at inference time when a prediction for a new data point is required, the prediction is based on the closest k neighbors. This requires a distance measure between examples.
+[649] (Normal) I've introduced two measures for time-series, Dynamic Time Warping (DTW) and Euclidean distances, earlier in this chapter. Many distance-based approaches take either of these as a distance measure.
+[650] (Normal) Another approach that has been tried is extracting features from time-series, and then storing these extracted features for retrieval with kNN. These features include shapelets or scale-invariant features (SIFT). SIFT features are extracted from time-series as shapes surrounding the extremum (Adelin
+[651] (Normal) We've discussed shapelets and ROCKET in separate sections in Chapter 3, Preprocessing Time-Series, so we'll keep their descriptions brief, but focus on their applications in machine learning.
+[652] (Normal) Shapelets
+[653] (Normal) We've discussed shapelets in Chapter 3, Preprocessing Time-Series, so we'll keep it brief here. Shapelets for time-series were presented in the research paper "Time-Series Shapelets: a novel technique that allows accurate, interpretable and fast classification" (Lexiang Ye and Eamonn Keogh, 2011). T
+[654] (Normal) The Shapelet Transform Classifier (STC; Hills and others, 2014) consists of taking the shapelets as feature transformation and then feeding the shapelets into a machine learning algorithm. They tested the C4.5 decision tree, Naïve Bayes, 1NN, SVM, and a rotation forest, but didn't find any significa
+[655] (Normal) The Generalized random shapelet forest (gRFS; Karlsson and others, 2016) follows the idea of the random forest. Each tree is built on a distinct set of shapelets of random length, which are extracted from one random dimension for each tree. A decision tree is trained on top of these shapelets. These
+[656] (Normal) ROCKET
+[657] (Normal) We've explained ROCKET in Chapter 3, Preprocessing Time-Series. Each input feature gets transformed separately by 10,000 random kernels (this number can be changed). In practice, this is a very fast process. These transformed features can be fed into a machine learning algorithm. Its inventors, Angu
+[658] (Normal) Recently, a new variant, MINIROCKET, was published that is about 75 times faster than ROCKET while maintaining roughly the same accuracy – MINIROCKET: A Very Fast (Almost) Deterministic Transform for Time-Series Classification (Angus Dempster, Daniel F. Schmidt, and Geoff Webb, 2020).
+[659] (Normal) In machine learning research, critical difference (CD) diagrams are a powerful visualization tool for comparing outcomes of multiple algorithms. The average ranks indicate how algorithms stack up in relation to each other (a lower rank is better). Algorithmic results are compared statistically – a h
+[660] (Normal) Here's a critical difference diagram that illustrates the comparative performances of MiniRocket with other algorithms (from the MiniRocket repo by Dempster and others):
+[661] (Normal) [IMG]
+[662] (Normal) Figure 4.16: Mean rank of MiniRocket in terms of accuracy versus other state-of-the-art approaches on 109 datasets of the UCR archive
+[663] (Normal) The numbers show the rank of the algorithms across 109 datasets in the test. We can see that MiniRocket is better than Rocket, but worse than TS-CHIEF and HIVE-COTE, although the difference between them is not statistically significant.
+[664] (Normal) We'll discuss InceptionTime in Chapter 10, Deep Learning for Time-Series. Some of the other methods mentioned will be introduced in the following sections.
+[665] (Normal) Time-Series Forest and Canonical Interval Forest
+[666] (Normal) The main innovation of the Time-Series Forest (TSF; by Houtao Deng and others, 2013) was the introduction of the entrance gain as a split criterion for the tree nodes. They showed that an ensemble classifier based on simple features such as mean, deviation, and slope outperforms 1NN classifiers with
+[667] (Normal) The Proximity Forest (PF), introduced by a group of researchers lead by Geoff Webb, is a tree ensemble based on the similarity of each time-series to a set of reference time-series (distance-based features). They found that PF attains a classification performance comparable to BOSS and Shapelet Tran
+[668] (Normal) TS-CHIEF, short for Time-Series Combination of Heterogeneous and Integrated Embedding Forest, comes from the same group (Ahmed Shifaz, Charlotte Pelletier, François Petitjean, and Geoff Webb, 2020), and it extends PF with dictionary-based (BOSS) and interval-based (RISE) splitters while keeping the 
+[669] (Normal) The idea of the Canonical Interval Forest (CIF; by Matthew Middlehurst, James Large, and Anthony Bagnall, 2020) was to extend the TSF with the catch22 features. It is an ensemble of time-series trees based on the 22 Catch22 features and summary statistics extracted from phase-dependent intervals. Th
+[670] (Normal) In the next section, we describe the evolution of symbolic approaches, from BOSS to the Temporal Dictionary Ensemble (TDE).
+[671] (Normal) Symbolic approaches
+[672] (Normal) Symbolic approaches are methods that transform a numeric time-series to symbols from an alphabet.
+[673] (Normal) Symbolic Aggregate ApproXimation (SAX) was first published by Eamonn Keogh and Jessica Lin in 2002. It extends Piecewise Aggregate Approximation (PAA), which calculates averages within equal segments of the time-series. In SAX, these averages are then quantized (binned), so the alphabet corresponds 
+[674] (Normal) The plot below (from Thach Le Nguyen's MrSEQL repository on GitHub) illustrates how SAX works:
+[675] (Normal) [IMG]
+[676] (Normal) Figure 4.17: SAX
+[677] (Normal) You can see the segments as a grid along the x axis and the bins as a grid along the y axis. Each segment is then replaced with its mean value. The time-series is discretized by replacing it in each segment with the bin ID (letter in the plot).
+[678] (Normal) Symbolic Fourier Approximation (SFA; Patrick Schäfer and Mikael Högqvist, 2012) also transforms a time-series to a symbolic representation, but using the frequency domain. The dimensionality of the dataset is first reduced by performing Discrete Fourier Transformation, low-pass filtered, and then qu
+[679] (Normal) The Bag of SFA Symbols (BOSS; Patrick Schäfer, 2015 and 2016) is based on histograms of n-grams to form a bag-of-patterns (BoP) from SFA representations. BOSS has been extended as BOSS in Vector Space (BOSS VS). The BOSS VS classifier is one to four orders of magnitude faster than the state of the a
+[680] (Normal) Contract BOSS (cBOSS; Matthew Middlehurst, William Vickers, and Anthony Bagnall, 2019) speeds up BOSS by introducing a new parameter limiting the number of base models.
+[681] (Normal) SEQL (Thach Le Nguyen, Severin Gsponer, and Georgiana Ifrim, 2017) is a symbolic sequence learning algorithm that selects the most discriminative subsequences for a linear model using greedy gradient descent. This is illustrated here (from the MrSEQL GitHub repo):
+[682] (Normal) [IMG]
+[683] (Normal) Figure 4.18: SEQL
+[684] (Normal) The multiple representation sequence learner (MrSEQL; Thach Le Nguyen, Severin Gsponer, Iulia Ilie, and Georgiana Ifrim, 2019) is extending SEQL by selecting transformed features across multiple resolutions and multiple domains.
+[685] (Normal) WEASEL+MUSE (Patrick Schäfer and Ulf Leser, 2017 and 2018) consists of two stages. WEASEL stands for Word Extraction for Time-Series Classification, while MUSE stands for Multivariate Unsupervised Symbols and Derivatives. This deserves emphasizing – while WEASEL is a univariate method, MUSE extends 
+[686] (Normal) In a first step, WEASEL derives features from windows at multiple lengths from the truncated Fourier transform and discretization. This acts in a way similar to a low-pass filter, keeping only the first l coefficients. These coefficients are then discretized into an alphabet of fixed size and counte
+[687] (Normal) In a second step (MUSE), the histogram features are concatenated across dimensions, and a statistical test, the χ2 test, is used for filter-based feature selection, resulting in a much smaller but more discriminative feature set.
+[688] (Normal) These BOPs are then fed into a logistic regression algorithm for classification.
+[689] (Normal) HIVE-COTE
+[690] (Normal) The Hierarchical Vote Collective of Transformation-Based Ensembles (HIVE-COTE) is the current state of the art in terms of classification accuracy.
+[691] (Normal) Proposed in 2016 and adapted in 2020 (Anthony Bagnall and others, 2020), it's an ensemble method that combines a heterogeneous collection of different methods:
+[692] (Normal) Shapelet Transform Classifier (STC)
+[693] (Normal) Time-Series Forest (TSF)
+[694] (Normal) Contractable Bag of Symbolic-Fourier Approximation Symbols (CBOSS)
+[695] (Normal) Random Interval Spectral Ensemble (RISE)
+[696] (Normal) Random Interval Spectral Ensemble (RISE) is a tree-based time-series classification algorithm, originally introduced as Random Interval Features (RIF) at the same time as HIVE-COTE (Jason Lines, Sarah Taylor, and Anthony Bagnall, 2016). At each iteration of RISE, a set of Fourier, autocorrelation, a
+[697] (Normal) The runtime complexity of HIVE-COTE, the quadratic runtime to the length of the series, is one of the biggest obstacles to its adoption. STC and another model, the elastic ensemble (EE) were the two slowest base models in the original algorithm from 2016. One of the main differences of the new versi
+[698] (Normal) Each of these base learners is trained separately. The base learners are weighted probabilistically based on a Cross-Validation Accuracy Weighted Probabilistic Ensemble (CAWPE) structure (James Large, Jason Lines, and Anthony Bagnall, 2019).
+[699] (Normal) In publications postdating HIVE-COTE 1.0, the group showed that the ensemble is even stronger when replacing the CIF with the TSF (2020) and when replacing BOSS with the Temporal Dictionary Ensemble (TDE, 2021).
+[700] (Normal) In the next section, we will discuss the performance and trade-offs of different approaches.
+[701] (Normal) Discussion
+[702] (Normal) Generally, there's a trade-off between accuracy and prediction times, and in these methods, there's a huge difference in time complexity and model accuracy. This chart illustrates this compromise (from Patrick Schäfer's GitHub repository of SFA):
+[703] (Normal) [IMG]
+[704] (Normal) Figure 4.19: Machine learning algorithms: query time versus accuracy
+[705] (Normal) Features could be the result of simple operations or themselves be the outcome of machine learning models. We could imagine second-order features as the combination of the original features, and third-order features as the combination of second-order features, and so on, a potentially large preproce
+[706] (Normal) We can sum up the different algorithms in this table:
+[707] (Normal) Figure 4.20: Detailed taxonomy of time-series machine learning algorithms
+[708] (Normal) This classification is far from perfect, but hopefully useful. TDE is both an ensemble and a dictionary-based model. HIVE-COTE is based on BOSS features. Furthermore, the two featurization methods – Random Convolutional Kernel Transform (ROCKET) and Canonical Time-Series Characteristics (Catch22), o
+[709] (Normal) A review paper that I would highly recommend to readers is "The great multivariate time-series classification bake-off", by Alejandro Pasos Ruiz, Michael Flynn, and Anthony Bagnall (2020). It compares state-of-the-art algorithms (16 of which were included in the analysis) on 26 multivariate datasets
+[710] (Normal) Dynamic time warping
+[711] (Normal) MUSE+WEASEL
+[712] (Normal) RISE
+[713] (Normal) CBOSS
+[714] (Normal) TSF
+[715] (Normal) gRSF
+[716] (Normal) ROCKET
+[717] (Normal) HIVE-COTE 1.0
+[718] (Normal) CIF
+[719] (Normal) ResNet
+[720] (Normal) STC
+[721] (Normal) The critical difference diagram (as found on timeseriesclassification.com) shows the rank of the algorithms across 26 datasets in the test. Links between algorithms show that the differences between them can't be statistically separated (based on the Wilcoxon rank-sum test):
+[722] (Normal) [IMG]
+[723] (Normal) Figure 4.21 Critical difference diagram of time-series classification algorithms
+[724] (Normal) They found a clique of top-performing classifiers, with ROCKET at the top achieving a considerable improvement in at least an order of magnitude less time. ROCKET was followed by HIVE-COTE and CIF.
+[725] (Normal) In a study from 2019, Hassan Fawaz and others compared deep learning algorithms for time-series across 12 multivariate datasets from the MTSC archive. The fully connected convolutional network (FCN) was best, followed by ResNet – on 85 univariate datasets from the UCR repository, ResNet beat FCN to 
+[726] (Normal) In another comparison study on multivariate time-series classification on 20 datasets from the MTSC archive (Bhaskar Dhariyal, Thach Le Nguyen, Severin Gsponer, and Georgiana Ifrim, 2020), it was established that ROCKET won on 14 datasets and was much better than most deep learning algorithms, while
+[727] (Normal) Here's the critical diagram created with Hassan Fawaz's Python script from their results:
+[728] (Normal) [IMG]
+[729] (Normal) Figure 4.22: Critical difference diagram of multivariate time-series classification
+[730] (Normal) Many different feature sets were tried, the best of which (9_stat_MulPAA) didn't end up far off.
+[731] (Normal) Implementations
+[732] (Normal) Great algorithms would be worth much less in practice without software that provides them in a way that makes them easy to use and reliable to use in a production setting of a company. Alternatively, implementing algorithms from scratch can take time, and is not without complications. Therefore, it'
+[733] (Normal) The following table summarizes implementations of supervised algorithms for regression and classification:
+[734] (Normal) Figure 4.23: Pyts versus SkTime implementations of machine learning algorithms
+[735] (Normal) It's not an accident that sktime has so many implementations. It is actively used in research activity by the group around Anthony Bagnall at the University of East Anglia. Pyts is being maintained by Johann Faouzi and Hicham Janati, postdoctoral fellows at the Paris Brain Institute and the Centre d
+[736] (Normal) I've omitted deep learning algorithms from the table, which are often implemented as part of different libraries. Please note that sktime allows use of the prophet forecaster through the same interface. For example, the sktime-DL library implements ResNet, InceptionTime, and TapNet algorithms, and d
+[737] (Normal) Facebook's Prophet contains a single model, a special case of the Generalized Additive Model (GAM). The Statsmodels library contains a GAM as well as linear regression models and a Generalized Linear Model (GLM), moving average (MA), Autoregressive Integrated Moving Average (ARIMA), and Vector Autor
+[738] (Normal) The Darts library provides a consistent interface to several models for time-series processing and forecasting. It includes both classical and deep learning algorithms:
+[739] (Normal) Exponential smoothing
+[740] (Normal) ARIMA
+[741] (Normal) Temporal convolutional network
+[742] (Normal) Transformer
+[743] (Normal) N-BEATS
+[744] (Normal) This concludes our overview of time-series machine learning libraries in Python.
+[745] (Normal) Summary
+[746] (Normal) In this chapter, we've talked about both the context and the technical background of machine learning with time-series. Machine learning algorithms or models can make systematic, repeatable, validated decisions based on data. We explained the main machine learning problems with time-series such as f
+[747] (Normal) We discussed different types of methods based on the approach and features used. Furthermore, we discussed many algorithms, concentrating on state-of-the-art machine learning approaches.
+[748] (Normal) I will discuss approaches including deep learning or classical models, such as autoregressive and moving averages, in chapters dedicated to them (for example, in chapter 5, Time-Series Forecasting with Moving Averages and Autoregressive Models, and chapter 10, Deep Learning for Time-Series).
+[750] (Normal) 6
+[751] (Normal) Unsupervised Methods for Time-Series
+[752] (Normal) We've discussed forecasting in the previous chapter, and we'll talk about predictions from time-series in the next chapter. The performance of these predictive models is easily undermined by major changes in the data. Recognizing these changes is the domain of unsupervised learning.
+[753] (Normal) In this chapter, we'll describe the specific challenges of unsupervised learning with time-series data. At the core of unsupervised learning is the extraction of structure from time-series, most importantly recognizing similarities between subsequences. This is the essence of anomaly detection (also
+[754] (Normal) Time-series data is usually non-stationary, non-linear, and dynamically evolving. An important challenge of working with time-series is recognizing the changes in the underlying processes. This is called change point detection (CPD) or drift detection. Data changes over time, and it is crucial to re
+[755] (Normal) In this chapter, we'll concentrate on anomaly detection and CPD, while in Chapter 8, Online Learning for Time-Series, we'll look at drift detection in more detail. We'll start with an overview and definitions, before looking at industry practices at big tech companies.
+[756] (Normal) We're going to cover the following topics:
+[757] (Normal) Unsupervised methods for time-series
+[758] (Normal) Anomaly detection
+[759] (Normal) Change detection
+[760] (Normal) Clustering
+[761] (Normal) Python practice
+[762] (Normal) We'll start with a general introduction to unsupervised learning with time-series.
+[763] (Normal) Unsupervised methods for time-series
+[764] (Normal) The main difference between time-series and other types of data is the dependence on the temporal axis; a correlation structure at one point t1 could have very different information to the same structure at point t2. Time-series often contain lots of noise and have high dimensionality.
+[765] (Normal) To reduce the noise and decrease the dimensionality, dimensionality reduction, wavelet analysis, or signal processing techniques such as filtering, for example, Fourier decomposition, can be applied. This is often at the basis of anomaly detection or CPD, the techniques we are discussing in this cha
+[766] (Normal) We'll be talking in detail about anomalies and change points, and it might be helpful to see an illustration of how anomalies and change points can look like. In the article "Social tipping dynamics for stabilizing Earth's climate by 2050" by Ilona Otto and others, they analyzed whether and how a ch
+[767] (Normal) [IMG]
+[768] (Normal) Figure 6.1: Possible change points based on greenhouse gas emissions
+[769] (Normal) Global temperatures have cycled between periods of glaciations and warm periods, each cycle taking somewhere in the order of tens of thousands of years. For the last few thousand years, the climate was cooling leading to widespread speculations as late as the 1970s around a cooling trend that could 
+[770] (Normal) Therefore, the beginning of the industrial period could be considered a change point for global temperatures as the following graph illustrates (source: Wikimedia Commons):
+[771] (Normal) [IMG]
+[772] (Normal) Figure 6.2: Change point in global temperatures: the beginning of the industrial age
+[773] (Normal) In the graph above, the change point at the onset of the industrial revolution precedes the anomaly of modern temperature rises.
+[774] (Normal) For a human, it's relatively easy to point out change points or anomalies, especially in hindsight when the full historical data is available. For automatic detection, there are lots of different ways to find salient points. In a practical context, it's important to carefully balance detection rates
+[775] (Normal) Anomaly detection
+[776] (Normal) In anomaly detection, we want to identify sequences that are notably different from the rest of the series. Anomalies or outliers can sometimes be the result of measurement error or noise, but they could indicate changes to behavior or aberrant behavior in the system under observation, which could r
+[777] (Normal) An important application of anomaly detection is automatic real-time monitoring of potentially complex, high-dimensional datasets.
+[778] (Normal) It's time for an attempt at a definition (after D.M. Hawkins, 1980, "Identification of Outliers"):
+[779] (Normal) Definition: An outlier is a data point that deviates so significantly from other observations that it could have been generated by a different mechanism.
+[780] (Normal) Let's start with a plot, so we can see how an anomaly might look graphically. This will also provide us context for our discussion.
+[781] (Normal) Anomaly detection methods can be distinguished between univariate and multivariate methods. Parametric anomaly detection methods, by the choice of their distribution parameters (for example, the arithmetic mean), place an assumption on the underlying distribution – often the Gaussian distribution. T
+[782] (Normal) In the simplest case, we can define an outlier as follows as the z-score of the observation xi with respect to the distribution parameters:
+[783] (Normal) [IMG]
+[784] (Normal) [IMG]The z-score measures the distance of each point from the moving average or sample mean, , in units of the moving or sample standard deviation . It is positive for values that lie above the mean, and negative for those that lie below the mean.
+[785] (Normal) [IMG]In this formula,  and  are the estimated mean and standard deviation of the time-series and x is the point that we want to test. Finally,  is a threshold dependent on the confidence interval that we are interested in – often, 2 or 1.96 are chosen for this, corresponding to a confidence interval of 9
+[786] (Normal) The z-score makes an assumption of normal-distributed data; however, the mean and standard deviation used in the outlier formula above can be replaced by other measures that do away with this assumption. Measures such as the median or the interquartile range (as discussed in Chapter 2, Time-Series A
+[787] (Normal) The Hampel filter (also: Hampel identifier) is a special case for this, where the median and the median absolute deviation (MAD) are employed:
+[788] (Normal) [IMG]
+[789] (Normal) In this equation, the sample mean is replaced by the (sample) median and the standard deviation by the MAD, which is defined as:
+[790] (Normal) [IMG]
+[791] (Normal) The median, in turn, is the middle number in a sorted list of numbers.
+[792] (Normal) In the Hampel filter, each observation, x, will be compared to the median. In the case of the normal distribution, the Hampel filter is equivalent to the z-score, and epsilon can be chosen the same way as for the z-score.
+[793] (Normal) In the multivariate case, the outlier function can be expressed as the distance (or, inversely: similarity) to a point in the model distribution such as the center of gravity, the mean. For example, we could take the covariance of the new observation to the mean.
+[794] (Normal) While these former methods are restricted to low-dimensional or univariate time-series, distance-based methods can handle much larger spaces. Distance-based anomaly detection methods effectively cluster points into different groups, where small groups will be labeled outliers. In these methods, the 
+[795] (Normal) Some of the challenges to detect anomalies in time-series are:
+[796] (Normal) Lack of a definition of outliers
+[797] (Normal) Noise within the input data
+[798] (Normal) Complexity of time-series
+[799] (Normal) High imbalance
+[800] (Normal) We often don't really know what outliers look like. In practical settings, we often don't have labels for the outliers – rendering benchmarking against real cases impossible. As for the complexity, time-series change over time, they are often non-stationary and the dependence between variables can b
+[801] (Normal) A requirement for deploying anomaly detection models as services at scale is that they should be able to detect anomalies in real time.
+[802] (Normal) Applications for anomaly detection encompass the ones in this diagram:
+[803] (Normal) [IMG]
+[804] (Normal) Figure 6.3: Applications for anomaly detection
+[805] (Normal) Some examples could be fraud detection with payments, network security (cyber intrusion), medical monitoring, or sensor networks. In medical monitoring, we want to work with real-time monitoring of physiological variables including heart rate, electroencephalogram, and electrocardiogram for alerting
+[806] (Normal) This diagram illustrates the main types of anomaly detection methods depending on the available knowledge of the dataset:
+[807] (Normal) [IMG]
+[808] (Normal) Figure 6.4: Anomaly detection methods depending on available knowledge
+[809] (Normal) The earliest examples for anomaly detection consist of rule-based systems. This works when the patterns can be clearly defined. When we have an annotated set of anomalies, we can apply supervised or semi-supervised methods such as classifiers or regression models. The most common use case, however, 
+[810] (Normal) It's instructive to see what the big technology companies, Alphabet (Google), Amazon, Facebook, Apple, and Microsoft (GAFAM), do for anomaly detection. Let's go over each in turn and see how they handle anomaly detection.
+[811] (Normal) Microsoft
+[812] (Normal) In the paper "Time-Series Anomaly Detection Service at Microsoft" (Hansheng Ren and others, 2019) a time-series service is presented that's deployed for anomaly detection for production data at Microsoft. Its core is a Spectral Residual (SR) and Convolutional Neural Network (CNN) that's applied to u
+[813] (Normal) They borrowed the SR method from the concept of the saliency map in vision. Saliency maps highlight the points in images, which stand out to human observers. The algorithm performs the Fourier Transform of the data, then it applies the SR of the log amplitude of the transformed signal, and finally p
+[814] (Normal) As an extension, they train a CNN based on artificial data using the SR method. They show benchmarks on publicly available data that support their claim that their method is the state of the art for anomaly detection.
+[815] (Normal) They further claim that their detection accuracy (F1-score) is improved by more than 20% on Microsoft production data. You can find the basic implementation in the alibi-detect library (the "Spectral Residual" method).
+[816] (Normal) Google
+[817] (Normal) In their frequently asked questions on Google Analytics (https://support.google.com/analytics/answer/7507748?hl=en), Google refer to a Bayesian state space-time-series model ("Predicting the Present with Bayesian Structural Time-Series" by Steven L. Scott and Hal Varian, 2013) for change point and a
+[818] (Normal) Google released an R package with more specific time-series functionality – CausalImpact. A paper describing the research behind the package was published in 2015 ("Inferring causal impact using Bayesian structural time-series models" by Kay H. Brodersen, Fabian Gallusser, Jim Koehler, Nicolas Remy,
+[819] (Normal) Amazon
+[820] (Normal) Amazon, providing machine learning solutions at scale through their Amazon Web Services (AWS) platform, have anomaly detection as part of their resource and application monitoring solution, CloudWatch. It's unclear how their solution works, but Corey Quinn, an economist, theorized in a tweet that th
+[821] (Normal) They also have a second service for anomaly detection: Amazon Lookout for Metrics. It's also unclear how this works under the hood. The service is geared toward monitoring business indicators, and – according to the documentation – is used internally within Amazon for large-scale monitoring. In the 
+[822] (Normal) As for Amazon research in anomaly detection, they clinched the top three spots, out of 117 submissions in a challenge at the Workshop on the Detection and Classification of Acoustic Scenes and Events (DCASE 2020). This is a challenge comparable to time-series anomaly detection. They won the best pap
+[823] (Normal) Facebook
+[824] (Normal) Facebook's Core Data Science team open-sourced their implementation for time-series forecasting and anomaly detection on GitHub. Their library is called Prophet. In their blog post announcing the library in 2017, they state that Prophet had been a key piece in Facebook's ability to create forecasts 
+[825] (Normal) The paper "Forecasting at scale" by Sean J Taylor and Benjamin Letham (2017) describes their setup at Facebook that includes an analyst in the loop and can automatically flag forecasts for manual review and adjustment. The anomaly detection builds on the uncertainty around the forecast from a Genera
+[826] (Normal) Prophet has been compared in benchmarks to other probabilistic and non-probabilistic models, and has rarely shown outstanding success. The Elo ratings at microprediction.com indicate that Prophet performs worse at univariate forecasts than exponential moving averages and many other standard methods.
+[827] (Normal) Twitter
+[828] (Normal) Twitter released an R package as well, called AnomalyDetection. Their method is based on the Generalized Extreme Studentized Deviate (ESD) test for detecting anomalies in univariate approximately normally distributed time-series. Their method was published in 2017 ("Automatic Anomaly Detection in th
+[829] (Normal) For their adaption of the ESD test, the Seasonal Hybrid ESD, they included a Seasonal-Trend decomposition using LOESS (STL) before applying a threshold on the z-score (as mentioned above) or – for datasets with a high number of anomalies – thresholding based on the median and MAD. The Twitter model 
+[830] (Normal) Implementations
+[831] (Normal) We'll end with an overview of readily available implementations for anomaly detection in Python. Lots of implementations are available. Their use cases are very similar, however, the implementations and the user bases are widely different.
+[832] (Normal) Here's a list ordered by the number of stars on GitHub (as per May 2021):
+[833] (Normal) Figure 6.5: Anomaly detection methods in Python
+[834] (Normal) Each of these methods has their own background and formal underpinning; however, it's out of scope in this chapter to describe all of them.
+[835] (Normal) This chart shows the star history (from star-history.t9t.io) of the top three repositories:
+[836] (Normal) [IMG]
+[837] (Normal) Figure 6.6: Star history of Prophet, PyOD, and alibi-detect
+[838] (Normal) Both Prophet and PyOD have been seeing a continuous rise in popularity (GitHub stars).
+[839] (Normal) Many deep learning algorithms have been applied more recently to anomaly detection, both with univariate and multivariate time-series.
+[840] (Normal) What's particularly interesting about deep learning models is that the applications can be much broader: anomaly detection in video surveillance in closed-circuit television. We'll go more into detail of deep learning architectures in Chapter 10, Deep Learning for Time-Series.
+[841] (Normal) Change point detection
+[842] (Normal) A common problem with time-series is changes in the behavior of the observed system. Generally speaking, a change point signals an abrupt and significant transition between states in the process generating the series. For example, the trend can suddenly change, and a change point can signal where th
+[843] (Normal) This list captures some applications for Change point detection (CPD):
+[844] (Normal) Speech recognition: Detection of word and sentence boundaries
+[845] (Normal) Image analysis: Surveillance on video footage of closed-circuit television
+[846] (Normal) Fitness: Segmenting human activities over time based on data from motion sensors from smart devices such as watches or phones
+[847] (Normal) Finance: Identifying changes to trend patterns that could indicate changes from bear to bull markets, or the other way around
+[848] (Normal) As an example for the importance of CPD, consider the stock market. Time-series data that describes the evolution of a market, such as stock prices, follows trends – it either rises, falls, or doesn't change significantly (stagnation).
+[849] (Normal) When a stock rises, the investor wants to buy the stock. Otherwise, when the stock is falling, the investors doesn't want to keep the stock, but rather to sell it. Not changing the position will cause a loss of book value – in the best case, this will cause a problem with liquidity.
+[850] (Normal) For investors, it is therefore key to know, when the market changes from rising to falling or the other way around. Recognizing these changes can make the difference between winning or losing.
+[851] (Normal) In forecasting, special events like Black Friday, Christmas, an election, a press release, or changes in regulation can cause short-term (perhaps then classed as an anomaly) or long-term change to the trend or to the level of the series. This will inevitably lead to strange predictions from traditio
+[852] (Normal) A particularly interesting challenge with CPD algorithms is detecting these inflection points in real time. This means detecting a change point as soon as it arrives (or, at the very least, before the next change point occurs).
+[853] (Normal) We can distinguish online and offline methods for CPD, where online refers to processing on the fly, dealing with each new data point as it becomes available. On the other hand, offline algorithms can work on the whole time-series at once. We'll deal more with online processing in Chapter 8, Online 
+[854] (Normal) CPD is related to segmentation, edge detection, event detection, and anomaly detection, and similar techniques can be applied to all these applications. CPD can be viewed as very much like anomaly detection, since one way to identify change points is by anomaly scores from an anomaly detection algor
+[855] (Normal) From this perspective, change points are identical to highly anomalous points, and anything above a certain threshold corresponds to a change. In the same way as anomaly detection, CPD can be defined as the problem of hypothesis testing between two alternatives, the null hypothesis being "no change 
+[856] (Normal) CPD algorithms are composed of three components: cost functions, search methods, and constraints. We'll go through these in turn. Cost functions are distance functions that can be applied to a subsection of the time-series (multivariate or univariate).
+[857] (Normal) An example for a cost function is least absolute deviation (LAD), which is an estimator of a shift in the central point (mean, median, and mode) of a distribution defined as follows:
+[858] (Normal) [IMG]
+[859] (Normal) [IMG]In this definition l is an index to a subsection in the time-series x, and  is the central point of x.
+[860] (Normal) The search function then iterates over the time-series to detect change points. This can be done approximately, such as in window-based detection, bottom-up methods, or binary segmentation, or it can be exhaustive as in the case of dynamic programming or Pruned Exact Linear Time (Pelt).
+[861] (Normal) [IMG]Pelt (Gachomo Dorcas Wambui and others, 2015) relies on pruning heuristics, and has a computational cost that is linear to the number of points of the time-series, . Dynamic programming methods have a much higher computational cost of , where n is the maximum number of expected change points.
+[862] (Normal) Finally, the constraint can come into play as a penalty in the search algorithm. This penalty term can encode a cost budget or knowledge of the number of change points that we would expect to find.
+[863] (Normal) It is notoriously difficult to evaluate the performance of CPD algorithms, because of the lack of benchmark datasets. Only very recently (2020) Gerrit van den Burg and Christopher Williams from the Alan Turing Institute and the University of Edinburgh published a benchmark consisting of 37 time-seri
+[864] (Normal) In the same paper ("An Evaluation of Change Point Detection Algorithm"), the authors evaluated a whole range of methods for CPD. They note that their "zero" baseline method, which assumes no change points all, outperforms many of the other methods, according to F1-measure and a cluster overlap measu
+[865] (Normal) Binary segmentation ("On Tests for Detecting Change in Mean" by Ashish Sen and Muni S. Srivastava, 1975) falls into the category of window-based CPD. Binary segmentation is a greedy algorithm that minimizes the sum of costs the most as defined like this:
+[866] (Normal) [IMG]
+[867] (Normal) [IMG]is the found change point and c() is a cost function similar to LAD, which we saw earlier in this section. The general idea is that when two subsequences are highly dissimilar, this indicates a change point.
+[868] (Normal) [IMG]Binary segmentation is sequential in the sense that the change point is detected first on the complete time-series, then again on the two sub-sequences before and after the change point. This explains its low complexity of , where T is the length of the time-series. This computational cost makes it 
+[869] (Normal) This table presents an overview of methods for CPD:
+[870] (Normal) Figure 6.7: CPD methods in Python
+[871] (Normal) We've omitted Facebook's Prophet library since it's not a dedicated CPD package.
+[872] (Normal) The chart below illustrates the popularity of CPD methods over time.
+[873] (Normal) [IMG]
+[874] (Normal) Figure 6.8: Star history of CPD methods
+[875] (Normal) LinkedIn's Greykite has been seeing a meteoric rise in GitHub stars since its release. Also ruptures has seen a huge increase in popularity.
+[876] (Normal) Clustering
+[877] (Normal) Cluster analysis or clustering is the process of finding meaningful groups (clusters) of points or objects in a dataset based on their similarity. As the result of this unsupervised data mining technique, we want points in each cluster to be similar to each other, while being different to points in 
+[878] (Normal) Clustering of time-series is challenging because each data point is a period of time (an ordered sequence). It has found application in diverse areas to discover patterns that empower time-series analysis, extracting insights from complex datasets.
+[879] (Normal) We are not going to get into details on time-series clustering, but the following table gives an overview of Python libraries for time-series clustering:
+[880] (Normal) Figure 6.9: Clustering methods for time-series in Python
+[881] (Normal) You can see the GitHub stars for the top implementation over history here:
+[882] (Normal) [IMG]
+[883] (Normal) Figure 6.10: Star history of tslearn and river
+[884] (Normal) Both libraries are going strong. We'll revisit river in Chapter 8, Online Learning for Time-Series.
+[885] (Normal) Python practice
+[886] (Normal) Let's do first an example of anomaly detection, then another for CPD. Let's first look at the needed libraries in the next section.
+[887] (Normal) Requirements
+[888] (Normal) In this chapter, we'll use several libraries, which we can quickly install from the terminal (or similarly from the anaconda navigator):
+[889] (Normal) pip install ruptures alibi_detect
+[890] (Normal) We'll execute the commands from the Python (or IPython) terminal, but equally we could execute them from a Jupyter notebook (or a different environment).
+[891] (Normal) We should be ready now to get into the woods with implementing unsupervised time-series algorithms in Python.
+[892] (Normal) Anomaly detection
+[893] (Normal) alibi-detect comes with several benchmark datasets for time-series anomaly detection:
+[894] (Normal) fetch_ecg—ECG dataset from the BIDMC Congestive Heart Failure Database
+[895] (Normal) fetch_nab—Numenta Anomaly Benchmark
+[896] (Normal) fetch_kdd—KDD Cup '99 dataset of computer network intrusions
+[897] (Normal) The last of these is loaded through scikit-learn.
+[898] (Normal) Let's load the time-series of computer network intrusions (KDD99):
+[899] (Normal) from alibi_detect.datasets import fetch_kdd
+[900] (Normal) intrusions = fetch_kdd()
+[901] (Normal) intrusions is a dictionary, where the data key returns a matrix of 494021x18. The 18 dimensions of the time-series are the continuous features of the dataset, mostly error rates and counts:
+[902] (Normal) intrusions['feature_names']
+[903] (Normal) ['srv_count',
+[904] (Normal) 'serror_rate',
+[905] (Normal) 'srv_serror_rate',
+[906] (Normal) 'rerror_rate',
+[907] (Normal) 'srv_rerror_rate',
+[908] (Normal) 'same_srv_rate',
+[909] (Normal) 'diff_srv_rate',
+[910] (Normal) 'srv_diff_host_rate',
+[911] (Normal) 'dst_host_count',
+[912] (Normal) 'dst_host_srv_count',
+[913] (Normal) 'dst_host_same_srv_rate',
+[914] (Normal) 'dst_host_diff_srv_rate',
+[915] (Normal) 'dst_host_same_src_port_rate',
+[916] (Normal) 'dst_host_srv_diff_host_rate',
+[917] (Normal) 'dst_host_serror_rate',
+[918] (Normal) 'dst_host_srv_serror_rate',
+[919] (Normal) 'dst_host_rerror_rate',
+[920] (Normal) 'dst_host_srv_rerror_rate']
+[921] (Normal) Another key, target contains the annotations of anomalies.
+[922] (Normal) Since we have the annotations ready we could train a classifier, however, we'll stick to unsupervised methods. Further, since the Spectral Method that we'll use is for univariate data and we'll only take a single dimension out of our multivariate dataset, we'll completely ignore the annotations.
+[923] (Normal) Here's a quick plot of our time-series (we'll choose – arbitrarily – the first dimension of our dataset):
+[924] (Normal) import pandas as pd
+[925] (Normal) pd.Series(intrusions['data'][:, 0]).plot()
+[926] (Normal) This is the plot:
+[927] (Normal) [IMG]
+[928] (Normal) Figure 6.11: Time-series chart
+[929] (Normal) We'll load and run the SpectralResidual model that implements the method proposed by Microsoft:
+[930] (Normal) from alibi_detect.od import SpectralResidual
+[931] (Normal) od = SpectralResidual(
+[932] (Normal) threshold=1.,
+[933] (Normal) window_amp=20,
+[934] (Normal) window_local=20,
+[935] (Normal) n_est_points=10,
+[936] (Normal) n_grad_points=5
+[937] (Normal) )
+[938] (Normal) We can then get the anomaly scores for each point in our time-series:
+[939] (Normal) scores = od.score(intrusions['data'][:, 0])
+[940] (Normal) Let's plot the scores imposed on top of our time-series!
+[941] (Normal) import matplotlib
+[942] (Normal) ax = pd.Series(intrusions['data'][:, 0], name='data').plot(legend=False, figsize=(12, 6))
+[943] (Normal) ax2 = ax.twinx()
+[944] (Normal) ax = pd.Series(scores, name='scores').plot(ax=ax2, legend=False, color="r", marker=matplotlib.markers.CARETDOWNBASE)
+[945] (Normal) ax.figure.legend(bbox_to_anchor=(1, 1), loc='upper left');
+[946] (Normal) We are using a dual y-axis for plotting the scores and the data within the same plot. Here it is:
+[947] (Normal) [IMG]
+[948] (Normal) Figure 6.12: Time-series with anomalies
+[949] (Normal) Some points are not recognized as outliers since the periodic nature of the signal is removed by the Fourier filter.
+[950] (Normal) Change point detection
+[951] (Normal) We'll first create a synthetic multivariate time-series with the ruptures library. We'll set the number of dimensions to 3 and the length of the time-series to 500, and our time-series will have 3 change points and a Gaussian noise of standard deviation 5.0 will be over imposed:
+[952] (Normal) import numpy as np
+[953] (Normal) import matplotlib.pylab as plt
+[954] (Normal) import ruptures as rpt
+[955] (Normal) signal, bkps = rpt.pw_constant(
+[956] (Normal) n_samples=500, n_features=3, n_bkps=3,
+[957] (Normal) noise_std=5.0, delta=(1, 20)
+[958] (Normal) )
+[959] (Normal) Signal is a NumPy array of 500x3. bkps is the array of the change points (123, 251, and 378).
+[960] (Normal) We can plot this time-series with a utility function that highlights the subsections separated by changepoints:
+[961] (Normal) rpt.display(signal, bkps)
+[962] (Normal) Here's the plot of our time-series with three change points:
+[963] (Normal) [IMG]
+[964] (Normal) Figure 6.13: Time-series with change points
+[965] (Normal) We can apply Binary Segmentation to this time-series. ruptures follows the scikit-learn conventions, so if you have used scikit-learn before, the usage should be very intuitive:
+[966] (Normal) algo = rpt.Binseg(model="l1").fit(signal)
+[967] (Normal) my_bkps = algo.predict(n_bkps=3)
+[968] (Normal) We have several options for the Binary Segmentation constraint – we have the choice between l1, l2, rbf, linear, normal, and ar.
+[969] (Normal) We can plot the predictions of the Binary Segmentation with another utility function:
+[970] (Normal) rpt.show.display(signal, bkps, my_bkps, figsize=(10, 6))
+[971] (Normal) Here's the plot of our change point predictions from the Binary Segmentation model:
+[972] (Normal) [IMG]
+[973] (Normal) Figure 6.14: Time-series with detected change points (Binary Segmentation)
+[974] (Normal) Let's summarize some of the information in this chapter!
+[975] (Normal) Summary
+[976] (Normal) In this chapter, we have concentrated on two aspects of unsupervised methods for time-series:
+[977] (Normal) Anomaly detection
+[978] (Normal) Change point detection
+[979] (Normal) The essence of anomaly detection (also: outlier detection) is to identify sequences that are notably different from the rest of the series. We've investigated different anomaly detection methods, and how several major companies are dealing with it at scale.
+[980] (Normal) When working with time-series, it's important to be aware of changes in the data over time that makes models useless (model staleness). This is called change point detection and drift detection.
+[981] (Normal) We've looked at change point detection in this chapter. In Chapter 8, Online Learning for Time-Series, we'll look at drift detection in more detail.
