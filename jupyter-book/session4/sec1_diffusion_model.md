@@ -1,10 +1,11 @@
 # 섹션 1 | Diffusion Model — 노이즈에서 결함 이미지를 꺼내는 법
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 **참고 교재**: *Hands-On Generative AI with Transformers and Diffusion Models* (Omar Sanseviero et al., O'Reilly)
 **소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
-:::
+```
 
 ---
 
@@ -43,10 +44,11 @@
 
 ### ① Diffusion의 직관: 노이즈 추가 → 노이즈 제거 (5분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Hands-On Generative AI* **Ch.3 Diving Into Diffusion Models** — Diffusion 모델의 Forward/Reverse Process 원리 / **Ch.4 Transformer-Based Diffusion Models** — U-Net 구조와 노이즈 예측 메커니즘
-:::
+```
 
 Diffusion 모델이 배우는 것은 딱 하나입니다: **"이 이미지에서 노이즈를 빼면 어떤 이미지가 나오는가"**
 
@@ -92,20 +94,22 @@ flowchart TD
       x₀  (새로운 결함 이미지 생성!)
 ```
 
-:::{admonition} 핵심
+```{admonition} 핵심
 :class: important
+
 **핵심 직관**: 모델은 "노이즈 → 이미지" 방향의 역과정을 학습합니다.
 한 번도 본 적 없는 새 이미지를 순수 노이즈에서 생성할 수 있습니다.
-:::
+```
 
 ---
 
 ### ② Fine-tuning 전략: 적은 데이터로 특정 스타일 학습 (5분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Hands-On Generative AI* **Ch.6 Fine-Tuning Language Models** — Fine-tuning의 원리와 LoRA / DreamBooth 전략 비교
-:::
+```
 
 Stable Diffusion 같은 대형 모델을 처음부터 학습하는 것은 불가능합니다.
 **Fine-tuning**: 이미 학습된 모델을 우리 결함 이미지에 맞게 **미세조정**합니다.
@@ -152,20 +156,22 @@ pipeline.load_lora_weights("./lora_defect_weights")
 pipeline = pipeline.to("cuda")
 ```
 
-:::{admonition} 주의
+```{admonition} 주의
 :class: warning
+
 **실습 주의사항**: Fine-tuning 학습 자체는 GPU에서 수십 분~수 시간이 필요합니다.
 이번 실습에서는 **사전 준비된 가중치**를 로드해서 생성 결과만 실험합니다.
-:::
+```
 
 ---
 
 ### ③ 생성 품질 평가: 무엇이 좋은 이미지인가 (3분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Hands-On Generative AI* **Ch.3 Diving Into Diffusion Models** — 생성 이미지 품질 평가 지표와 실무 활용
-:::
+```
 
 ```
 [생성 이미지 평가 지표 3가지]
@@ -207,10 +213,11 @@ print(f"SSIM: {score:.3f}")  # 0.7 이상이면 품질 양호
 
 ## 1-3. Claude Code 시연 (10분)
 
-:::{admonition} 팁
+```{admonition} 팁
 :class: tip
+
 **시연 포인트**: Fine-tuning 학습 과정이 아닌 **생성 결과의 품질을 평가하는 방법**에 집중하세요.
-:::
+```
 
 **Claude에게 던질 프롬프트 예시**:
 ```

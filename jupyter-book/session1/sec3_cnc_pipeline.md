@@ -1,10 +1,11 @@
 # 섹션 3 | CNC 이상탐지 파이프라인 — 공구 마모 시작점 잡기
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 **참고 교재**: *Machine Learning for Time-Series with Python* (Ben Auffarth)  
 **소요 시간**: 50분 (문제 제기+검증 5 + 이론 15 + 시연 15 + 실습 15)
-:::
+```
 
 ---
 
@@ -32,10 +33,11 @@ flowchart LR
 
 ### ① 왜 Raw Signal을 그대로 쓰면 안 되는가: 특징 추출 (5분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *ML for Time-Series with Python* **Ch.3 Preprocessing Time-Series Data** — 시계열 데이터 전처리와 특징 공학 / **Ch.6 Unsupervised Methods for Anomaly Detection** — 비지도 이상탐지를 위한 특징 설계
-:::
+```
 
 진동 신호를 그대로 ML 모델에 넣으면 두 가지 문제가 생깁니다:
 1. **차원의 저주**: 1초에 10,000개 샘플 × 10시간 = 3억 6천만 개의 입력값
@@ -76,10 +78,11 @@ def extract_features(signal_window):
 
 ### ② 이상탐지 방식 선택: 레이블 유무에 따른 전략 (5분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *ML for Time-Series with Python* **Ch.6 Unsupervised Methods for Anomaly Detection** — Isolation Forest, LOF 등 비지도 탐지 / **Ch.7 Machine Learning for Time-Series Classification** — 레이블 있는 경우의 지도학습 분류
-:::
+```
 
 ```{mermaid}
 flowchart TD
@@ -115,10 +118,11 @@ predictions = model.predict(X_test)  # 1: 정상, -1: 이상
 
 ### ③ 전체 파이프라인 설계 (5분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *ML for Time-Series with Python* **Ch.3 Preprocessing** — 슬라이딩 윈도우와 특징 추출 파이프라인 구성 / **Ch.6 Anomaly Detection** — 엔드투엔드 이상탐지 시스템 구조
-:::
+```
 
 ```{mermaid}
 flowchart TB

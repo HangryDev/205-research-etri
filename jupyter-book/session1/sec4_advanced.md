@@ -1,23 +1,25 @@
 # 심화 학습 자료
 
-:::{admonition} 심화 학습 자료
+```{admonition} 심화 학습 자료
 :class: note
+
 강의에서 시간 관계상 다루지 못한 심화 내용입니다. 강의 후 궁금증이 생겼을 때 아래 순서로 탐색하시길 권장합니다.
-:::
+```
 
 ---
 
 ## 📘 섹션 1 심화: 신호 처리
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 **교재**: *Think DSP: Digital Signal Processing in Python* (Allen B. Downey, O'Reilly)  
 **심화 챕터 로드맵**:  
 - **Ch.7 Discrete Cosine Transform** — DCT 기반 압축과 신호 표현  
 - **Ch.8 Filtering and Convolution** — 저역/고역/대역 필터 구현 원리  
 - **Ch.9 Differentiation and Integration** — 차분 방정식과 필터 설계  
 - **Ch.10 LTI Systems** — 선형 시불변 시스템과 임펄스 응답
-:::
+```
 
 ### Wavelet 종류별 특성
 
@@ -86,8 +88,9 @@ plt.colorbar()
 
 ## 📘 섹션 2 심화: 불균형 데이터
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 **교재**: *Machine Learning for Imbalanced Data* (Kumar Abhishek & Mounir Abdelaziz, Packt)  
 **심화 챕터 로드맵**:  
 - **Ch.2 Oversampling Methods** — SMOTE 변형 알고리즘 전체 비교 (ADASYN, Borderline-SMOTE 등)  
@@ -95,7 +98,7 @@ plt.colorbar()
 - **Ch.4 Ensemble Methods** — BalancedRandomForest, EasyEnsemble, BalancedBagging  
 - **Ch.5 Cost-Sensitive Learning** — 클래스 가중치와 비용 행렬 설계  
 - **Ch.10 Threshold Adjustment and Model Calibration** — Platt Scaling, Isotonic Regression
-:::
+```
 
 ### SMOTE 변형 알고리즘 비교
 
@@ -168,15 +171,16 @@ plt.plot([0, 1], [0, 1], "k:", label="완벽한 보정")
 
 ## 📘 섹션 3 심화: 이상탐지
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 **교재**: *Machine Learning for Time-Series with Python* (Ben Auffarth, Packt)  
 **심화 챕터 로드맵**:  
 - **Ch.3 Preprocessing Time-Series Data** — 슬라이딩 윈도우, 특징 공학, 정상화  
 - **Ch.6 Unsupervised Methods for Anomaly Detection** — Isolation Forest, LOF, One-Class SVM 비교  
 - **Ch.7 Machine Learning for Time-Series Classification** — 지도학습 분류기와 불균형 데이터 연결  
 - **Ch.11 Probabilistic Models** — 베이지안 구조변화 탐지 (온라인 이상탐지 심화)
-:::
+```
 
 ### 이상탐지 알고리즘 비교
 

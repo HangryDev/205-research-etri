@@ -1,10 +1,11 @@
 # 섹션 2 | 데이터 불균형 — 99% 정확도의 함정
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 **참고 교재**: *Machine Learning for Imbalanced Data* (Kumar Abhishek & Mounir Abdelaziz)  
 **소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
-:::
+```
 
 ---
 
@@ -28,11 +29,12 @@
 - 불량 100개를 **전부 놓쳤습니다** (불량을 잡으러 만든 모델이 불량을 하나도 못 잡음)
 - 이것이 **정확도의 역설(Accuracy Paradox)** 입니다
 
-:::{admonition} 핵심
+```{admonition} 핵심
 :class: important
+
 **제조업에서의 현실**: 불량 탐지 실패는 리콜, 안전사고, 고객 클레임으로 이어집니다.  
 정확도가 아닌 **불량을 얼마나 잡는가(Recall)** 가 핵심 지표입니다.
-:::
+```
 
 ---
 
@@ -40,10 +42,11 @@
 
 ### ① 정확도의 역설 → 올바른 평가 지표 (5분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *ML for Imbalanced Data* **Ch.1 Overcoming the Challenge of Imbalanced Data** — 정확도의 역설과 올바른 평가 지표 선택 / **Ch.3 Metrics** — Precision, Recall, F1, ROC-AUC 상세 설명
-:::
+```
 
 **Confusion Matrix** 로 실제 상황을 분석합니다.
 
@@ -67,22 +70,24 @@ F1-Score = 2 × (Precision × Recall) / (Precision + Recall)
   → 더미 모델: 0  ← 명확하게 실패를 드러냄
 ```
 
-:::{admonition} 핵심
+```{admonition} 핵심
 :class: important
+
 **제조업 판단 기준**:
 - 불량 탐지: **Recall을 최우선** (놓치는 불량이 없어야 함)
 - 정밀 검사 자원이 제한적: Precision도 함께 고려
 - 보통 F1-Score를 종합 지표로 사용
-:::
+```
 
 ---
 
 ### ② SMOTE: 소수 클래스 합성 원리 (4분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *ML for Imbalanced Data* **Ch.2 Oversampling Methods** — SMOTE 원리와 k-NN 기반 합성 샘플 생성 / **Ch.3 Metrics** — 오버샘플링 후 평가 지표 해석
-:::
+```
 
 **SMOTE(Synthetic Minority Over-sampling Technique)** 는 불량 샘플을 **인공적으로 새로 만들어** 균형을 맞춥니다.
 
@@ -119,10 +124,11 @@ print(f"SMOTE 후: {dict(zip(*np.unique(y_resampled, return_counts=True)))}")
 
 ### ③ class_weight: 손실함수 레벨에서 조정 (2분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *ML for Imbalanced Data* **Ch.5 Cost-Sensitive Learning** — 클래스 가중치를 이용한 비용 민감 학습 원리
-:::
+```
 
 SMOTE가 **데이터를 늘리는** 접근이라면, `class_weight`는 **학습 과정에서 불량 샘플의 영향력을 키우는** 접근입니다.
 
@@ -139,20 +145,22 @@ model = RandomForestClassifier(
 )
 ```
 
-:::{admonition} 팁
+```{admonition} 팁
 :class: tip
+
 **직관**: 불량 샘플을 하나 틀리면 정상 샘플 99개를 틀린 것과 같은 페널티를 줌  
 → 모델이 불량 샘플을 더 신중하게 학습
-:::
+```
 
 ---
 
 ### ④ 임계값 조정: 0.5가 항상 최선이 아니다 (2분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *ML for Imbalanced Data* **Ch.10 Threshold Adjustment and Model Calibration** — 최적 임계값 탐색과 Precision-Recall 트레이드오프
-:::
+```
 
 대부분의 분류 모델은 **확률값**을 출력하고, 0.5를 기준으로 클래스를 결정합니다.
 

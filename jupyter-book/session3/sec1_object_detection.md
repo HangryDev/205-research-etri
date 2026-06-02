@@ -1,10 +1,11 @@
 # 섹션 1 | Object Detection — YOLO가 어떻게 그렇게 빠른가
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 **참고 교재**: *Practical Deep Learning for Cloud, Mobile, and Edge* (Anirudh Koul et al., O'Reilly)
 **소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
-:::
+```
 
 ---
 
@@ -50,10 +51,11 @@ flowchart LR
 
 ### ① Object Detection의 발전: 왜 YOLO인가 (4분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Practical Deep Learning for Cloud, Mobile, and Edge* **Ch.3 Preparing Your Data** — 딥러닝 모델 구조의 이해와 CNN 기반 탐지 모델의 발전 흐름
-:::
+```
 
 딥러닝 기반 Object Detection은 크게 두 계열로 나뉩니다.
 
@@ -94,20 +96,22 @@ flowchart LR
 속도: 빠름 (30~100+ FPS) → 실시간 가능
 ```
 
-:::{admonition} 핵심
+```{admonition} 핵심
 :class: important
+
 **YOLO(You Only Look Once)**: 이름 그대로 이미지를 한 번만 보고 모든 객체를 동시에 예측합니다.
 실시간 산업 안전 모니터링에는 YOLO 계열이 사실상 표준입니다.
-:::
+```
 
 ---
 
 ### ② YOLOv8 구조 직관 (5분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Practical Deep Learning for Cloud, Mobile, and Edge* **Ch.3 Preparing Your Data** — CNN 특징 추출 구조 / **Ch.6 Maximizing Speed of an Existing Mobile Model** — Backbone 경량화와 추론 최적화
-:::
+```
 
 YOLOv8은 세 부분으로 구성됩니다.
 
@@ -132,10 +136,11 @@ YOLOv8x (xlarge) → 68.2M 파라미터, 최저 속도, 최고 정확도 ← 서
 
 ### ③ 경량화의 핵심: Depthwise Separable Convolution (4분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Practical Deep Learning for Cloud, Mobile, and Edge* **Ch.6 Maximizing Speed of an Existing Mobile Model** — MobileNet의 Depthwise Separable Convolution 원리와 연산량 절감 분석
-:::
+```
 
 **왜 일반 Convolution은 엣지 디바이스에서 느린가?**
 
@@ -195,22 +200,24 @@ pointwise = nn.Conv2d(
 )
 ```
 
-:::{admonition} 팁
+```{admonition} 팁
 :class: tip
+
 **실무 판단 기준**:
 엣지 디바이스 목표 → YOLOv8n 또는 MobileNet 기반 모델 선택
 서버 배포 목표 → YOLOv8m 이상으로 정확도 우선
 엣지 + 정확도 모두 중요 → Quantization 적용 (심화 파트 참조)
-:::
+```
 
 ---
 
 ## 1-3. Claude Code 시연 (10분)
 
-:::{admonition} 팁
+```{admonition} 팁
 :class: tip
+
 **시연 포인트**: 모델 크기에 따른 속도-정확도 트레이드오프를 **숫자로 확인**하는 과정에 집중하세요.
-:::
+```
 
 **Claude에게 던질 프롬프트 예시**:
 ```

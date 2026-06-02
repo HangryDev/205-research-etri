@@ -1,10 +1,11 @@
 # 섹션 3 | 합성 데이터 고도화 — 만든 데이터가 실제로 도움이 되는가
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 **참고 교재**: *Practical Synthetic Data Generation* (Khaled El Emam et al., O'Reilly)
 **소요 시간**: 50분 (핵심 개념+실험 설계 10 + Claude Code 시연 15 + 자유 실습 25)
-:::
+```
 
 ---
 
@@ -12,10 +13,11 @@
 
 ### 합성 데이터의 기회와 위험
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Practical Synthetic Data Generation* **Ch.1 An Introduction to Synthetic Data** — 합성 데이터의 활용 사례, 기회, 그리고 실패 사례
-:::
+```
 
 합성 데이터가 항상 도움이 되는 건 아닙니다.
 
@@ -43,10 +45,11 @@
 
 ### 실험 설계: 무엇을 비교할 것인가
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Practical Synthetic Data Generation* **Ch.6 Measuring the Quality of Synthetic Data** — 합성 데이터 품질 측정과 실제 데이터 유사도 평가
-:::
+```
 
 ```
 [실험 구성]
@@ -72,10 +75,11 @@
 
 ## 3-2. Claude Code 시연 (15분)
 
-:::{admonition} 팁
+```{admonition} 팁
 :class: tip
+
 **시연 포인트**: 코드 작성보다 **결과 수치를 보고 "왜 이런 결과가 나왔는가"를 Claude에게 질문하는 과정**에 집중하세요.
-:::
+```
 
 **Claude에게 던질 프롬프트 예시**:
 ```

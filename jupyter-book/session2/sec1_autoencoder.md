@@ -1,10 +1,11 @@
 # 섹션 1 | Autoencoder — 정상을 학습해서 이상을 찾는다
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 **참고 교재**: *Hands-On Unsupervised Learning Using Python* (Ankur A. Patel, O'Reilly)  
 **소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
-:::
+```
 
 ---
 
@@ -34,10 +35,11 @@
 
 ### ① 비지도 학습의 프레임워크 (3분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Hands-On Unsupervised Learning* **Ch.1 Unsupervised Learning Using Python** — 비지도 학습의 정의, 라벨 없는 학습의 목표와 활용 분야
-:::
+```
 
 라벨 없이 데이터 자체의 구조를 학습합니다.
 
@@ -67,10 +69,11 @@ flowchart LR
 
 ### ② Autoencoder 구조와 재구성 오차 (5분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Hands-On Unsupervised Learning* **Ch.3 Autoencoders** — Autoencoder 구조, 잠재 표현 학습, 재구성 오차를 이용한 이상탐지 원리
-:::
+```
 
 Autoencoder는 **압축(Encoder) → 복원(Decoder)** 을 학습하는 신경망입니다.
 
@@ -141,10 +144,11 @@ def reconstruction_error(model, x):
 
 ### ③ 임계값 설정: 어디서부터 이상인가 (5분)
 
-:::{admonition} 참고 교재
+```{admonition} 참고 교재
 :class: note
+
 📖 *Hands-On Unsupervised Learning* **Ch.7 Anomaly Detection with Autoencoders** — 재구성 오차 분포 분석과 임계값 설정 전략
-:::
+```
 
 모델을 학습했다고 끝이 아닙니다. **임계값을 어떻게 정하느냐**가 실무의 핵심입니다.
 
@@ -183,8 +187,9 @@ T보다 높은 오차 → 이상
 
 **트레이드오프 정리**:
 
-:::{admonition} 주의
+```{admonition} 주의
 :class: warning
+
 **임계값 T ↓ (낮게 설정)**
   → 민감도 ↑: 이상을 더 많이 잡음
   → 오탐 ↑: 정상을 이상으로 잘못 판단 (현장 피로도 증가)
@@ -196,16 +201,17 @@ T보다 높은 오차 → 이상
 **제조업 판단 기준**:
   안전과 직결된 설비 → T를 낮게 (놓치는 것이 더 위험)
   단순 품질 검사 → T를 높게 (오탐이 더 비쌈)
-:::
+```
 
 ---
 
 ## 1-3. Claude Code 시연 (10분)
 
-:::{admonition} 팁
+```{admonition} 팁
 :class: tip
+
 **시연 포인트**: Autoencoder 구조 설계보다 **재구성 오차가 실제로 이상 신호를 잡는지** 확인하는 과정에 집중하세요.
-:::
+```
 
 **Claude에게 던질 프롬프트 예시**:
 ```

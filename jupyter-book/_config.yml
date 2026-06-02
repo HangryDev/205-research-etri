@@ -9,6 +9,7 @@ parse:
     - dollarmath
     - linkify
     - mermaid
+    - colon_fence
 repository:
   url: https://github.com/hangrydev/205-research-etri
   branch: main
