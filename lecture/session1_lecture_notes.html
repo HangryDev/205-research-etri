@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session 1 | 제조 데이터 심층 분석 및 전처리</title>
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #F8F6F1;
+      --color-text: #1A1A1A;
+      --color-accent: #0D7E6E;
+      --color-accent-light: #e6f4f1;
+      --color-muted: #5A5A5A;
+      --color-border: #D8D5CE;
+      --color-code-bg: #F0EDE8;
+      --color-header-bg: #0D7E6E;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { font-size: 16px; }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.75;
+      word-break: keep-all;
+      font-feature-settings: "kern" 1;
+      margin: 0; padding: 0;
+    }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 0 2rem; }
+
+    /* ─── COVER ─── */
+    .cover {
+      background: var(--color-accent); color: white;
+      padding: 5rem 2rem 4rem; margin-bottom: 0;
+    }
+    .cover-inner { max-width: 780px; margin: 0 auto; }
+    .cover-meta {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em;
+      text-transform: uppercase; opacity: 0.75; margin-bottom: 1.5rem;
+    }
+    .cover-title { font-size: 2.4rem; font-weight: 700; line-height: 1.25; margin: 0 0 0.75rem; }
+    .cover-subtitle { font-size: 1.1rem; opacity: 0.85; margin: 0 0 2rem; font-weight: 400; }
+    .cover-divider { border: none; border-top: 1px solid rgba(255,255,255,0.3); margin-bottom: 1.5rem; }
+    .cover-info { display: flex; gap: 2rem; font-size: 0.85rem; opacity: 0.8; flex-wrap: wrap; }
+    .cover-info span::before { content: "· "; opacity: 0.5; }
+    .cover-info span:first-child::before { content: ""; }
+
+    /* ─── TOC ─── */
+    .toc {
+      background: white; border: 1px solid var(--color-border);
+      border-radius: 8px; padding: 1.75rem 2rem; margin: 2.5rem auto; max-width: 780px;
+    }
+    .toc h2 {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--color-accent); margin: 0 0 1rem;
+    }
+    .toc ol {
+      margin: 0; padding-left: 1.25rem; list-style: none; counter-reset: toc-counter;
+    }
+    .toc li { counter-increment: toc-counter; margin: 0.4rem 0; font-size: 0.9rem; }
+    .toc li::before {
+      content: counter(toc-counter, decimal-leading-zero) ". ";
+      color: var(--color-accent); font-weight: 600;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+    }
+    .toc a { color: var(--color-text); text-decoration: none; }
+    .toc a:hover { color: var(--color-accent); }
+
+    /* ─── MODULE ─── */
+    .module { margin-top: 3rem; padding-bottom: 2rem; }
+    .module + .module { border-top: 1px solid var(--color-border); padding-top: 1rem; }
+    .module-header {
+      display: flex; align-items: baseline; gap: 1rem;
+      border-bottom: 2px solid var(--color-accent); padding-bottom: 0.75rem;
+      margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .module-number {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--color-accent);
+      font-family: 'JetBrains Mono', monospace; white-space: nowrap;
+    }
+    .module-title { font-size: 1.5rem; font-weight: 700; flex: 1; margin: 0; line-height: 1.3; }
+    .module-duration {
+      font-size: 0.78rem; background: var(--color-accent); color: white;
+      padding: 0.2em 0.7em; border-radius: 3px; font-weight: 500; white-space: nowrap;
+    }
+    .module-desc { color: var(--color-muted); font-size: 0.95rem; margin: -1rem 0 1.75rem; line-height: 1.6; }
+
+    /* ─── SECTION BLOCK ─── */
+    .section-block { margin-top: 2.5rem; }
+    .section-block h3 {
+      font-size: 1.15rem; font-weight: 600; color: var(--color-text);
+      margin: 0 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--color-border);
+    }
+
+    /* ─── STEP BLOCK ─── */
+    .step-block { margin: 1.25rem 0; page-break-inside: avoid; break-inside: avoid; }
+    .step-block h4 { font-size: 1rem; font-weight: 600; margin: 0 0 0.5rem; color: var(--color-text); }
+    .step-badge {
+      display: inline-block; font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent);
+      background: var(--color-accent-light); border: 1px solid rgba(13,126,110,0.2);
+      border-radius: 3px; padding: 0.1em 0.5em; margin-right: 0.5rem; vertical-align: middle;
+    }
+
+    /* ─── TIME TABLE ─── */
+    .time-table {
+      width: 100%; border-collapse: collapse; margin: 1.25rem 0;
+      font-size: 0.88rem; page-break-inside: avoid; break-inside: avoid;
+    }
+    .time-table th {
+      background: var(--color-accent); color: white;
+      padding: 0.5rem 0.75rem; text-align: left; font-weight: 500;
+    }
+    .time-table td {
+      padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--color-border); vertical-align: top;
+    }
+    .time-table tr:nth-child(even) td { background: rgba(13,126,110,0.03); }
+    .time-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+      color: var(--color-accent); white-space: nowrap;
+    }
+
+    /* ─── CALLOUT ─── */
+    .callout {
+      display: flex; gap: 0.75rem; padding: 0.875rem 1rem;
+      border-left: 3px solid; background: var(--color-code-bg);
+      margin: 1.25rem 0; font-size: 0.9rem;
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    .callout-instructor { border-color: #E8A020; }
+    .callout-prompt     { border-color: var(--color-accent); }
+    .callout-tip        { border-color: #3D7EC4; }
+    .callout-warning    { border-color: #C0392B; }
+    .callout-icon { font-size: 1rem; flex-shrink: 0; padding-top: 0.05rem; }
+
+    /* ─── CODE ─── */
+    pre {
+      background: var(--color-code-bg); border: 1px solid var(--color-border);
+      border-radius: 6px; padding: 1rem 1.25rem; overflow-x: auto;
+      font-size: 0.8rem; line-height: 1.65;
+      page-break-inside: avoid; break-inside: avoid; margin: 1rem 0;
+    }
+    code { font-family: 'JetBrains Mono', monospace; }
+    p code, li code, td code {
+      background: var(--color-code-bg); border: 1px solid var(--color-border);
+      border-radius: 3px; padding: 0.1em 0.35em; font-size: 0.83em;
+    }
+
+    /* ─── FIGURE ─── */
+    .figure-block {
+      margin: 1.5rem 0; text-align: center;
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    .figure-block img {
+      max-width: 90%; height: auto; border-radius: 6px;
+      border: 1px solid var(--color-border);
+    }
+    .figure-block figcaption {
+      font-size: 0.82rem; color: var(--color-muted);
+      margin-top: 0.5rem; font-style: italic;
+    }
+
+    /* ─── IMAGE GALLERY ─── */
+    .image-gallery {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem; margin: 1.5rem 0;
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    .image-gallery .figure-block { margin: 0; }
+    .image-gallery .figure-block img { max-width: 100%; }
+
+    /* ─── GENERAL TYPOGRAPHY ─── */
+    h1 { font-size: 1.8rem; font-weight: 700; margin: 2rem 0 1rem; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 0.75rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+    p  { margin: 0.6rem 0 0.9rem; }
+    ul, ol { margin: 0.5rem 0 0.9rem; padding-left: 1.5rem; }
+    li { margin-bottom: 0.3rem; }
+    strong { font-weight: 700; }
+    blockquote {
+      border-left: 3px solid var(--color-accent); margin: 1rem 0;
+      padding: 0.5rem 1rem; background: var(--color-accent-light); font-size: 0.92rem;
+    }
+    a { color: var(--color-accent); }
+    hr { border: none; border-top: 1px solid var(--color-border); margin: 2rem 0; }
+
+    /* ─── GENERAL TABLE ─── */
+    table {
+      width: 100%; border-collapse: collapse; margin: 1rem 0;
+      font-size: 0.88rem; page-break-inside: avoid; break-inside: avoid;
+    }
+    th {
+      background: var(--color-accent); color: white;
+      padding: 0.45rem 0.75rem; text-align: left; font-weight: 500;
+    }
+    td {
+      padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--color-border); vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(13,126,110,0.03); }
+
+    /* ─── PRINT ─── */
+    @page {
+      size: A4;
+      margin: 2cm 2.5cm 2.5cm 2.5cm;
+      @bottom-right {
+        content: counter(page);
+        font-size: 9pt; color: #888;
+      }
+    }
+
+    h1, h2, h3, h4 { page-break-after: avoid; break-after: avoid; }
+    pre, code, blockquote, table, figure, .no-break,
+    .callout, .step-block, .time-table, .figure-block, .image-gallery {
+      page-break-inside: avoid; break-inside: avoid;
+    }
+
+    .module { page-break-before: always; break-before: page; }
+    .module:first-of-type { page-break-before: auto; break-before: auto; }
+
+    @media print {
+      body { background: white !important; font-size: 10pt; line-height: 1.75; word-break: keep-all; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      a { text-decoration: none; color: inherit; }
+      a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 7.5pt; color: #666; }
+      .toc { display: none; }
+      .cover { padding: 3rem 2rem 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ COVER ═══ -->
+<header class="cover">
+  <div class="cover-inner">
+    <div class="cover-meta">강의 자료 · AI 제조 실무 시리즈 · 2026</div>
+    <h1 class="cover-title">Session 1<br>제조 데이터 심층 분석 및 전처리</h1>
+    <p class="cover-subtitle">노이즈 제거, 데이터 불균형 처리, CNC 이상탐지 파이프라인 구축</p>
+    <div class="cover-divider"></div>
+    <div class="cover-info">
+      <span>소요 시간: 140분 (섹션 1: 45분 + 섹션 2: 45분 + 섹션 3: 50분)</span>
+      <span>대상: 데이터 분석 입문자 ~ 초급자</span>
+      <span>실습 중심</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ TOC ═══ -->
+<nav class="toc">
+  <h2>목차</h2>
+  <ol>
+    <li><a href="#section1">섹션 1 — 노이즈 제거: 신호에서 의미를 꺼내는 법 (45분)</a></li>
+    <li><a href="#section2">섹션 2 — 데이터 불균형: 99% 정확도의 함정 (45분)</a></li>
+    <li><a href="#section3">섹션 3 — CNC 이상탐지 파이프라인: 공구 마모 시작점 잡기 (50분)</a></li>
+    <li><a href="#advanced">심화 학습 자료</a></li>
+  </ol>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════════ SECTION 1 ═══════════════════════ -->
+<section class="module" id="section1">
+  <div class="module-header">
+    <span class="module-number">SECTION 01</span>
+    <h2 class="module-title">노이즈 제거 — 신호에서 의미를 꺼내는 법</h2>
+    <span class="module-duration">45분</span>
+  </div>
+  <p class="module-desc">
+    <strong>참고 교재</strong>: <em>Think DSP: Digital Signal Processing in Python</em> (Allen B. Downey)<br>
+    소요 시간: 문제 제기 3분 + 이론 12분 + 시연 10분 + 실습 20분
+  </p>
+
+  <!-- 1-1. 문제 제기 -->
+  <div class="section-block">
+    <h3>1-1. 문제 제기 (3분)</h3>
+    <p>CNC 밀링머신의 진동 센서가 수집하는 데이터에는 여러 신호가 <strong>뒤섞여</strong> 있습니다.</p>
+
+<pre><code>[실제 CNC 진동 데이터에 섞인 성분들]
+
+절삭 신호     ──── 우리가 원하는 것 (공구-소재 접촉 정보)
+스핀들 노이즈 ──── 회전체의 기계적 진동 (고주파, 일정한 패턴)
+채터링       ──── 공구 떨림 (불규칙 고주파, 가공 불량의 전조)
+전기 간섭    ──── 모터/인버터에서 오는 전자기 노이즈 (특정 주파수에 집중)</code></pre>
+
+    <p>Raw plot을 보면 이 성분들을 <strong>육안으로 구분하기 불가능</strong>합니다.<br>
+    → <strong>핵심 질문</strong>: 우리가 원하는 신호만 꺼낼 수 있을까?</p>
+  </div>
+
+  <!-- 1-2. 이론 -->
+  <div class="section-block">
+    <h3>1-2. 이론 (12분)</h3>
+
+    <!-- ① FFT -->
+    <div class="step-block">
+      <h4>① FFT로 먼저 보면 어떨까? (3분)</h4>
+      <blockquote>
+        📖 <em>Think DSP</em> <strong>Ch.7 Discrete Fourier Transform</strong> — FFT의 정의와 스펙트럼 분석 / <strong>Ch.3 Non-Periodic Signals</strong> — Spectrogram과 Gabor Limit
+      </blockquote>
+
+      <p><strong>FFT(Fast Fourier Transform)</strong>는 신호를 주파수 성분으로 분해합니다.</p>
+
+<pre><code>시간 영역 신호 x(t)  →  FFT  →  주파수 스펙트럼 X(f)
+
+       진폭                         진폭
+        │  /\/\                       │ │  │    │
+        │ /    \  /\/                 │ │  │    │  │
+        └──────────── 시간            └─┴──┴────┴──┴── 주파수</code></pre>
+
+      <ul>
+        <li><strong>장점</strong>: "어떤 주파수 성분이 얼마나 있는가"를 한눈에 파악</li>
+        <li><strong>단점</strong>: <strong>"그 주파수가 언제 발생했는가"를 알 수 없다</strong></li>
+      </ul>
+
+      <div class="callout callout-tip"><span class="callout-icon">💡</span><div>
+        <strong>핵심 한계</strong>: FFT는 신호 전체를 하나의 스펙트럼으로 압축하기 때문에, 시간에 따라 변하는(비정상 신호, non-stationary) 데이터에는 적합하지 않습니다.
+      </div></div>
+    </div>
+
+    <!-- 세부내용: 스펙트럼 분해의 원리 -->
+    <div class="step-block">
+      <h4>세부내용: 스펙트럼 분해의 원리 (Think DSP Ch.1 발췌)</h4>
+      <p>신호 처리에서 가장 중요한 아이디어는 <strong>스펙트럼 분해(Spectral Decomposition)</strong>입니다 — "임의의 신호는 서로 다른 주파수를 갖는 사인파들의 합으로 표현될 수 있다"는 것입니다.</p>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_1_img64.png" alt="Figure 1-1. 종(Bell) 녹음 신호의 일부 — 주기적 정현파" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 1-1. 종(Bell) 녹음 신호의 일부 — 주기적 정현파</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_1_img32.png" alt="Figure 1-2. 바이올린 녹음 신호 — 복합 파형" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 1-2. 바이올린 녹음 신호 — 복합 파형</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_1_img74.png" alt="Figure 1-3. 바이올린 신호의 스펙트럼 — 기본 주파수와 고조파" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 1-3. 바이올린 신호의 스펙트럼 — 기본 주파수와 고조파</figcaption>
+</figure>
+      </div>
+
+<pre><code>[주파수 성분의 구조]
+
+기본 주파수(fundamental frequency): 가장 낮은 주파수 성분
+고조파(harmonics): 기본 주파수의 정수배 주파수 성분들
+  → 2차 고조파: 2 × f₀
+  → 3차 고조파: 3 × f₀
+  → ...
+
+예시) A4 음(440Hz)의 바이올린 신호:
+  기본: 440Hz (가장 큰 진폭)
+  1차 고조파: 880Hz (A5, 1옥타브 위)
+  2차 고조파: 1320Hz (E6, 완전 5도 위)</code></pre>
+
+      <p><strong>FFT가 생성하는 스펙트럼은 x축이 주파수, y축이 각 주파수 성분의 진폭(amplitude)</strong> 또는 파워(power)입니다. CNC 진동 데이터에서도 동일한 원리가 적용됩니다:</p>
+      <ul>
+        <li>절삭 신호 → 특정 주파수(공구 회전수 관련)에 집중된 피크</li>
+        <li>스핀들 노이즈 → 고주파 대역에 규칙적 분포</li>
+        <li>채터링 → 불규칙한 고주파 성분</li>
+      </ul>
+    </div>
+
+    <!-- 세부내용: Spectrogram과 Gabor Limit -->
+    <div class="step-block">
+      <h4>세부내용: Spectrogram과 Gabor Limit (Think DSP Ch.3 발췌)</h4>
+      <p>FFT의 "시간 정보 상실" 문제를 해결하기 위해 <strong>Spectrogram(스펙트로그램)</strong>을 사용합니다. 신호를 짧은 구간으로 나누어 각 구간의 스펙트럼을 계산한 뒤, 시간-주파수 2차원 플롯으로 시각화합니다.</p>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_1_img49.png" alt="Figure 3-3. 1초 1옥타브 처프(Chirp)의 스펙트로그램" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 3-3. 1초 1옥타브 처프(Chirp)의 스펙트로그램</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_1_img41.png" alt="Figure 3-5. 정현파 세그먼트, Hamming 윈도우, 곱셈 결과" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 3-5. 정현파 세그먼트, Hamming 윈도우, 곱셈 결과</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_1_img66.png" alt="Figure 3-6. 겹치는 Hamming 윈도우" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 3-6. 겹치는 Hamming 윈도우</figcaption>
+</figure>
+      </div>
+
+      <p>하지만 <strong>Gabor Limit(가보르 한계)</strong>라는 근본적 제약이 있습니다:</p>
+
+<pre><code>시간 해상도 ↑ = 주파수 해상도 ↓
+시간 해상도 ↓ = 주파수 해상도 ↑
+
+→ 구간을 짧게 자르면 시간은 정확해지지만 주파수가 뭉개짐
+→ 구간을 길게 자르면 주파수는 정확해지지만 시간이 뭉개짐
+→ 둘 다 완벽할 수는 없음 (불확정성 원리의 일종)</code></pre>
+
+      <p>이것이 바로 <strong>Wavelet Transform이 필요한 이유</strong>입니다 — Wavelet은 주파수에 따라 윈도우 크기를 자동으로 조절하여 Gabor Limit을 우회합니다.</p>
+    </div>
+
+    <!-- ② Wavelet Transform -->
+    <div class="step-block">
+      <h4>② Wavelet Transform의 직관 (3분)</h4>
+      <blockquote>
+        📖 <em>Think DSP</em> <strong>Ch.3 Non-Periodic Signals</strong> — 시간-주파수 동시 분석의 필요성 / <strong>Ch.8 Filtering and Convolution</strong> — 주파수 선택과 합성곱 기반 필터
+      </blockquote>
+
+      <p>Wavelet Transform은 <strong>"돋보기를 스케일 바꿔가며 신호를 훑는 것"</strong>입니다.</p>
+
+<pre><code>큰 스케일 (저주파 돋보기)  → 신호의 전체적인 추세(절삭 패턴)를 봄
+중간 스케일               → 중간 주파수 성분 (스핀들 진동)을 봄
+작은 스케일 (고주파 돋보기) → 빠른 변화(채터링, 전기 노이즈)를 봄</code></pre>
+
+      <p>FFT와의 결정적 차이: <strong>주파수 정보 + 시간 위치 정보를 동시에</strong> 갖습니다.</p>
+    </div>
+
+    <!-- 세부내용: 노이즈의 종류 -->
+    <div class="step-block">
+      <h4>세부내용: 노이즈의 종류와 특성 (Think DSP Ch.4 발췌)</h4>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_1_img28.png" alt="Figure 4-1. 비상관 균일 잡음의 파형" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 4-1. 비상관 균일 잡음의 파형</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_1_img04.png" alt="Figure 4-2. 비상관 균일 잡음의 파워 스펙트럼" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 4-2. 비상관 균일 잡음의 파워 스펙트럼</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_1_img33.png" alt="Figure 4-7. 백색·분홍·적색 잡음 스펙트럼 비교 (log-log 스케일)" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 4-7. 백색·분홍·적색 잡음 스펙트럼 비교 (log-log 스케일)</figcaption>
+</figure>
+      </div>
+
+<pre><code>[노이즈 분류 — 파워와 주파수의 관계]
+
+백색 잡음 (White Noise):
+  → 모든 주파수에서 동일한 파워 (P = 일정)
+  → 스펙트럼이 평평함
+  → 예: 전기 간섭의 일부, 센서 열잡음
+
+갈색 잡음 (Brownian/Red Noise):
+  → 파워가 주파수에 반비례 (P ∝ 1/f²)
+  → 저주파에 파워 집중
+  → 예: 기계적 드리프트, 온도 변화로 인한 센서 출력 이동
+
+분홍 잡음 (Pink Noise, 1/f Noise):
+  → 파워가 주파수에 반비례 (P ∝ 1/f)
+  → 백색과 갈색의 중간</code></pre>
+
+      <div class="callout callout-tip"><span class="callout-icon">💡</span><div>
+        <strong>제조 데이터에서의 의미</strong>: CNC 진동 신호에 섞인 노이즈는 대부분 <strong>백색 잡음 + 가우시안 잡음</strong>의 혼합입니다. Wavelet 분해 후 가장 고주파 계수(cD1)를 분석하면 노이즈의 표준편차 σ를 추정할 수 있고, 이것이 Universal Threshold 계산에 직접 사용됩니다.
+      </div></div>
+    </div>
+
+    <!-- ③ Hard/Soft Threshold -->
+    <div class="step-block">
+      <h4>③ Hard/Soft Threshold: 어떤 성분을 버릴 것인가 (3분)</h4>
+      <blockquote>
+        📖 <em>Think DSP</em> <strong>Ch.8 Filtering and Convolution — Smoothing &amp; Convolution Theorem</strong> / <strong>Ch.4 Noise — Gaussian Noise</strong>
+      </blockquote>
+
+      <p>Wavelet 분해 후, 각 레벨의 계수(coefficient)에 <strong>임계값(threshold)</strong>을 적용해서 노이즈를 제거합니다.</p>
+
+<pre><code>Hard Threshold:  |계수| &lt; T  →  0으로 설정 (잘라내기)
+                 |계수| ≥ T  →  그대로 유지
+
+Soft Threshold:  |계수| &lt; T  →  0으로 설정
+                 |계수| ≥ T  →  크기를 T만큼 줄임 (부드럽게 처리)
+
+→ 제조 데이터 실무: 보통 Soft Threshold가 더 안정적</code></pre>
+
+      <blockquote>
+        <strong>임계값 T는 어떻게 정하나?</strong><br>
+        가장 널리 쓰이는 방법: <code>T = σ × √(2 × log(N))</code><br>
+        σ: 노이즈 표준편차 추정값, N: 신호 샘플 수 (Universal Threshold, Donoho &amp; Johnstone, 1994)
+      </blockquote>
+    </div>
+
+    <!-- 세부내용: 필터링과 합성곱 -->
+    <div class="step-block">
+      <h4>세부내용: 필터링과 합성곱 (Think DSP Ch.8 발췌)</h4>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_1_img38.png" alt="Figure 8-1. Facebook 일일 종가와 30일 이동평균" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 8-1. Facebook 일일 종가와 30일 이동평균</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_1_img19.png" alt="Figure 8-2. 400Hz 구형파와 11요소 이동평균" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 8-2. 400Hz 구형파와 11요소 이동평균</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_1_img52.png" alt="Figure 8-7. 가우시안 평활화 전후 스펙트럼 비율" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 8-7. 가우시안 평활화 전후 스펙트럼 비율</figcaption>
+</figure>
+      </div>
+
+<pre><code>[합성곱(Convolution)의 직관]
+
+입력 신호 × 윈도우(필터) = 출력 신호
+
+합성곱 정리(Convolution Theorem):
+시간 영역에서의 합성곱 = 주파수 영역에서의 곱셈
+  DFT(f * g) = DFT(f) × DFT(g)
+
+→ 이것이 FFT가 빠른 이유: O(N²) → O(N log N)</code></pre>
+    </div>
+
+    <!-- ④ pywt 라이브러리 -->
+    <div class="step-block">
+      <h4>④ pywt 라이브러리 핵심 함수 3개 (3분)</h4>
+
+      <p><strong>어떤 코드인지 한눈에 보기</strong>: <code>pywt</code> 라이브러리로 신호를 <strong>분해했다가 다시 합치는</strong> 3단계 기본 흐름을 보여줍니다.</p>
+
+<pre><code class="language-python">import pywt
+import numpy as np
+
+# 1. 사용 가능한 wavelet 종류 확인
+print(pywt.wavelist(kind='discrete'))  # db, sym, haar 등
+
+# 2. 다중 레벨 분해 (DWT)
+coeffs = pywt.wavedec(signal, wavelet='db4', level=5)
+# coeffs = [cA5, cD5, cD4, cD3, cD2, cD1]
+#            근사  디테일5 디테일4 ... 디테일1(최고주파)
+
+# 3. 재합성 (역 DWT)
+reconstructed = pywt.waverec(coeffs_modified, wavelet='db4')</code></pre>
+
+      <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div>
+        <strong>주의</strong>: 분해할 때 쓴 wavelet 이름(<code>db4</code>)과 재합성할 때 쓴 이름이 <strong>같아야</strong> 제대로 복원됩니다.
+      </div></div>
+    </div>
+  </div>
+
+  <!-- 1-3. Claude Code 시연 -->
+  <div class="section-block">
+    <h3>1-3. Claude Code 시연 (10분)</h3>
+    <blockquote>
+      <strong>시연 포인트</strong>: 코드 자체보다 <strong>Claude에게 어떻게 질문하는가</strong>를 주목하세요.
+    </blockquote>
+
+<pre><code>Claude에게 던질 프롬프트 예시:
+
+CNC 밀링머신 진동 데이터에서 채터링 노이즈를 제거하려고 해.
+pywt 라이브러리를 사용해서:
+1. db4 wavelet으로 5레벨 분해
+2. 상위 2개 레벨(고주파)에 soft threshold 적용
+3. 재합성 후 원본과 결과를 subplot으로 비교
+샘플 데이터는 numpy로 직접 생성해줘.</code></pre>
+  </div>
+
+  <!-- 1-4. 실습 -->
+  <div class="section-block">
+    <h3>1-4. 실습 (20분)</h3>
+
+    <table>
+      <thead><tr><th>조합</th><th>Wavelet</th><th>Level</th><th>관찰 포인트</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td><code>db4</code></td><td>3</td><td>기준선</td></tr>
+        <tr><td>B</td><td><code>db4</code></td><td>5</td><td>레벨이 늘면?</td></tr>
+        <tr><td>C</td><td><code>sym5</code></td><td>3</td><td>wavelet 종류 변경 시?</td></tr>
+        <tr><td>D</td><td><code>sym5</code></td><td>5</td><td>둘 다 변경 시?</td></tr>
+      </tbody>
+    </table>
+
+    <div class="step-block">
+      <h4><span class="step-badge">STEP 1</span> 가상 신호 만들기</h4>
+<pre><code class="language-python">import numpy as np
+import pywt
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+t = np.linspace(0, 1, 1024)
+cutting_signal = np.sin(2 * np.pi * 50 * t)        # 50Hz: 절삭 신호
+spindle_noise  = 0.3 * np.sin(2 * np.pi * 200 * t) # 200Hz: 스핀들 노이즈
+chatter        = 0.2 * np.random.randn(len(t))       # 채터링 흉내
+signal = cutting_signal + spindle_noise + chatter</code></pre>
+    </div>
+
+    <div class="step-block">
+      <h4><span class="step-badge">STEP 2</span> 노이즈 제거 함수 — 직접 채워보세요</h4>
+<pre><code class="language-python">def denoise_wavelet(signal, wavelet='db4', level=5, threshold_mode='soft'):
+    # TODO: 여기를 채워보세요
+    # 1. pywt.wavedec 로 분해
+    # 2. 고주파 계수에 threshold 적용
+    # 3. pywt.waverec 로 재합성
+    pass</code></pre>
+    </div>
+
+    <div class="step-block">
+      <h4><span class="step-badge">STEP 3</span> 결과 시각화</h4>
+<pre><code class="language-python">fig, axes = plt.subplots(2, 1, figsize=(12, 6))
+axes[0].plot(t, signal, label='원본 신호', alpha=0.7)
+# TODO: 노이즈 제거 결과를 axes[1]에 그리기
+plt.tight_layout()
+plt.show()</code></pre>
+    </div>
+
+    <div class="callout callout-prompt"><span class="callout-icon">✅</span><div>
+      <strong>성공 체크리스트</strong>: (1) 윗그래프는 울퉁불퉁하고 (2) 아랫그래프는 50Hz 사인파에 가까워야 합니다.
+    </div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SECTION 2 ═══════════════════════ -->
+<section class="module" id="section2">
+  <div class="module-header">
+    <span class="module-number">SECTION 02</span>
+    <h2 class="module-title">데이터 불균형 — 99% 정확도의 함정</h2>
+    <span class="module-duration">45분</span>
+  </div>
+  <p class="module-desc">
+    <strong>참고 교재</strong>: <em>Machine Learning for Imbalanced Data</em> (Kumar Abhishek &amp; Mounir Abdelaziz)<br>
+    소요 시간: 문제 제기 3분 + 이론 13분 + 시연 10분 + 실습 19분
+  </p>
+
+  <!-- 2-1. 문제 제기 -->
+  <div class="section-block">
+    <h3>2-1. 문제 제기 (3분)</h3>
+    <p><strong>상황</strong>: 공장 불량 탐지 모델을 만들었더니 정확도가 <strong>99%</strong>가 나왔습니다. 이 모델은 잘 만든 걸까요?</p>
+
+<pre><code>[데이터 구성]
+정상 제품:  9,900개  (99%)
+불량 제품:    100개  (1%)
+
+[더미 모델의 전략]
+"모든 샘플을 정상으로 예측한다"
+정확도 = 9,900 / 10,000 = 99% ✓
+
+하지만 실제로는 불량 100개를 전부 놓쳤습니다
+→ 정확도의 역설(Accuracy Paradox)</code></pre>
+
+    <div class="image-gallery">
+      <figure class="figure-block">
+  <img src="images/s1_2_img51.jpg" alt="Figure 1.1 – 균형 잡힌 분포" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 1.1 – 균형 잡힌 분포</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img71.jpg" alt="Figure 1.2 – 불균형 데이터셋" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 1.2 – 불균형 데이터셋</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img95.jpg" alt="Figure 1.3 – 불균형 분류 용어 가이드" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 1.3 – 불균형 분류 용어 가이드</figcaption>
+</figure>
+    </div>
+  </div>
+
+  <!-- 2-2. 이론 -->
+  <div class="section-block">
+    <h3>2-2. 이론 (13분)</h3>
+
+    <!-- ① 정확도의 역설 -->
+    <div class="step-block">
+      <h4>① 정확도의 역설 → 올바른 평가 지표 (5분)</h4>
+      <blockquote>
+        📖 <em>ML for Imbalanced Data</em> <strong>Ch.1 Introduction to Data Imbalance in Machine Learning</strong>
+      </blockquote>
+
+<pre><code>Precision (정밀도) = TP / (TP + FP) → "불량이라고 예측한 것 중 실제 불량의 비율"
+Recall (재현율)    = TP / (TP + FN) → "실제 불량 중 모델이 잡아낸 비율" ← 핵심 지표
+F1-Score = 2 × (Precision × Recall) / (Precision + Recall)</code></pre>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_2_img08.jpg" alt="Figure 1.4 – 불균형 데이터셋에서 ML 알고리즘의 결정 경계" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 1.4 – 불균형 데이터셋에서 ML 알고리즘의 결정 경계</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img57.jpg" alt="Figure 1.8 – ROC 곡선 (TPR vs FPR)" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 1.8 – ROC 곡선 (TPR vs FPR)</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img97.jpg" alt="Figure 1.9 – PR 곡선이 모델 간 차이를 더 명확히 보여줌" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 1.9 – PR 곡선이 모델 간 차이를 더 명확히 보여줌</figcaption>
+</figure>
+      </div>
+
+      <div class="callout callout-tip"><span class="callout-icon">💡</span><div>
+        <strong>제조업 판단 기준</strong>: 불량 탐지는 <strong>Recall을 최우선</strong> (놓치는 불량이 없어야 함). 정밀 검사 자원이 제한적이면 Precision도 함께 고려. 보통 F1-Score를 종합 지표로 사용.
+      </div></div>
+    </div>
+
+    <!-- 세부내용: 평가 지표 상세 -->
+    <div class="step-block">
+      <h4>세부내용: 불균형 데이터에서의 평가 지표 상세 (Ch.1 발췌)</h4>
+
+<pre><code>F-beta Score (F-β):
+  = (1 + β²) × (Precision × Recall) / (β² × Precision + Recall)
+
+  β > 1: Recall을 더 중시 (예: 불량 탐지에서 놓치는 것이 더 치명적일 때)
+  제조업에서는 보통 β=2 이상으로 설정하여 Recall을 강조
+
+ROC Curve vs PR Curve — 불균형 데이터에서는 PR Curve가 더 유용:
+  → ROC에서는 비슷해 보여도 PR에서는 큰 차이가 나타나는 경우가 많음
+  → 결론: 불균형 제조 데이터에서는 PR Curve + F1-Score 조합이 가장 권장됨</code></pre>
+    </div>
+
+    <!-- ② SMOTE -->
+    <div class="step-block">
+      <h4>② SMOTE: 합성 샘플로 균형 맞추기 (4분)</h4>
+      <blockquote>
+        📖 <em>ML for Imbalanced Data</em> <strong>Ch.2 Oversampling Methods</strong> — SMOTE &amp; Variants
+      </blockquote>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_2_img10.jpg" alt="Figure 2.5 – SMOTE 동작 원리" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 2.5 – SMOTE 동작 원리</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img27.jpg" alt="Figure 2.6 – SMOTE 오버샘플링 결과" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 2.6 – SMOTE 오버샘플링 결과</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img103.jpg" alt="Figure 2.8 – Borderline-SMOTE 알고리즘" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 2.8 – Borderline-SMOTE 알고리즘</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img81.jpg" alt="Figure 2.11 – ADASYN 동작 원리" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 2.11 – ADASYN 동작 원리</figcaption>
+</figure>
+      </div>
+
+<pre><code class="language-python">from imblearn.over_sampling import SMOTE
+
+smote = SMOTE(k_neighbors=5, random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X_train, y_train)</code></pre>
+
+      <div class="callout callout-warning"><span class="callout-icon">⚠️</span><div>
+        <strong>주의</strong>: SMOTE는 <strong>학습 데이터에만</strong> 적용합니다. 테스트 데이터에 쓰면 부정 행위가 됩니다.
+      </div></div>
+    </div>
+
+    <!-- 세부내용: SMOTE 변형 -->
+    <div class="step-block">
+      <h4>세부내용: SMOTE 변형 알고리즘 (Ch.2 발췌)</h4>
+
+<pre><code class="language-python">from imblearn.over_sampling import ADASYN, BorderlineSMOTE
+from imblearn.combine import SMOTETomek, SMOTEENN
+
+methods = {
+    'SMOTE': SMOTE(random_state=42),                    # 기본 — 대부분의 출발점
+    'ADASYN': ADASYN(random_state=42),                  # 경계 근처 집중 보강
+    'BorderlineSMOTE': BorderlineSMOTE(random_state=42), # 경계 샘플만 타겟팅
+    'SMOTETomek': SMOTETomek(random_state=42),           # 깨끗한 데이터가 필요할 때
+}</code></pre>
+    </div>
+
+    <!-- ③ class_weight -->
+    <div class="step-block">
+      <h4>③ class_weight: 손실함수 레벨에서 조정 (2분)</h4>
+      <blockquote>
+        📖 <em>ML for Imbalanced Data</em> <strong>Ch.5 Cost-Sensitive Learning</strong>
+      </blockquote>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_2_img23.jpg" alt="Figure 5.1 – 비용 민감 학습 방법 분류" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 5.1 – 비용 민감 학습 방법 분류</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img47.jpg" alt="Figure 5.6 – 기본 로지스틱 회귀의 결정 경계와 PR 곡선" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 5.6 – 기본 로지스틱 회귀의 결정 경계와 PR 곡선</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img24.jpg" alt="Figure 5.7 – balanced 가중치 적용 후 결정 경계와 PR 곡선" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 5.7 – balanced 가중치 적용 후 결정 경계와 PR 곡선</figcaption>
+</figure>
+      </div>
+
+<pre><code class="language-python">from sklearn.ensemble import RandomForestClassifier
+
+# 자동 가중치
+model = RandomForestClassifier(class_weight='balanced', random_state=42)
+
+# 또는 수동 설정
+model = RandomForestClassifier(class_weight={0: 1, 1: 99}, random_state=42)</code></pre>
+    </div>
+
+    <!-- ④ 임계값 조정 -->
+    <div class="step-block">
+      <h4>④ 임계값 조정: 0.5가 항상 최선이 아니다 (2분)</h4>
+      <blockquote>
+        📖 <em>ML for Imbalanced Data</em> <strong>Ch.5 Cost-Sensitive Learning — Threshold Adjustment</strong>
+      </blockquote>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_2_img73.jpg" alt="Figure 5.16 – F1 최대 임계값을 찾는 PR 곡선" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 5.16 – F1 최대 임계값을 찾는 PR 곡선</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img93.jpg" alt="Figure 5.17 – 임계값 변경에 따른 분류 지표 변화" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 5.17 – 임계값 변경에 따른 분류 지표 변화</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_2_img41.jpg" alt="Figure 5.19 – F1 최적 임계값의 PR 곡선" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 5.19 – F1 최적 임계값의 PR 곡선</figcaption>
+</figure>
+      </div>
+
+<pre><code class="language-python">from sklearn.metrics import precision_recall_curve
+
+probas = model.predict_proba(X_test)[:, 1]
+precision, recall, thresholds = precision_recall_curve(y_test, probas)
+
+f1_scores = 2 * precision * recall / (precision + recall + 1e-8)
+best_threshold = thresholds[np.argmax(f1_scores)]
+print(f"최적 임계값: {best_threshold:.3f}")</code></pre>
+    </div>
+  </div>
+
+  <!-- 2-3. Claude Code 시연 -->
+  <div class="section-block">
+    <h3>2-3. Claude Code 시연 (10분)</h3>
+
+<pre><code>Claude에게 던질 프롬프트 예시:
+
+불량률 1%인 제조 데이터를 시뮬레이션해줘.
+1. 기본 RandomForest 모델 학습
+2. SMOTE 적용 후 재학습
+3. class_weight='balanced' 적용 후 재학습
+세 모델의 Confusion Matrix와 F1-score를 나란히 비교하는 시각화를 만들어줘.</code></pre>
+  </div>
+
+  <!-- 2-4. 실습 -->
+  <div class="section-block">
+    <h3>2-4. 실습 (19분)</h3>
+
+    <div class="step-block">
+      <h4><span class="step-badge">STEP 1</span> 데이터 준비</h4>
+<pre><code class="language-python">import numpy as np
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score, recall_score
+from imblearn.over_sampling import SMOTE
+
+X, y = make_classification(n_samples=10000, weights=[0.99, 0.01],
+                           n_features=10, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)</code></pre>
+    </div>
+
+    <div class="step-block">
+      <h4><span class="step-badge">STEP 2</span> k_neighbors별 실험 루프</h4>
+<pre><code class="language-python">results = {}
+for k in [3, 5, 7, 10]:
+    smote = SMOTE(k_neighbors=k, random_state=42)
+    X_res, y_res = smote.fit_resample(X_train, y_train)
+    model = RandomForestClassifier(random_state=42).fit(X_res, y_res)
+    pred = model.predict(X_test)
+    results[k] = {'f1': f1_score(y_test, pred), 'recall': recall_score(y_test, pred)}</code></pre>
+    </div>
+
+    <div class="step-block">
+      <h4><span class="step-badge">STEP 3</span> 결과 비교 시각화</h4>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+ks = list(results.keys())
+f1s = [results[k]['f1'] for k in ks]
+recalls = [results[k]['recall'] for k in ks]
+plt.plot(ks, f1s, marker='o', label='F1')
+plt.plot(ks, recalls, marker='s', label='Recall')
+plt.xlabel('k_neighbors'); plt.ylabel('score'); plt.legend(); plt.show()</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SECTION 3 ═══════════════════════ -->
+<section class="module" id="section3">
+  <div class="module-header">
+    <span class="module-number">SECTION 03</span>
+    <h2 class="module-title">CNC 이상탐지 파이프라인 — 공구 마모 시작점 잡기</h2>
+    <span class="module-duration">50분</span>
+  </div>
+  <p class="module-desc">
+    <strong>참고 교재</strong>: <em>Machine Learning for Time-Series with Python</em> (Ben Auffarth)<br>
+    소요 시간: 문제 제기+검증 5분 + 이론 15분 + 시연 15분 + 실습 15분
+  </p>
+
+  <!-- 3-1. 문제 제기 -->
+  <div class="section-block">
+    <h3>3-1. 문제 제기 + 데이터 확인 (5분)</h3>
+    <p><strong>목표</strong>: 공구 마모가 <strong>시작되는 순간</strong>을 실시간으로 포착할 수 있을까?</p>
+
+<pre><code>[공구 마모의 진행 단계]
+
+정상 가공           초기 마모 시작        심각한 마모
+    ↓                    ↓                   ↓
+진동 안정적       진동 약간 증가         진동 급격히 증가
+RMS 낮음          RMS 서서히 상승        RMS 급등, 불규칙</code></pre>
+  </div>
+
+  <!-- 3-2. 이론 -->
+  <div class="section-block">
+    <h3>3-2. 이론: 파이프라인 설계 논리 (15분)</h3>
+
+    <!-- ① 특징 추출 -->
+    <div class="step-block">
+      <h4>① 왜 Raw Signal을 그대로 쓰면 안 되는가: 특징 추출 (5분)</h4>
+      <blockquote>
+        📖 <em>ML for Time-Series with Python</em> <strong>Ch.3 Preprocessing Time-Series</strong> / <strong>Ch.4 Introduction to ML for Time-Series</strong>
+      </blockquote>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_3_img96.png" alt="Figure 3.1 – 선명화(Sharpening) 필터 적용 결과" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 3.1 – 선명화(Sharpening) 필터 적용 결과</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_3_img113.png" alt="Figure 3.7 – ROCKET 특징 추출 결과" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 3.7 – ROCKET 특징 추출 결과</figcaption>
+</figure>
+      </div>
+
+<pre><code>[핵심 특징 3가지]
+
+1. RMS (Root Mean Square) — 신호의 에너지
+   RMS = √(Σx² / N)  → 마모가 진행될수록 RMS 상승
+
+2. Peak Value — 순간 최대 진폭
+   → 채터링, 충격 발생 시 급등
+
+3. Kurtosis — 신호의 첨도 (뾰족한 정도)
+   Kurtosis = E[(X-μ)⁴] / σ⁴
+   → 정상 신호: ~3 (정규분포)
+   → 결함 발생: 3 이상으로 상승</code></pre>
+
+<pre><code class="language-python">import numpy as np
+
+def extract_features(signal_window):
+    rms = np.sqrt(np.mean(signal_window**2))
+    peak = np.max(np.abs(signal_window))
+    mean = np.mean(signal_window)
+    std = np.std(signal_window)
+    kurtosis = np.mean(((signal_window - mean) / std)**4) if std > 0 else 0
+    return {'rms': rms, 'peak': peak, 'kurtosis': kurtosis}</code></pre>
+    </div>
+
+    <!-- ② 이상탐지 방식 -->
+    <div class="step-block">
+      <h4>② 이상탐지 방식 선택: 레이블 유무에 따른 전략 (5분)</h4>
+      <blockquote>
+        📖 <em>ML for Time-Series with Python</em> <strong>Ch.6 Unsupervised Methods for Time-Series</strong>
+      </blockquote>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_3_img110.png" alt="Figure 6.1 – 온실가스 배출량 기반 변화점 가능 위치" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 6.1 – 온실가스 배출량 기반 변화점 가능 위치</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_3_img99.png" alt="Figure 6.3 – 이상 탐지 응용 분야" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 6.3 – 이상 탐지 응용 분야</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_3_img01.png" alt="Figure 6.4 – 가용 지식에 따른 이상 탐지 방법 분류" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 6.4 – 가용 지식에 따른 이상 탐지 방법 분류</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_3_img54.png" alt="Figure 6.12 – 이상치가 표시된 시계열" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 6.12 – 이상치가 표시된 시계열</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_3_img78.png" alt="Figure 6.13 – 변화점이 표시된 시계열" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 6.13 – 변화점이 표시된 시계열</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_3_img106.png" alt="Figure 6.14 – Binary Segmentation으로 탐지한 변화점" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 6.14 – Binary Segmentation으로 탐지한 변화점</figcaption>
+</figure>
+      </div>
+
+<pre><code class="language-python">from sklearn.ensemble import IsolationForest
+
+model = IsolationForest(contamination=0.05, random_state=42)
+model.fit(X_normal)
+predictions = model.predict(X_test)  # 1: 정상, -1: 이상</code></pre>
+    </div>
+
+    <!-- ③ 파이프라인 -->
+    <div class="step-block">
+      <h4>③ 전체 파이프라인 설계 (5분)</h4>
+
+      <div class="image-gallery">
+        <figure class="figure-block">
+  <img src="images/s1_3_img09.png" alt="Figure 4.1 – 머신러닝 카테고리 분류" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 4.1 – 머신러닝 카테고리 분류</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_3_img61.png" alt="Figure 4.8 – 머신러닝 워크플로우" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 4.8 – 머신러닝 워크플로우</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_3_img85.png" alt="Figure 4.9 – 교차 검증(Cross-validation)" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 4.9 – 교차 검증(Cross-validation)</figcaption>
+</figure>
+<figure class="figure-block">
+  <img src="images/s1_3_img15.png" alt="Figure 4.19 – ML 알고리즘: 쿼리 시간 vs 정확도" style="max-width:90%; height:auto; border-radius:6px; border:1px solid var(--color-border);">
+  <figcaption>Figure 4.19 – ML 알고리즘: 쿼리 시간 vs 정확도</figcaption>
+</figure>
+      </div>
+
+<pre><code>[CNC 공구 마모 탐지 파이프라인]
+
+1. 데이터 수집 → 센서 데이터 실시간 스트림
+2. 전처리 (섹션 1) → Wavelet Transform → 노이즈 제거
+3. 윈도우 분할 → 슬라이딩 윈도우 (1초 단위, 0.5초 겹침)
+4. 특징 추출 → 각 윈도우 → [RMS, Peak, Kurtosis] 계산
+5. 이상탐지 → Isolation Forest → 이상 점수 계산
+6. 알림 → 이상 점수 > 임계값 → 경보 발생</code></pre>
+    </div>
+  </div>
+
+  <!-- 3-3. Claude Code 시연 -->
+  <div class="section-block">
+    <h3>3-3. Claude Code 시연 (15분)</h3>
+
+<pre><code>Claude에게 던질 프롬프트 예시:
+
+CNC 밀링머신의 공구 마모 탐지 파이프라인을 만들어줘.
+- 시뮬레이션 데이터: 정상 구간 + 마모 시작 구간 포함
+- 단계: Wavelet 노이즈 제거 → 슬라이딩 윈도우 특징 추출 → Isolation Forest
+- 각 단계의 결과를 subplot으로 시각화
+- contamination=0.05로 설정</code></pre>
+  </div>
+
+  <!-- 3-4. 실습 -->
+  <div class="section-block">
+    <h3>3-4. 실습 (15분)</h3>
+
+    <div class="step-block">
+      <h4><span class="step-badge">STEP 1</span> 가상의 공구 마모 신호 만들기</h4>
+<pre><code class="language-python">import numpy as np
+import pywt
+import matplotlib.pyplot as plt
+from sklearn.ensemble import IsolationForest
+
+np.random.seed(42)
+t = np.linspace(0, 10, 10000)
+signal = np.sin(2 * np.pi * 50 * t)
+signal[5000:7000] += 0.3 * np.random.randn(2000)  # 마모 시작
+signal[7000:] += 0.8 * np.random.randn(3000)       # 심각한 마모</code></pre>
+    </div>
+
+    <div class="step-block">
+      <h4><span class="step-badge">STEP 2</span> Wavelet 노이즈 제거</h4>
+<pre><code class="language-python">def denoise(signal, wavelet='db4', level=5):
+    coeffs = pywt.wavedec(signal, wavelet, level=level)
+    threshold = np.sqrt(2 * np.log(len(signal))) * np.std(coeffs[-1])
+    coeffs[1:] = [pywt.threshold(c, threshold, mode='soft') for c in coeffs[1:]]
+    return pywt.waverec(coeffs, wavelet)
+
+denoised = denoise(signal)</code></pre>
+    </div>
+
+    <div class="step-block">
+      <h4><span class="step-badge">STEP 3</span> 슬라이딩 윈도우 특징 추출</h4>
+<pre><code class="language-python">def extract_features_windowed(signal, window_size=100, step=50):
+    features = []
+    for i in range(0, len(signal) - window_size, step):
+        window = signal[i:i+window_size]
+        rms = np.sqrt(np.mean(window**2))
+        peak = np.max(np.abs(window))
+        std = np.std(window)
+        kurt = np.mean(((window - np.mean(window)) / (std + 1e-8))**4)
+        features.append([rms, peak, kurt])
+    return np.array(features)
+
+features = extract_features_windowed(denoised)</code></pre>
+    </div>
+
+    <div class="step-block">
+      <h4><span class="step-badge">STEP 4</span> Isolation Forest로 이상 점수 계산</h4>
+<pre><code class="language-python">for contamination in [0.01, 0.05, 0.10]:
+    model = IsolationForest(contamination=contamination, random_state=42)
+    model.fit(features)
+    preds = model.predict(features)
+    scores = -model.score_samples(features)  # 클수록 이상
+    # TODO: scores 시계열로 시각화</code></pre>
+    </div>
+
+    <div class="callout callout-prompt"><span class="callout-icon">✅</span><div>
+      <strong>성공 체크리스트</strong>: 마모가 시작되는 5초 부근에서 이상 점수가 확 올라가야 성공입니다.
+    </div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ ADVANCED ═══════════════════════ -->
+<section class="module" id="advanced">
+  <div class="module-header">
+    <span class="module-number">APPENDIX</span>
+    <h2 class="module-title">심화 학습 자료</h2>
+  </div>
+
+  <div class="section-block">
+    <h3>📘 섹션 1 심화: 신호 처리</h3>
+    <blockquote>📖 <strong>교재</strong>: <em>Think DSP: Digital Signal Processing in Python</em> (Allen B. Downey)</blockquote>
+
+    <h4>Wavelet 종류별 특성</h4>
+    <table>
+      <thead><tr><th>Wavelet 계열</th><th>특성</th><th>적합한 용도</th></tr></thead>
+      <tbody>
+        <tr><td>Haar</td><td>가장 단순, 불연속</td><td>단계 함수 신호, 빠른 계산</td></tr>
+        <tr><td>Daubechies (db)</td><td>비대칭, 지지 소형</td><td>일반적 제조 진동 신호</td></tr>
+        <tr><td>Symlets (sym)</td><td>db보다 대칭에 가까움</td><td>위상 왜곡이 민감한 경우</td></tr>
+        <tr><td>Coiflets (coif)</td><td>높은 소멸 모멘트</td><td>부드러운 신호</td></tr>
+        <tr><td>Morlet</td><td>연속 Wavelet, 복소수</td><td>주파수 분석 중심</td></tr>
+      </tbody>
+    </table>
+
+    <h4>추천 학습 경로</h4>
+    <table>
+      <thead><tr><th>순서</th><th>챕터</th><th>핵심 내용</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Ch.1 Sounds and Signals</td><td>신호, 주파수, 진폭, 스펙트럼의 정의</td></tr>
+        <tr><td>2</td><td>Ch.3 Non-Periodic Signals</td><td>Spectrogram, Gabor Limit, 비정상 신호</td></tr>
+        <tr><td>3</td><td>Ch.4 Noise</td><td>Uncorrelated/Brownian/Pink/Gaussian Noise</td></tr>
+        <tr><td>4</td><td>Ch.7 Discrete Fourier Transform</td><td>FFT 심화 이해</td></tr>
+        <tr><td>5</td><td>Ch.8 Filtering and Convolution</td><td>Smoothing, Convolution Theorem</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-block">
+    <h3>📘 섹션 2 심화: 불균형 데이터</h3>
+    <blockquote>📖 <strong>교재</strong>: <em>Machine Learning for Imbalanced Data</em> (Kumar Abhishek &amp; Mounir Abdelaziz)</blockquote>
+
+    <h4>추천 학습 경로</h4>
+    <table>
+      <thead><tr><th>순서</th><th>챕터</th><th>핵심 내용</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Ch.1 Introduction</td><td>정확도의 역설, Confusion Matrix, ROC, PR Curve</td></tr>
+        <tr><td>2</td><td>Ch.2 Oversampling Methods</td><td>SMOTE, ADASYN, Borderline-SMOTE</td></tr>
+        <tr><td>3</td><td>Ch.3 Undersampling Methods</td><td>Tomek Links, ENN, NearMiss</td></tr>
+        <tr><td>4</td><td>Ch.4 Ensemble Methods</td><td>EasyEnsemble, RUSBoost</td></tr>
+        <tr><td>5</td><td>Ch.5 Cost-Sensitive Learning</td><td>class_weight, MetaCost, Threshold</td></tr>
+        <tr><td>6</td><td>Ch.10 Model Calibration</td><td>Platt Scaling, Isotonic Regression, Brier Score</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-block">
+    <h3>📘 섹션 3 심화: 이상탐지</h3>
+    <blockquote>📖 <strong>교재</strong>: <em>Machine Learning for Time-Series with Python</em> (Ben Auffarth)</blockquote>
+
+    <h4>이상탐지 알고리즘 비교</h4>
+    <table>
+      <thead><tr><th>알고리즘</th><th>방식</th><th>장점</th><th>단점</th></tr></thead>
+      <tbody>
+        <tr><td>Isolation Forest</td><td>트리 기반 분리</td><td>빠름, 고차원 적합</td><td>contamination 설정 필요</td></tr>
+        <tr><td>One-Class SVM</td><td>경계 학습</td><td>이론적 근거 확실</td><td>대용량에 느림</td></tr>
+        <tr><td>LOF</td><td>밀도 기반</td><td>지역적 이상 탐지</td><td>n_neighbors 설정 필요</td></tr>
+        <tr><td>AutoEncoder</td><td>딥러닝 기반</td><td>복잡한 패턴 학습</td><td>데이터 많이 필요</td></tr>
+      </tbody>
+    </table>
+
+    <h4>추천 학습 경로</h4>
+    <table>
+      <thead><tr><th>순서</th><th>챕터</th><th>핵심 내용</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Ch.3 Preprocessing</td><td>Feature Engineering, ROCKET, Shapelets</td></tr>
+        <tr><td>2</td><td>Ch.4 ML for Time-Series</td><td>Distance-based, Time-Series Forest</td></tr>
+        <tr><td>3</td><td>Ch.6 Unsupervised Methods</td><td>Anomaly Detection, Change Point Detection</td></tr>
+        <tr><td>4</td><td>Ch.7 ML Models</td><td>KNN+DTW, Gradient Boosting</td></tr>
+        <tr><td>5</td><td>Ch.8 Online Learning</td><td>Drift Detection, Adaptive Learning</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div><!-- .container -->
+
+<footer style="text-align:center; padding:3rem 2rem; color:var(--color-muted); font-size:0.82rem;">
+  <p>이 문서는 세션 1 강의 자료로 제작되었습니다. 질문 및 피드백: Claude Code를 활용해 실습 중 막히는 부분을 언제든지 질문하세요.</p>
+  <p style="margin-top:0.5rem;">
+    <strong>출처</strong>:
+    섹션 1. <em>Think DSP</em> (O'Reilly) &nbsp;|&nbsp;
+    섹션 2. <em>ML for Imbalanced Data</em> (Packt) &nbsp;|&nbsp;
+    섹션 3. <em>ML for Time-Series with Python</em> (Packt)
+  </p>
+</footer>
+
+</body>
+</html>
