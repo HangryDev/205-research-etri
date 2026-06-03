@@ -7,9 +7,9 @@
 
 ---
 
-```{admonition} 출처: 섹션 1 · Autoencoder
+```{admonition} 출처: Autoencoder
 :class: note dropdown
-아래 시연/실습은 원래 **섹션 1 · Autoencoder** 섹션에 있던 내용입니다.
+아래 시연/실습은 원래 Autoencoder** 섹션에 있던 내용입니다.
 ```
 
 ## 1-3. Claude Code 시연
@@ -159,9 +159,9 @@ for latent_dim in [32, 16, 8, 4]:
 
 ---
 
-```{admonition} 출처: 섹션 2 · RUL 예측
+```{admonition} 출처: RUL 예측
 :class: note dropdown
-아래 시연/실습은 원래 **섹션 2 · RUL 예측** 섹션에 있던 내용입니다.
+아래 시연/실습은 원래 RUL 예측** 섹션에 있던 내용입니다.
 ```
 
 ## 2-3. Claude Code 시연
@@ -192,7 +192,7 @@ NASA Turbofan FD001 데이터로 LSTM RUL 예측을 구현해줘.
 
 - FD001은 100개 엔진의 사이클별 센서 데이터
 - RUL = 각 유닛의 최대 사이클 - 현재 사이클
-- 125로 클리핑 (이유는 섹션 3에서 상세 설명)
+- 125로 클리핑 (이유는 상세 설명)
 
 **2단계 — 슬라이딩 윈도우 시퀀스 구성**
 

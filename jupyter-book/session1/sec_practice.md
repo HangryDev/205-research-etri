@@ -7,9 +7,9 @@
 
 ---
 
-```{admonition} 출처: 섹션 1 · 노이즈 제거
+```{admonition} 출처: 노이즈 제거
 :class: note dropdown
-아래 시연/실습은 원래 **섹션 1 · 노이즈 제거** 섹션에 있던 내용입니다.
+아래 시연/실습은 원래 노이즈 제거** 섹션에 있던 내용입니다.
 ```
 
 ## 1-3. Claude Code 시연
@@ -108,9 +108,9 @@ plt.tight_layout(); plt.show()
 
 ---
 
-```{admonition} 출처: 섹션 2 · 데이터 불균형
+```{admonition} 출처: 데이터 불균형
 :class: note dropdown
-아래 시연/실습은 원래 **섹션 2 · 데이터 불균형** 섹션에 있던 내용입니다.
+아래 시연/실습은 원래 데이터 불균형** 섹션에 있던 내용입니다.
 ```
 
 ## 2-3. Claude Code 시연
@@ -187,9 +187,9 @@ plt.xlabel('k_neighbors'); plt.ylabel('score'); plt.legend(); plt.show()
 
 ---
 
-```{admonition} 출처: 섹션 3 · CNC 이상탐지 파이프라인
+```{admonition} 출처: CNC 이상탐지 파이프라인
 :class: note dropdown
-아래 시연/실습은 원래 **섹션 3 · CNC 이상탐지 파이프라인** 섹션에 있던 내용입니다.
+아래 시연/실습은 원래 CNC 이상탐지 파이프라인** 섹션에 있던 내용입니다.
 ```
 
 ## 3-3. Claude Code 시연
@@ -229,7 +229,7 @@ CNC 밀링머신 공구 마모 탐지 파이프라인을 만들어줘.
 **추가 질문**: "탐지 민감도를 높이려면 어떤 파라미터를 조정해야 하고, 트레이드오프는?"
 - `contamination`을 높이면 더 민감해지지만 **오탐도 증가** (0.05 → 0.10)
 - 윈도우 크기를 작게 하면 빠른 변화 감지 가능하지만 **노이즈에 취약**
-- 섹션 2에서 배운 Recall-Precision 트레이드오프와 동일한 원리
+- 배운 Recall-Precision 트레이드오프와 동일한 원리
 - 현장에서는 "오탐 10번 vs 불량 하나 놓침"을 결정하고 contamination 조절
 
 ---

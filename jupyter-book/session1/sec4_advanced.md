@@ -8,7 +8,7 @@
 
 ---
 
-## 📘 섹션 1 심화: 신호 처리
+## 📘 심화: 신호 처리
 
 ### Wavelet 종류별 특성
 
@@ -75,7 +75,7 @@ plt.colorbar()
 
 ---
 
-## 📘 섹션 2 심화: 불균형 데이터
+## 📘 심화: 불균형 데이터
 
 ### SMOTE 변형 알고리즘 비교
 
@@ -146,7 +146,7 @@ plt.plot([0, 1], [0, 1], "k:", label="완벽한 보정")
 
 ---
 
-## 📘 섹션 3 심화: 이상탐지
+## 📘 심화: 이상탐지
 
 ### 이상탐지 알고리즘 비교
 
@@ -258,6 +258,6 @@ for x in data_stream:
 *질문 및 피드백: Claude Code를 활용해 실습 중 막히는 부분을 언제든지 질문하세요.*
 
 # 출처
-## 섹션 1. 텍스트 북 : [Think DSP: Digital Signal Processing in Python](https://www.oreilly.com/library/view/think-dsp/9781491938508/)
-## 섹션 2. 텍스트 북 : [Machine Learning for Imbalanced Data](https://www.oreilly.com/library/view/machine-learning-for/9781801070836/)
-## 섹션 3. 텍스트 북 : [Machine Learning for Time-Series with Python](https://www.oreilly.com/library/view/machine-learning-for/9781801819626/)
+## . 텍스트 북 : [Think DSP: Digital Signal Processing in Python](https://www.oreilly.com/library/view/think-dsp/9781491938508/)
+## . 텍스트 북 : [Machine Learning for Imbalanced Data](https://www.oreilly.com/library/view/machine-learning-for/9781801070836/)
+## . 텍스트 북 : [Machine Learning for Time-Series with Python](https://www.oreilly.com/library/view/machine-learning-for/9781801819626/)

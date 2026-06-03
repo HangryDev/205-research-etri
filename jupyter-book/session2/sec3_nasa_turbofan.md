@@ -148,7 +148,7 @@ RUL > 200 구간에서는 센서 값이 거의 일정.
 
 ### LSTM 모델 적용
 
-섹션 2에서 만든 LSTM 구조를 Turbofan 데이터에 적용. **2층 LSTM** 모델 사용.
+만든 LSTM 구조를 Turbofan 데이터에 적용. **2층 LSTM** 모델 사용.
 
 ```python
 # 2층 LSTM + Dropout
@@ -355,7 +355,7 @@ FD001 vs FD002 센서 분포 비교
 
 ### 심화 — Autoencoder + LSTM 통합 파이프라인
 
-섹션 1의 Autoencoder와 섹션 2의 LSTM을 **하나의 시스템으로 통합**.
+Autoencoder와 LSTM을 **하나의 시스템으로 통합**.
 
 ```{mermaid}
 flowchart TB
@@ -370,7 +370,7 @@ flowchart TB
 
 구현 순서:
 
-1. 섹션 1 Autoencoder를 FD001 **정상 구간(RUL > 125)** 으로만 학습
+1. Autoencoder를 FD001 **정상 구간(RUL > 125)** 으로만 학습
 2. 모든 윈도우에 대해 재구성 오차 계산
 3. 기존 14개 센서 + 재구성 오차 = **15차원 특징** 생성
 4. 이 15차원 특징으로 LSTM RUL 예측 모델 학습

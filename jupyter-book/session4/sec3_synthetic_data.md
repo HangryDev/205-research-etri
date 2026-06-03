@@ -8,7 +8,7 @@
 
 > 우리가 만든 합성 데이터가 실제로 모델 성능을 올려 주는가?
 
-섹션 1과 2에서 결함 이미지를 자유롭게 생성하는 능력을 얻었지만, 이건 **수단**입니다. 진짜 목적은 **탐지 모델의 성능 향상**. 합성 데이터가 그 목적에 봉사하지 못한다면 아무리 좋은 이미지를 만들어도 의미가 없습니다.
+결함 이미지를 자유롭게 생성하는 능력을 얻었지만, 이건 **수단**입니다. 진짜 목적은 **탐지 모델의 성능 향상**. 합성 데이터가 그 목적에 봉사하지 못한다면 아무리 좋은 이미지를 만들어도 의미가 없습니다.
 
 ### 합성 데이터의 본질
 
@@ -72,7 +72,7 @@ flowchart TD
 
 **데이터셋 구성**
 
-데이터셋은 현실적으로 모은 실제 결함 이미지 50장, 섹션 1·2에서 생성한 합성 결함 이미지 200장, 그리고 절대 학습에 쓰지 않는 실제 테스트 이미지 20장으로 구성합니다.
+데이터셋은 현실적으로 모은 실제 결함 이미지 50장, 생성한 합성 결함 이미지 200장, 그리고 절대 학습에 쓰지 않는 실제 테스트 이미지 20장으로 구성합니다.
 
 ```{admonition} 가장 중요한 원칙
 :class: warning
@@ -107,21 +107,21 @@ Session 1에서 배운 불균형 데이터 평가 지표가 여기서 다시 쓰
 
 ### 세 섹션 요약
 
-**섹션 1 -- Diffusion Model**
+Diffusion Model**
 
 - Forward는 노이즈 추가, Reverse는 노이즈 제거
 - 모델이 학습하는 것은 노이즈 제거의 **방향성**
 - DreamBooth, LoRA, Textual Inversion 세 가지 Fine-tuning 전략 중 LoRA가 일반 사용자에게 현실적
 - SSIM, FID로 생성 품질 평가
 
-**섹션 2 -- 프롬프트로 결함 제어**
+프롬프트로 결함 제어**
 
 - CLIP이 텍스트와 이미지를 같은 벡터 공간에 놓는 능력이 Text-to-Image 생성의 기반
 - 프롬프트 설계 공식: [결함 유형] + [위치] + [심각도] + [재질] + [촬영 스타일]
 - 네거티브 프롬프트와 guidance_scale의 적절한 활용
 - 시드 고정으로 재현성 확보
 
-**섹션 3 -- 합성 데이터 검증**
+합성 데이터 검증**
 
 - 합성은 **적당히 섞을 때** 가장 효과적
 - Recall과 Precision의 트레이드오프를 데이터로 확인
@@ -141,9 +141,9 @@ flowchart TD
 
 ### 참고 문헌
 
-- 섹션 1: *Hands-On Generative AI with Transformers and Diffusion Models* (Omar Sanseviero et al., O'Reilly) Ch.4, Ch.7
-- 섹션 2: *Generative Deep Learning, 2nd Edition* (David Foster, O'Reilly) Ch.4, Ch.13 / *Hands-On Generative AI* Ch.2
-- 섹션 3: *Practical Synthetic Data Generation* (Khaled El Emam et al., O'Reilly) Ch.1, Ch.4
+- *Hands-On Generative AI with Transformers and Diffusion Models* (Omar Sanseviero et al., O'Reilly) Ch.4, Ch.7
+- *Generative Deep Learning, 2nd Edition* (David Foster, O'Reilly) Ch.4, Ch.13 / *Hands-On Generative AI* Ch.2
+- *Practical Synthetic Data Generation* (Khaled El Emam et al., O'Reilly) Ch.1, Ch.4
 
 ### 추가 학습 방향
 

@@ -8,7 +8,7 @@
 
 ---
 
-## 📘 섹션 1 심화: 모델 경량화와 엣지 배포
+## 📘 심화: 모델 경량화와 엣지 배포
 
 ### Quantization (양자화): float32 → int8
 
@@ -70,7 +70,7 @@ model_for_pruning = tfmot.sparsity.keras.prune_low_magnitude(
 
 ---
 
-## 📘 섹션 2 심화: 행동인식 심화와 데이터셋 구축
+## 📘 심화: 행동인식 심화와 데이터셋 구축
 
 ### 비디오 라벨링 워크플로우
 
@@ -131,7 +131,7 @@ def normalize_keypoints(keypoints, reference_joints=(11, 12)):
 
 ---
 
-## 📘 섹션 3 심화: 성능 평가와 실시간 최적화
+## 📘 심화: 성능 평가와 실시간 최적화
 
 ### 탐지 성능 평가 지표
 
@@ -251,6 +251,6 @@ def inference_thread(frame_queue, result_queue, yolo_model, action_model):
 *이전 세션 자료: `session1_manufacturing_data_analysis.md` / `session2_deep_learning_anomaly_detection.md`*
 
 # 출처
-## 섹션 1. 텍스트 북 : [Practical Deep Learning Cloud/Mobile/Edge](https://www.oreilly.com/library/view/practical-deep-learning/9781492034858/)
-## 섹션 2. 텍스트 북 : [Practical ML for Computer Vision](https://www.oreilly.com/library/view/practical-machine-learning/9781098102357/)
-## 섹션 3. 텍스트 북 : [Practical ML for Computer Vision](https://www.oreilly.com/library/view/practical-machine-learning/9781098102357/)
+## . 텍스트 북 : [Practical Deep Learning Cloud/Mobile/Edge](https://www.oreilly.com/library/view/practical-deep-learning/9781492034858/)
+## . 텍스트 북 : [Practical ML for Computer Vision](https://www.oreilly.com/library/view/practical-machine-learning/9781098102357/)
+## . 텍스트 북 : [Practical ML for Computer Vision](https://www.oreilly.com/library/view/practical-machine-learning/9781098102357/)

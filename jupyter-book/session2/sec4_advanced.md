@@ -8,7 +8,7 @@
 
 ---
 
-## 📘 섹션 1 심화: Autoencoder 변형과 Deep SVDD
+## 📘 심화: Autoencoder 변형과 Deep SVDD
 
 ### Autoencoder 변형 비교
 
@@ -83,7 +83,7 @@ def svdd_loss(z, center, radius, nu=0.1):
 
 ---
 
-## 📘 섹션 2 심화: RNN 계열 모델 비교와 Keras 심화
+## 📘 심화: RNN 계열 모델 비교와 Keras 심화
 
 ### RNN 계열 모델 비교
 
@@ -156,7 +156,7 @@ mean, std = predict_with_uncertainty(model, X_test)
 
 ---
 
-## 📘 섹션 3 심화: 시계열 이상탐지 고급 기법
+## 📘 심화: 시계열 이상탐지 고급 기법
 
 ### 도메인 적응 (Domain Adaptation): FD001 → FD002
 
@@ -255,8 +255,8 @@ for new_data in streaming_sensor_data:
 
 ### 실무 적용 프로젝트 아이디어
 
-- [ ] **CWRU Bearing Dataset**: Autoencoder로 베어링 결함 탐지 (섹션 1 심화)
-- [ ] **NASA Turbofan FD002~FD004**: 운전 조건 변화 시 도메인 적응 실험 (섹션 3 심화)
+- [ ] **CWRU Bearing Dataset**: Autoencoder로 베어링 결함 탐지 (심화)
+- [ ] **NASA Turbofan FD002~FD004**: 운전 조건 변화 시 도메인 적응 실험 (심화)
 - [ ] **PHM08 Challenge Dataset**: LSTM-Autoencoder 통합 파이프라인으로 RUL 예측 대회 재현
 - [ ] **실시간 시뮬레이터**: Streamlit으로 온라인 RUL 예측 대시보드 구현
 
@@ -267,6 +267,6 @@ for new_data in streaming_sensor_data:
 *세션 1 자료와 함께 참고하세요: `session1_manufacturing_data_analysis.md`*
 
 # 출처
-## 섹션 1. 텍스트북 : [Hands-On Unsupervised Learning Using Python](https://www.oreilly.com/library/view/hands-on-unsupervised-learning/9781492035633/)
-## 섹션 2. 텍스트북 : [Deep Learning with Python (2nd Ed.)](https://www.oreilly.com/library/view/deep-learning-with/9781617296422/)
-## 섹션 3. 텍스트북 : [Machine Learning for Time-Series with Python](https://www.oreilly.com/library/view/machine-learning-for/9781801819626/)
+## . 텍스트북 : [Hands-On Unsupervised Learning Using Python](https://www.oreilly.com/library/view/hands-on-unsupervised-learning/9781492035633/)
+## . 텍스트북 : [Deep Learning with Python (2nd Ed.)](https://www.oreilly.com/library/view/deep-learning-with/9781617296422/)
+## . 텍스트북 : [Machine Learning for Time-Series with Python](https://www.oreilly.com/library/view/machine-learning-for/9781801819626/)

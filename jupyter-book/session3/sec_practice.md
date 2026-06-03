@@ -7,9 +7,9 @@
 
 ---
 
-```{admonition} 출처: 섹션 1 · Object Detection
+```{admonition} 출처: Object Detection
 :class: note dropdown
-아래 시연/실습은 원래 **섹션 1 · Object Detection** 섹션에 있던 내용입니다.
+아래 시연/실습은 원래 Object Detection** 섹션에 있던 내용입니다.
 ```
 
 ## 1-3. Claude Code 시연
@@ -112,9 +112,9 @@ for model_name, model in models.items():
 
 ---
 
-```{admonition} 출처: 섹션 2 · Action Recognition
+```{admonition} 출처: Action Recognition
 :class: note dropdown
-아래 시연/실습은 원래 **섹션 2 · Action Recognition** 섹션에 있던 내용입니다.
+아래 시연/실습은 원래 Action Recognition** 섹션에 있던 내용입니다.
 ```
 
 ## 2-3. Claude Code 시연

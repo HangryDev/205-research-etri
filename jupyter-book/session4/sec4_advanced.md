@@ -8,7 +8,7 @@
 
 ---
 
-## 📘 섹션 1 심화: Diffusion 구조와 Fine-tuning 심화
+## 📘 심화: Diffusion 구조와 Fine-tuning 심화
 
 ### Diffusion의 수학적 원리 (심화)
 
@@ -60,7 +60,7 @@ image = pipe(prompt, num_inference_steps=50).images[0]
 
 ---
 
-## 📘 섹션 2 심화: 고급 프롬프트 제어와 CGAN
+## 📘 심화: 고급 프롬프트 제어와 CGAN
 
 ### ControlNet: 이미지 구조까지 제어
 
@@ -129,7 +129,7 @@ prompt = build_defect_prompt(
 
 ---
 
-## 📘 섹션 3 심화: 합성 데이터 품질 측정
+## 📘 심화: 합성 데이터 품질 측정
 
 ### FID (Fréchet Inception Distance) 계산
 
@@ -224,6 +224,6 @@ def calculate_fid(real_images, fake_images, batch_size=32):
 *이전 세션 자료: `session1_manufacturing_data_analysis.md` / `session2_deep_learning_anomaly_detection.md` / `session3_vision_ai_safety_monitoring.md`*
 
 # 출처
-## 섹션 1. 텍스트 북 : [Hands-On Generative AI w/ Transformers & Diffusion](https://www.oreilly.com/library/view/hands-on-generative-ai/9781098149239/)
-## 섹션 2. 텍스트 북 : [Generative Deep Learning 2nd](https://www.oreilly.com/library/view/generative-deep-learning/9781098134174/)
-## 섹션 3. 텍스트 북 : [Practical Synthetic Data Generation](https://www.oreilly.com/library/view/practical-synthetic-data/9781492072737/)
+## . 텍스트 북 : [Hands-On Generative AI w/ Transformers & Diffusion](https://www.oreilly.com/library/view/hands-on-generative-ai/9781098149239/)
+## . 텍스트 북 : [Generative Deep Learning 2nd](https://www.oreilly.com/library/view/generative-deep-learning/9781098134174/)
+## . 텍스트 북 : [Practical Synthetic Data Generation](https://www.oreilly.com/library/view/practical-synthetic-data/9781492072737/)
