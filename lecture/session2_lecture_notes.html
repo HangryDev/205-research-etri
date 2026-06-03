@@ -1018,6 +1018,7 @@ train_df['RUL'] = (train_df['max_cycle'] - train_df['cycle']).clip(upper=125)</c
       <tr><td>상수 센서 (제외)</td><td>sensor_1, 5, 6, 10, 16, 18, 19 (7개)</td></tr>
       <tr><td>유효 센서</td><td>14개 (sensor_2,3,4,7,8,9,11,12,13,14,15,17,20,21)</td></tr>
     </table>
+    <p style="font-size:0.9em;color:#666;"><em>※ 이 실습용 사본은 원본 C-MAPSS를 5사이클 간격으로 서브샘플한 버전입니다(cycle 1·6·11·…). 그래서 Train 샘플 수가 4,163행(공식 20,631)이고 수명도 126~361 cycle(공식 128~362)로 공식 데이터셋과 다릅니다.</em></p>
 
     </div>
 
