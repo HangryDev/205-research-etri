@@ -1003,6 +1003,81 @@ train_df['RUL'] = (train_df['max_cycle'] - train_df['cycle']).clip(upper=125)</c
 
     <figcaption>시계열 정상성 검정 결과</figcaption>
 </div>
+
+    <h4>EDA 실습 결과 해석</h4>
+    <div>
+
+    <p><strong>FD001 데이터셋 기본 통계</strong>:</p>
+    <table>
+      <tr><th>항목</th><th>값</th></tr>
+      <tr><td>Train 샘플 수</td><td>4,163</td></tr>
+      <tr><td>Train 엔진 수</td><td>100</td></tr>
+      <tr><td>평균 수명</td><td>204 cycles (126~361)</td></tr>
+      <tr><td>상수 센서 (제외)</td><td>sensor_1, 5, 6, 10, 16, 18, 19 (7개)</td></tr>
+      <tr><td>유효 센서</td><td>14개 (sensor_2,3,4,7,8,9,11,12,13,14,15,17,20,21)</td></tr>
+    </table>
+
+    </div>
+
+    <div>
+
+    <p><strong>센서-RUL 상관관계 (FD001)</strong>:</p>
+    <table>
+      <tr><th>센서</th><th>상관계수</th><th>해석</th></tr>
+      <tr><td>sensor_11</td><td>-0.70</td><td>RUL 감소 시 값 증가 (가장 강한 음의 상관)</td></tr>
+      <tr><td>sensor_4</td><td>-0.68</td><td>RUL 감소 시 값 증가</td></tr>
+      <tr><td>sensor_12</td><td>+0.67</td><td>RUL 감소 시 값 감소</td></tr>
+      <tr><td>sensor_7</td><td>+0.65</td><td>RUL 감소 시 값 감소</td></tr>
+      <tr><td>sensor_21</td><td>+0.64</td><td>RUL 감소 시 값 감소</td></tr>
+    </table>
+    <p>음의 상관 센서: 고장 임박 시 값이 <strong>증가</strong>하는 센서 (온도, 압력 등)</p>
+    <p>양의 상관 센서: 고장 임박 시 값이 <strong>감소</strong>하는 센서 (효율, 유량 등)</p>
+
+    </div>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#128161;</span>
+      <div>
+        <strong>핵심 발견</strong>: RUL이 125 이하로 떨어지면 센서 변화가 가속화되는 "급격한 성능 저하 구간"이 시작됩니다. RUL > 200 구간에서는 센서 값이 거의 일정하며, 이것이 RUL 클리핑(125)의 실증적 근거입니다.
+      </div>
+    </div>
+
+    <div>
+
+    <p><strong>Autoencoder 이상 탐지 결과 (FD001)</strong>:</p>
+    <table>
+      <tr><th>지표</th><th>값</th></tr>
+      <tr><td>정상 재구성 오차 (mean)</td><td>0.00936</td></tr>
+      <tr><td>노화 재구성 오차 (mean)</td><td>0.02104</td></tr>
+      <tr><td>임계값 (95th %ile)</td><td>0.01762</td></tr>
+      <tr><td>ROC-AUC</td><td>0.671</td></tr>
+      <tr><td>정상 recall</td><td>95% (1,484/1,563)</td></tr>
+    </table>
+    <p>Autoencoder는 정상 데이터만 학습했음에도 노화 구간을 재구성 오차로 구분합니다. Latent space에서 건강/노화 상태의 분리가 시각적으로 확인됩니다.</p>
+
+    </div>
+
+    <div>
+
+    <p><strong>LSTM RUL 예측 결과 (FD001)</strong>:</p>
+    <table>
+      <tr><th>지표</th><th>값</th><th>해석</th></tr>
+      <tr><td>Best Val RMSE</td><td>31.98 cycles</td><td>검증 세트 기준</td></tr>
+      <tr><td>Test RMSE</td><td>52.45 cycles</td><td>테스트 세트 (보수적 경향)</td></tr>
+      <tr><td>Early Stopping</td><td>Epoch 29</td><td>과적합 방지로 조기 종료</td></tr>
+    </table>
+    <p><strong>Dropout 실험 결과</strong>:</p>
+    <table>
+      <tr><th>Dropout</th><th>Val RMSE</th><th>Test RMSE</th></tr>
+      <tr><td>0.0</td><td>32.17</td><td>51.47</td></tr>
+      <tr><td>0.1</td><td>32.01</td><td>52.71</td></tr>
+      <tr><td>0.2</td><td>32.21</td><td>51.25</td></tr>
+      <tr><td>0.3</td><td>32.03</td><td>52.51</td></tr>
+      <tr><td>0.5</td><td>31.99</td><td>54.06</td></tr>
+    </table>
+    <p>Dropout 0.1~0.3 구간이 일반화에 유리하며, 0.5에서는 학습 불충분으로 Test RMSE가 악화됩니다.</p>
+
+    </div>
   </div>
 
   <!-- 3-2 모델링 + 평가 -->
