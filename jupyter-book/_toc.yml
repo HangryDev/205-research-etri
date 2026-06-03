@@ -14,30 +14,30 @@ parts:
       - file: session1/sec2_data_imbalance
       - file: session1/sec3_cnc_pipeline
       - file: session1/sec_practice
-      - file: session1/sec4_advanced
       - file: h1_cnc_anomaly_detection_exercise
+      - file: session1/sec4_advanced
   - caption: Part 3. 세션 2 — 딥러닝 이상 탐지
     chapters:
       - file: session2/sec1_autoencoder
       - file: session2/sec2_rul_prediction
       - file: session2/sec3_nasa_turbofan
       - file: session2/sec_practice
-      - file: session2/sec4_advanced
       - file: spec_driven_dev
       - file: h2_nasa_turbofan_rul_exercise
+      - file: session2/sec4_advanced
   # - caption: Part 4. 세션 3 — Vision AI 안전 모니터링
   #   chapters:
   #     - file: session3/sec1_object_detection
   #     - file: session3/sec2_action_recognition
   #     - file: session3/sec3_cctv_safety
   #     - file: session3/sec_practice
-  #     - file: session3/sec4_advanced
   #     - file: h3_cctv_safety_detection
+  #     - file: session3/sec4_advanced
   # - caption: Part 5. 세션 4 — Generative AI 합성 데이터
   #   chapters:
   #     - file: session4/sec1_diffusion_model
   #     - file: session4/sec2_defect_generation
   #     - file: session4/sec3_synthetic_data
   #     - file: session4/sec_practice
-  #     - file: session4/sec4_advanced
   #     - file: h4_mvtec_anomaly_detection
+  #     - file: session4/sec4_advanced
