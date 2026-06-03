@@ -72,9 +72,7 @@ flowchart TD
     C --> D["정확도: 높음<br/>속도: 느림 2~10 FPS → 실시간 불가"]
 ```
 
-- 1단계: 후보 영역을 수백~수천 개 생성
-- 2단계: 각 후보 영역을 분류
-- 정확도 높으나 속도가 느려 **실시간 불가** (CCTV 30FPS의 1/10도 못 따라감)
+R-CNN 계열은 먼저 후보 영역을 수백~수천 개 생성한 뒤 각 영역을 분류하는 2단계 방식입니다. 정확도는 높지만 속도가 느려 **실시간이 불가능** 한데, CCTV의 30FPS는커녕 그 1/10도 따라가지 못합니다.
 
 **1-Stage Detector: YOLO 계열** (YOLO, SSD, RetinaNet)
 
@@ -84,9 +82,7 @@ flowchart LR
     B --> C["정확도: 약간 낮음<br/>속도: 빠름 30~100+ FPS → 실시간 가능"]
 ```
 
-- 단 한 번의 추론으로 위치와 클래스를 **동시 예측**
-- YOLO = **"You Only Look Once"**, 한 번만 본다
-- 정확도는 약간 낮으나 **30~100+ FPS** 로 실시간 가능
+반면 YOLO 계열은 단 한 번의 추론으로 위치와 클래스를 **동시에 예측** 합니다. 이름 그대로 "You Only Look Once", 한 번만 본다는 뜻입니다. 정확도는 약간 낮지만 **30~100+ FPS** 로 실시간 처리가 가능합니다.
 
 ```{admonition} 핵심
 :class: important
@@ -98,9 +94,7 @@ flowchart LR
 
 **YOLO의 한계** (*Practical ML for Computer Vision* Ch.4 지적):
 
-- 한 그리드 셀당 하나의 클래스만 예측 → 작은 객체 떼는 잘 못 잡음
-- 마지막 feature map만 사용 → 작은 객체 탐지 약함
-- 후속 아키텍처(RetinaNet, FPN)가 이 한계를 보완
+다만 YOLO에도 한계가 있습니다. 한 그리드 셀당 하나의 클래스만 예측하기 때문에 작은 객체가 떼로 몰려 있으면 잘 못 잡고, 마지막 feature map만 사용해 작은 객체 탐지가 약합니다. 이런 한계는 RetinaNet, FPN 같은 후속 아키텍처가 보완합니다.
 
 ![Object Detection 아키텍처 발전 타임라인](../../lecture/images/s3_1_img16.png)
 
@@ -135,9 +129,7 @@ flowchart TD
     C --> D["Head (Decoupled)<br/>역할: 위치(bbox) + 클래스 동시 예측<br/>→ 어디에, 무엇이, 얼마나 확실한가"]
 ```
 
-- **Backbone (CSPDarknet)**: 이미지에서 특징을 추출. 텍스처, 모서리, 형태, 색상을 점점 더 추상화된 표현으로 압축
-- **Neck (FPN + PAN)**: 다양한 크기의 특징을 결합. 깊은 층(의미 풍부, 해상도 낮음)과 얕은 층(해상도 좋음, 의미 빈약)을 합쳐 크기 무관 탐지
-- **Head (Decoupled)**: 위치 예측(회귀)과 클래스 예측(분류)을 분리. 학습 신호가 서로 다르므로 분리하면 학습 안정
+**Backbone(CSPDarknet)** 은 이미지에서 특징을 추출해 텍스처·모서리·형태·색상을 점점 더 추상화된 표현으로 압축합니다. **Neck(FPN + PAN)** 은 깊은 층(의미는 풍부하나 해상도가 낮음)과 얕은 층(해상도는 좋으나 의미가 빈약함)을 결합해 크기에 상관없이 탐지할 수 있게 합니다. **Head(Decoupled)** 는 위치 예측(회귀)과 클래스 예측(분류)을 분리하는데, 학습 신호가 서로 다르기 때문에 분리하면 학습이 더 안정적입니다.
 
 **YOLOv8 모델 크기 계열**:
 
@@ -184,7 +176,7 @@ flowchart TD
 
 $$\text{FLOPs} = H \times W \times K^2 \times C_{in} \times C_{out}$$
 
-- 예) 224×224 이미지, 3×3 필터, $C_{in}=64$, $C_{out}=128$ → 약 **3.7억 번** 곱셈 (한 레이어)
+예를 들어 224×224 이미지에 3×3 필터, $C_{in}=64$, $C_{out}=128$ 이면 한 레이어에만 약 **3.7억 번** 의 곱셈이 필요합니다.
 
 **MobileNet의 해결책**: 한 단계 연산을 **두 단계로 쪼갬**
 
@@ -199,8 +191,7 @@ flowchart LR
 | **Depthwise Conv** | 각 채널마다 따로 3×3 필터 적용 (공간만 처리) | `groups=in_channels` |
 | **Pointwise Conv** | 1×1 필터로 채널 간 정보 결합 (채널만 처리) | `kernel_size=1` |
 
-- **연산량 감소**: 약 **1/8 ~ 1/9** 수준
-- **정확도 손실**: 1~2%에 불과
+이렇게 쪼개면 **연산량이 약 1/8~1/9 로 줄어드는** 대신, **정확도 손실은 1~2%에 불과** 합니다.
 
 ```python
 import torch.nn as nn
@@ -225,9 +216,7 @@ pointwise = nn.Conv2d(
 
 **양자화(Quantization)** (*Practical Deep Learning* Ch.6 "Quantize the Model"):
 
-- FP32(32비트) 가중치를 **INT8(8비트)** 로 저장
-- 모델 크기 **4배 축소**, 추론 속도 **2~3배 향상**, 정확도 손실 **1% 미만**
-- TensorFlow Lite, Core ML, TensorRT 등이 지원
+양자화는 FP32(32비트) 가중치를 **INT8(8비트)** 로 저장하는 기법입니다. 모델 크기가 **4배 축소** 되고 추론 속도가 **2~3배 향상** 되며 정확도 손실은 **1% 미만** 으로, TensorFlow Lite·Core ML·TensorRT 등이 지원합니다.
 
 ```{admonition} 팁
 :class: tip
