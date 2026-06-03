@@ -1,11 +1,5 @@
 # 섹션 1 | Diffusion Model — 노이즈에서 결함 이미지를 꺼내는 법
 
-```{admonition} 참고 교재
-:class: note
-
-**참고 교재**: *Hands-On Generative AI with Transformers and Diffusion Models* (Omar Sanseviero et al., O'Reilly)
-```
-
 ---
 
 ## 1-1. 문제 제기
@@ -42,12 +36,6 @@
 ## 1-2. 이론
 
 ### ① Diffusion의 직관: 노이즈 추가 → 노이즈 제거
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Hands-On Generative AI* **Ch.3 Diving Into Diffusion Models** — Diffusion 모델의 Forward/Reverse Process 원리 / **Ch.4 Transformer-Based Diffusion Models** — U-Net 구조와 노이즈 예측 메커니즘
-```
 
 Diffusion 모델이 배우는 것은 딱 하나입니다: **"이 이미지에서 노이즈를 빼면 어떤 이미지가 나오는가"**
 
@@ -104,12 +92,6 @@ flowchart TD
 
 ### ② Fine-tuning 전략: 적은 데이터로 특정 스타일 학습
 
-```{admonition} 참고 교재
-:class: note
-
-📖 *Hands-On Generative AI* **Ch.6 Fine-Tuning Language Models** — Fine-tuning의 원리와 LoRA / DreamBooth 전략 비교
-```
-
 Stable Diffusion 같은 대형 모델을 처음부터 학습하는 것은 불가능합니다.
 **Fine-tuning**: 이미 학습된 모델을 우리 결함 이미지에 맞게 **미세조정**합니다.
 
@@ -165,12 +147,6 @@ pipeline = pipeline.to("cuda")
 ---
 
 ### ③ 생성 품질 평가: 무엇이 좋은 이미지인가
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Hands-On Generative AI* **Ch.3 Diving Into Diffusion Models** — 생성 이미지 품질 평가 지표와 실무 활용
-```
 
 ```
 [생성 이미지 평가 지표 3가지]

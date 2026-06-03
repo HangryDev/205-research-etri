@@ -1,22 +1,10 @@
 # 섹션 3 | NASA Turbofan 통합 실습
 
-```{admonition} 참고 교재
-:class: note
-
-**참고 교재**: *Machine Learning for Time-Series with Python* (Ben Auffarth, Packt)  
-```
-
 ---
 
 ## 3-1. 데이터 확인 + RUL 라벨 설계
 
 ### NASA Turbofan Engine Degradation 데이터셋 소개
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *ML for Time-Series with Python* **Ch.2 Exploratory Data Analysis** — 시계열 데이터 탐색, 분포 분석, 센서 상관관계 파악
-```
 
 ```
 [데이터셋 구성]
@@ -43,12 +31,6 @@ NASA Turbofan FD001 train 데이터를 탐색해줘.
 ```
 
 ### RUL 클리핑: 왜 125로 자르는가
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *ML for Time-Series with Python* **Ch.3 Preprocessing Time-Series Data** — RUL 라벨 설계, 클리핑 전략, 비선형 RUL 정의
-```
 
 ```
 [클리핑이 필요한 이유]
@@ -81,12 +63,6 @@ train_df['RUL'] = (train_df['max_cycle'] - train_df['cycle']).clip(upper=125)
 
 ### LSTM 모델 적용
 
-```{admonition} 참고 교재
-:class: note
-
-📖 *ML for Time-Series with Python* **Ch.7 Machine Learning for Time-Series Classification** — LSTM 기반 회귀, 슬라이딩 윈도우 입력 구성
-```
-
 섹션 2에서 만든 LSTM 구조를 Turbofan 데이터에 그대로 적용합니다.
 
 ```python
@@ -114,12 +90,6 @@ history = model.fit(
 ```
 
 ### 평가 지표: RMSE만으로는 부족한 이유
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *ML for Time-Series with Python* **Ch.4 Feature Engineering** — 평가 지표 설계, 비대칭 손실 함수
-```
 
 ```
 [RMSE의 한계]

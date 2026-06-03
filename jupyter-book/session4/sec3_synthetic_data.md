@@ -1,22 +1,10 @@
 # 섹션 3 | 합성 데이터 고도화 — 만든 데이터가 실제로 도움이 되는가
 
-```{admonition} 참고 교재
-:class: note
-
-**참고 교재**: *Practical Synthetic Data Generation* (Khaled El Emam et al., O'Reilly)
-```
-
 ---
 
 ## 3-1. 핵심 개념 + 실험 설계
 
 ### 합성 데이터의 기회와 위험
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Practical Synthetic Data Generation* **Ch.1 An Introduction to Synthetic Data** — 합성 데이터의 활용 사례, 기회, 그리고 실패 사례
-```
 
 합성 데이터가 항상 도움이 되는 건 아닙니다.
 
@@ -43,12 +31,6 @@
 ```
 
 ### 실험 설계: 무엇을 비교할 것인가
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Practical Synthetic Data Generation* **Ch.6 Measuring the Quality of Synthetic Data** — 합성 데이터 품질 측정과 실제 데이터 유사도 평가
-```
 
 ```
 [실험 구성]

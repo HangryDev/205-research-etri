@@ -10,20 +10,6 @@
 
 ## 📘 섹션 1 심화: 모델 경량화와 엣지 배포
 
-```{admonition} 참고 교재
-:class: note
-
-📖 **교재**: *Practical Deep Learning for Cloud, Mobile, and Edge* (Anirudh Koul et al., O'Reilly)
-**심화 챕터 로드맵**:
-
-| 순서 | 챕터 | 핵심 내용 | 이유 |
-|------|------|----------|------|
-| 1 | **Ch.3** Preparing Your Data | CNN 구조 이해, 데이터 준비 | 모델 선택의 배경 이해 |
-| 2 | **Ch.6** Maximizing Speed of an Existing Mobile Model | MobileNet, 속도 최적화 | 경량화 원리 심화 |
-| 3 | **Ch.13** Exploring AI at the Edge | 엣지 디바이스 종류와 제약 | 배포 환경 이해 |
-| 4 | **Ch.14** Building an Augumented Reality App | 실제 엣지 배포 실습 | 프로덕션 수준 구현 |
-```
-
 ### Quantization (양자화): float32 → int8
 
 ```python
@@ -86,18 +72,6 @@ model_for_pruning = tfmot.sparsity.keras.prune_low_magnitude(
 
 ## 📘 섹션 2 심화: 행동인식 심화와 데이터셋 구축
 
-```{admonition} 참고 교재
-:class: note
-
-📖 **교재**: *Practical Machine Learning for Computer Vision* (Valliappa Lakshmanan et al., O'Reilly)
-**심화 챕터 로드맵**:
-
-| 순서 | 챕터 | 핵심 내용 | 이유 |
-|------|------|----------|------|
-| 1 | **Ch.5** Creating Vision Datasets | 비디오 라벨링, 데이터셋 설계 | 실제 데이터 수집 능력 |
-| 2 | **Ch.11** Image and Video Understanding | 골격 행동인식 심화, 3D CNN | 고급 모델 선택 기준 |
-```
-
 ### 비디오 라벨링 워크플로우
 
 ```{mermaid}
@@ -158,18 +132,6 @@ def normalize_keypoints(keypoints, reference_joints=(11, 12)):
 ---
 
 ## 📘 섹션 3 심화: 성능 평가와 실시간 최적화
-
-```{admonition} 참고 교재
-:class: note
-
-📖 **교재**: *Practical Machine Learning for Computer Vision* (Valliappa Lakshmanan et al., O'Reilly)
-**심화 챕터 로드맵**:
-
-| 순서 | 챕터 | 핵심 내용 | 이유 |
-|------|------|----------|------|
-| 1 | **Ch.6** Image Classification and Preprocessing | 데이터 전처리 파이프라인 | 실제 영상 처리 능력 |
-| 2 | **Ch.8** Faster and More Efficient Models | 다단계 파이프라인 최적화 | 실시간 성능 향상 |
-```
 
 ### 탐지 성능 평가 지표
 

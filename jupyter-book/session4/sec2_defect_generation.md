@@ -1,11 +1,5 @@
 # 섹션 2 | Defect Generation — 프롬프트로 결함을 설계한다
 
-```{admonition} 참고 교재
-:class: note
-
-**참고 교재**: *Generative Deep Learning, 2nd Ed.* (David Foster, O'Reilly)
-```
-
 ---
 
 ## 2-1. 문제 제기
@@ -39,12 +33,6 @@
 ## 2-2. 이론
 
 ### ① 조건부 생성의 직관: CGAN에서 Diffusion으로
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Generative Deep Learning* **Ch.4 Generative Adversarial Networks** — CGAN의 조건부 생성 원리 / **Ch.13 Multimodal Models** — 텍스트-이미지 멀티모달 생성 모델
-```
 
 조건부 생성이라는 아이디어는 GAN 시대부터 있었습니다.
 
@@ -87,12 +75,6 @@ Text-to-Image Diffusion (2022~):
 ---
 
 ### ② CLIP: 텍스트와 이미지를 연결하는 다리
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Generative Deep Learning* **Ch.13 Multimodal Models** — CLIP의 대조 학습 원리와 텍스트-이미지 공간 연결
-```
 
 Stable Diffusion이 텍스트 프롬프트를 이해할 수 있는 이유는 **CLIP** 덕분입니다.
 
@@ -150,12 +132,6 @@ for prompt in prompts:
 ---
 
 ### ③ 제조 결함 프롬프트 설계 원칙
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Generative Deep Learning* **Ch.13 Multimodal Models** — 효과적인 텍스트 프롬프트 설계와 네거티브 프롬프트 활용
-```
 
 좋은 프롬프트는 구조화된 정보를 담습니다.
 

@@ -1,22 +1,10 @@
 # 섹션 3 | CCTV 안전 위반 탐지 통합 실습
 
-```{admonition} 참고 교재
-:class: note
-
-**참고 교재**: *Practical Machine Learning for Computer Vision* (Valliappa Lakshmanan et al., O'Reilly)
-```
-
 ---
 
 ## 3-1. 파이프라인 설계 + 데이터 준비
 
 ### 통합 파이프라인 구조
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Practical ML for Computer Vision* **Ch.6 Image Classification and Preprocessing** — 영상 프레임 추출과 전처리 파이프라인 / **Ch.8 Faster and More Efficient Models** — 다단계 모델 파이프라인 설계
-```
 
 섹션 1(YOLO)과 섹션 2(Action Recognition)를 하나로 연결합니다.
 
@@ -72,12 +60,6 @@ CCTV mp4 영상에서 분석용 프레임을 추출하는 코드를 만들어줘
 ## 3-2. 통합 탐지 + 알림 트리거
 
 ### 위반 판정 로직
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Practical ML for Computer Vision* **Ch.8 Faster and More Efficient Models** — 다단계 탐지 파이프라인의 조건 결합 전략
-```
 
 ```python
 def detect_violation(frame, yolo_model, action_model, keypoint_buffer,

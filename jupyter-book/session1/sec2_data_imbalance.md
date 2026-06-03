@@ -1,11 +1,5 @@
 # 섹션 2 | 데이터 불균형 — 99% 정확도의 함정
 
-```{admonition} 참고 교재
-:class: note
-
-**참고 교재**: *Machine Learning for Imbalanced Data* (Kumar Abhishek & Mounir Abdelaziz)  
-```
-
 ---
 
 ## 2-1. 문제 제기
@@ -40,12 +34,6 @@
 ## 2-2. 이론
 
 ### ① 정확도의 역설 → 올바른 평가 지표
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *ML for Imbalanced Data* **Ch.1 Overcoming the Challenge of Imbalanced Data** — 정확도의 역설과 올바른 평가 지표 선택 / **Ch.3 Metrics** — Precision, Recall, F1, ROC-AUC 상세 설명
-```
 
 **Confusion Matrix** 로 실제 상황을 분석합니다.
 
@@ -82,12 +70,6 @@ F1-Score = 2 × (Precision × Recall) / (Precision + Recall)
 
 ### ② SMOTE: 소수 클래스 합성 원리
 
-```{admonition} 참고 교재
-:class: note
-
-📖 *ML for Imbalanced Data* **Ch.2 Oversampling Methods** — SMOTE 원리와 k-NN 기반 합성 샘플 생성 / **Ch.3 Metrics** — 오버샘플링 후 평가 지표 해석
-```
-
 **SMOTE(Synthetic Minority Over-sampling Technique)** 는 불량 샘플을 **인공적으로 새로 만들어** 균형을 맞춥니다.
 
 ```{mermaid}
@@ -123,12 +105,6 @@ print(f"SMOTE 후: {dict(zip(*np.unique(y_resampled, return_counts=True)))}")
 
 ### ③ class_weight: 손실함수 레벨에서 조정
 
-```{admonition} 참고 교재
-:class: note
-
-📖 *ML for Imbalanced Data* **Ch.5 Cost-Sensitive Learning** — 클래스 가중치를 이용한 비용 민감 학습 원리
-```
-
 SMOTE가 **데이터를 늘리는** 접근이라면, `class_weight`는 **학습 과정에서 불량 샘플의 영향력을 키우는** 접근입니다.
 
 ```python
@@ -154,12 +130,6 @@ model = RandomForestClassifier(
 ---
 
 ### ④ 임계값 조정: 0.5가 항상 최선이 아니다
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *ML for Imbalanced Data* **Ch.10 Threshold Adjustment and Model Calibration** — 최적 임계값 탐색과 Precision-Recall 트레이드오프
-```
 
 대부분의 분류 모델은 **확률값**을 출력하고, 0.5를 기준으로 클래스를 결정합니다.
 

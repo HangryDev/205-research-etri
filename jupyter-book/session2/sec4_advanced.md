@@ -10,16 +10,6 @@
 
 ## 📘 섹션 1 심화: Autoencoder 변형과 Deep SVDD
 
-```{admonition} 참고 교재
-:class: note
-
-📖 **교재**: *Hands-On Unsupervised Learning Using Python* (Ankur A. Patel, O'Reilly)  
-**심화 챕터 로드맵**:
-- **Ch.1 Unsupervised Learning Using Python** — 비지도 학습 전체 지형도
-- **Ch.3 Autoencoders** — Vanilla AE, Sparse AE, Denoising AE 비교
-- **Ch.7 Anomaly Detection with Autoencoders** — 재구성 오차 분포 분석, 임계값 최적화, Deep SVDD 연결
-```
-
 ### Autoencoder 변형 비교
 
 | 종류 | 핵심 아이디어 | 이상탐지에서의 장점 |
@@ -55,12 +45,6 @@ class VAE(nn.Module):
 ```
 
 ### Deep SVDD (Support Vector Data Description)
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Hands-On Unsupervised Learning* **Ch.7** — One-Class 분류와 SVDD 원리
-```
 
 Autoencoder가 "재구성 오차"로 이상을 판단한다면,  
 Deep SVDD는 **"정상 데이터를 하나의 구에 가둔다"** 는 아이디어입니다.
@@ -100,16 +84,6 @@ def svdd_loss(z, center, radius, nu=0.1):
 ---
 
 ## 📘 섹션 2 심화: RNN 계열 모델 비교와 Keras 심화
-
-```{admonition} 참고 교재
-:class: note
-
-📖 **교재**: *Deep Learning with Python, 2nd Ed.* (François Chollet, Manning)  
-**심화 챕터 로드맵**:
-- **Ch.5 Fundamentals of Machine Learning** — 과적합 원인, 정규화 전략 (L1/L2, Dropout, Batch Norm)
-- **Ch.7 Working with Keras: A Deep Dive** — Functional API, 커스텀 레이어, 콜백
-- **Ch.10 Deep Learning for Timeseries** — RNN, LSTM, GRU, Conv1D 비교, 양방향 LSTM
-```
 
 ### RNN 계열 모델 비교
 
@@ -183,18 +157,6 @@ mean, std = predict_with_uncertainty(model, X_test)
 ---
 
 ## 📘 섹션 3 심화: 시계열 이상탐지 고급 기법
-
-```{admonition} 참고 교재
-:class: note
-
-📖 **교재**: *Machine Learning for Time-Series with Python* (Ben Auffarth, Packt)  
-**심화 챕터 로드맵**:
-- **Ch.2 Exploratory Data Analysis** — 시계열 EDA, 정상성 검정, 자기상관 분석
-- **Ch.3 Preprocessing Time-Series Data** — 정규화, 결측치, 슬라이딩 윈도우 설계
-- **Ch.4 Feature Engineering** — 시계열 특징 추출, 비대칭 손실 함수 설계
-- **Ch.7 Machine Learning for Time-Series Classification** — LSTM 분류/회귀 심화
-- **Ch.11 Probabilistic Models** — 베이지안 구조변화 탐지, 온라인 이상탐지
-```
 
 ### 도메인 적응 (Domain Adaptation): FD001 → FD002
 

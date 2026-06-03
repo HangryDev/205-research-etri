@@ -1,11 +1,5 @@
 # 섹션 1 | Object Detection — YOLO가 어떻게 그렇게 빠른가
 
-```{admonition} 참고 교재
-:class: note
-
-**참고 교재**: *Practical Deep Learning for Cloud, Mobile, and Edge* (Anirudh Koul et al., O'Reilly)
-```
-
 ---
 
 ## 1-1. 문제 제기
@@ -49,12 +43,6 @@ flowchart LR
 ## 1-2. 이론
 
 ### ① Object Detection의 발전: 왜 YOLO인가
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Practical Deep Learning for Cloud, Mobile, and Edge* **Ch.3 Preparing Your Data** — 딥러닝 모델 구조의 이해와 CNN 기반 탐지 모델의 발전 흐름
-```
 
 딥러닝 기반 Object Detection은 크게 두 계열로 나뉩니다.
 
@@ -106,12 +94,6 @@ flowchart LR
 
 ### ② YOLOv8 구조 직관
 
-```{admonition} 참고 교재
-:class: note
-
-📖 *Practical Deep Learning for Cloud, Mobile, and Edge* **Ch.3 Preparing Your Data** — CNN 특징 추출 구조 / **Ch.6 Maximizing Speed of an Existing Mobile Model** — Backbone 경량화와 추론 최적화
-```
-
 YOLOv8은 세 부분으로 구성됩니다.
 
 ```{mermaid}
@@ -134,12 +116,6 @@ YOLOv8x (xlarge) → 68.2M 파라미터, 최저 속도, 최고 정확도 ← 서
 ---
 
 ### ③ 경량화의 핵심: Depthwise Separable Convolution
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Practical Deep Learning for Cloud, Mobile, and Edge* **Ch.6 Maximizing Speed of an Existing Mobile Model** — MobileNet의 Depthwise Separable Convolution 원리와 연산량 절감 분석
-```
 
 **왜 일반 Convolution은 엣지 디바이스에서 느린가?**
 

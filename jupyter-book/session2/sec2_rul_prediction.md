@@ -1,11 +1,5 @@
 # 섹션 2 | RUL 예측 — 얼마나 버틸 수 있는가
 
-```{admonition} 참고 교재
-:class: note
-
-**참고 교재**: *Deep Learning with Python, 2nd Ed.* (François Chollet, Manning)  
-```
-
 ---
 
 ## 2-1. 문제 제기
@@ -36,12 +30,6 @@ flowchart LR
 
 ### ① 왜 일반 회귀가 아닌 LSTM인가
 
-```{admonition} 참고 교재
-:class: note
-
-📖 *Deep Learning with Python* **Ch.1 What is Deep Learning?** — 딥러닝의 표현 학습과 시계열 데이터 / **Ch.10 Deep Learning for Timeseries** — 순환 신경망이 필요한 이유
-```
-
 RUL 예측은 결국 숫자를 맞추는 회귀(Regression) 문제입니다.  
 그런데 **왜 선형 회귀나 일반 신경망(MLP)으로는 부족할까요?**
 
@@ -62,12 +50,6 @@ LSTM: 이전 상태를 기억하며 처리 → 변화 패턴 학습
 ---
 
 ### ② LSTM의 직관
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Deep Learning with Python* **Ch.10 Deep Learning for Timeseries** — LSTM 구조, 게이트 메커니즘, 장기 의존성 학습
-```
 
 LSTM(Long Short-Term Memory)은 **"무엇을 기억하고, 무엇을 버릴지"를 학습하는** 순환 신경망입니다.
 
@@ -115,12 +97,6 @@ model.compile(optimizer='adam', loss='mse', metrics=['mae'])
 ---
 
 ### ③ 과적합 방지: Dropout과 Early Stopping
-
-```{admonition} 참고 교재
-:class: note
-
-📖 *Deep Learning with Python* **Ch.5 Fundamentals of Machine Learning** — 과적합의 원인과 정규화 전략 / **Ch.7 Working with Keras: A Deep Dive** — Dropout, Early Stopping 구현
-```
 
 제조 센서 데이터는 **노이즈가 많고 샘플 수가 제한적**이라 과적합 위험이 높습니다.
 

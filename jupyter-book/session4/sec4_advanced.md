@@ -10,19 +10,6 @@
 
 ## 📘 섹션 1 심화: Diffusion 구조와 Fine-tuning 심화
 
-```{admonition} 참고 교재
-:class: note
-
-📖 **교재**: *Hands-On Generative AI with Transformers and Diffusion Models* (Omar Sanseviero et al., O'Reilly)
-**심화 챕터 로드맵**:
-
-| 순서 | 챕터 | 핵심 내용 | 이유 |
-|------|------|----------|------|
-| 1 | **Ch.3** Diving Into Diffusion Models | Forward/Reverse Process 수학적 이해 | Diffusion 원리 깊이 이해 |
-| 2 | **Ch.4** Transformer-Based Diffusion Models | U-Net, Cross-Attention, DDPM vs DDIM | 구조 심화 |
-| 3 | **Ch.6** Fine-Tuning Language Models | LoRA, DreamBooth, Textual Inversion 비교 | Fine-tuning 전략 선택 |
-```
-
 ### Diffusion의 수학적 원리 (심화)
 
 ```
@@ -74,18 +61,6 @@ image = pipe(prompt, num_inference_steps=50).images[0]
 ---
 
 ## 📘 섹션 2 심화: 고급 프롬프트 제어와 CGAN
-
-```{admonition} 참고 교재
-:class: note
-
-📖 **교재**: *Generative Deep Learning, 2nd Ed.* (David Foster, O'Reilly)
-**심화 챕터 로드맵**:
-
-| 순서 | 챕터 | 핵심 내용 | 이유 |
-|------|------|----------|------|
-| 1 | **Ch.4** Generative Adversarial Networks | GAN 기초, CGAN 조건부 생성 원리 | 조건부 생성의 뿌리 이해 |
-| 2 | **Ch.13** Multimodal Models | CLIP, 텍스트-이미지 공간, DALL-E | 현대 생성 모델의 구조 |
-```
 
 ### ControlNet: 이미지 구조까지 제어
 
@@ -155,18 +130,6 @@ prompt = build_defect_prompt(
 ---
 
 ## 📘 섹션 3 심화: 합성 데이터 품질 측정
-
-```{admonition} 참고 교재
-:class: note
-
-📖 **교재**: *Practical Synthetic Data Generation* (Khaled El Emam et al., O'Reilly)
-**심화 챕터 로드맵**:
-
-| 순서 | 챕터 | 핵심 내용 | 이유 |
-|------|------|----------|------|
-| 1 | **Ch.1** An Introduction to Synthetic Data | 합성 데이터 활용 사례와 위험 | 전체 맥락 파악 |
-| 2 | **Ch.6** Measuring the Quality of Synthetic Data | FID, SSIM, 분포 유사도 측정 | 품질 평가 능력 |
-```
 
 ### FID (Fréchet Inception Distance) 계산
 
