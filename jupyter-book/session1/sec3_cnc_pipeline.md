@@ -4,12 +4,11 @@
 :class: note
 
 **참고 교재**: *Machine Learning for Time-Series with Python* (Ben Auffarth)  
-**소요 시간**: 50분 (문제 제기+검증 5 + 이론 15 + 시연 15 + 실습 15)
 ```
 
 ---
 
-## 3-1. 문제 제기 + 데이터 확인 (5분)
+## 3-1. 문제 제기 + 데이터 확인
 
 **목표**: 공구 마모가 **시작되는 순간**을 실시간으로 포착할 수 있을까?
 
@@ -29,9 +28,9 @@ flowchart LR
 
 ---
 
-## 3-2. 이론: 파이프라인 설계 논리 (15분)
+## 3-2. 이론: 파이프라인 설계 논리
 
-### ① 왜 Raw Signal을 그대로 쓰면 안 되는가: 특징 추출 (5분)
+### ① 왜 Raw Signal을 그대로 쓰면 안 되는가: 특징 추출
 
 ```{admonition} 참고 교재
 :class: note
@@ -76,7 +75,7 @@ def extract_features(signal_window):
 
 ---
 
-### ② 이상탐지 방식 선택: 레이블 유무에 따른 전략 (5분)
+### ② 이상탐지 방식 선택: 레이블 유무에 따른 전략
 
 ```{admonition} 참고 교재
 :class: note
@@ -116,7 +115,7 @@ predictions = model.predict(X_test)  # 1: 정상, -1: 이상
 
 ---
 
-### ③ 전체 파이프라인 설계 (5분)
+### ③ 전체 파이프라인 설계
 
 ```{admonition} 참고 교재
 :class: note
@@ -135,7 +134,7 @@ flowchart TB
 
 ---
 
-## 3-3. Claude Code 시연 (15분)
+## 3-3. Claude Code 시연
 
 **Claude에게 던질 프롬프트 예시**:
 ```
@@ -158,7 +157,7 @@ CNC 밀링머신의 공구 마모 탐지 파이프라인을 만들어줘.
 
 ---
 
-## 3-4. 실습 (15분)
+## 3-4. 실습
 
 ### 과제
 

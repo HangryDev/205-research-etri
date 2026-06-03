@@ -4,12 +4,11 @@
 :class: note
 
 **참고 교재**: *Machine Learning for Time-Series with Python* (Ben Auffarth, Packt)  
-**소요 시간**: 50분 (데이터 확인+라벨 설계 10 + 모델링+평가 15 + 자유 실습 25)
 ```
 
 ---
 
-## 3-1. 데이터 확인 + RUL 라벨 설계 (10분)
+## 3-1. 데이터 확인 + RUL 라벨 설계
 
 ### NASA Turbofan Engine Degradation 데이터셋 소개
 
@@ -78,7 +77,7 @@ train_df['RUL'] = (train_df['max_cycle'] - train_df['cycle']).clip(upper=125)
 
 ---
 
-## 3-2. 모델링 + 평가 (15분)
+## 3-2. 모델링 + 평가
 
 ### LSTM 모델 적용
 
@@ -166,7 +165,7 @@ print(f"NASA Score: {score:.2f}  (낮을수록 좋음)")
 
 ---
 
-## 3-3. 자유 실습 (25분)
+## 3-3. 자유 실습
 
 본인의 수준에 맞는 과제를 선택하세요.
 

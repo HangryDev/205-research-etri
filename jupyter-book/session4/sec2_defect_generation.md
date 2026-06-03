@@ -4,12 +4,11 @@
 :class: note
 
 **참고 교재**: *Generative Deep Learning, 2nd Ed.* (David Foster, O'Reilly)
-**소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
 ```
 
 ---
 
-## 2-1. 문제 제기 (3분)
+## 2-1. 문제 제기
 
 **섹션 1에서 배운 것**: Diffusion으로 결함 이미지를 생성할 수 있음
 **이번 섹션의 질문**: 원하는 결함을 **정확하게 제어**할 수 있을까?
@@ -37,9 +36,9 @@
 
 ---
 
-## 2-2. 이론 (13분)
+## 2-2. 이론
 
-### ① 조건부 생성의 직관: CGAN에서 Diffusion으로 (4분)
+### ① 조건부 생성의 직관: CGAN에서 Diffusion으로
 
 ```{admonition} 참고 교재
 :class: note
@@ -87,7 +86,7 @@ Text-to-Image Diffusion (2022~):
 
 ---
 
-### ② CLIP: 텍스트와 이미지를 연결하는 다리 (5분)
+### ② CLIP: 텍스트와 이미지를 연결하는 다리
 
 ```{admonition} 참고 교재
 :class: note
@@ -150,7 +149,7 @@ for prompt in prompts:
 
 ---
 
-### ③ 제조 결함 프롬프트 설계 원칙 (4분)
+### ③ 제조 결함 프롬프트 설계 원칙
 
 ```{admonition} 참고 교재
 :class: note
@@ -210,7 +209,7 @@ image = pipeline(
 
 ---
 
-## 2-3. Claude Code 시연 (10분)
+## 2-3. Claude Code 시연
 
 ```{admonition} 팁
 :class: tip
@@ -246,7 +245,7 @@ image = pipeline(
 
 ---
 
-## 2-4. 실습 (19분)
+## 2-4. 실습
 
 ### 과제
 

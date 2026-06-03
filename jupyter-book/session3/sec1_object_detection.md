@@ -4,12 +4,11 @@
 :class: note
 
 **참고 교재**: *Practical Deep Learning for Cloud, Mobile, and Edge* (Anirudh Koul et al., O'Reilly)
-**소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
 ```
 
 ---
 
-## 1-1. 문제 제기 (3분)
+## 1-1. 문제 제기
 
 **상황**: 공장 CCTV로 실시간 안전 모니터링을 하려고 합니다.
 그런데 GPU 서버에 영상을 보내서 분석하면 어떤 문제가 생길까요?
@@ -47,9 +46,9 @@ flowchart LR
 
 ---
 
-## 1-2. 이론 (13분)
+## 1-2. 이론
 
-### ① Object Detection의 발전: 왜 YOLO인가 (4분)
+### ① Object Detection의 발전: 왜 YOLO인가
 
 ```{admonition} 참고 교재
 :class: note
@@ -105,7 +104,7 @@ flowchart LR
 
 ---
 
-### ② YOLOv8 구조 직관 (5분)
+### ② YOLOv8 구조 직관
 
 ```{admonition} 참고 교재
 :class: note
@@ -134,7 +133,7 @@ YOLOv8x (xlarge) → 68.2M 파라미터, 최저 속도, 최고 정확도 ← 서
 
 ---
 
-### ③ 경량화의 핵심: Depthwise Separable Convolution (4분)
+### ③ 경량화의 핵심: Depthwise Separable Convolution
 
 ```{admonition} 참고 교재
 :class: note
@@ -211,7 +210,7 @@ pointwise = nn.Conv2d(
 
 ---
 
-## 1-3. Claude Code 시연 (10분)
+## 1-3. Claude Code 시연
 
 ```{admonition} 팁
 :class: tip
@@ -241,7 +240,7 @@ YOLOv8로 안전모 탐지 데모를 만들어줘.
 
 ---
 
-## 1-4. 실습 (19분)
+## 1-4. 실습
 
 ### 과제
 

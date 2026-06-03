@@ -4,12 +4,11 @@
 :class: note
 
 **참고 교재**: *Machine Learning for Imbalanced Data* (Kumar Abhishek & Mounir Abdelaziz)  
-**소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
 ```
 
 ---
 
-## 2-1. 문제 제기 (3분)
+## 2-1. 문제 제기
 
 **상황**: 공장 불량 탐지 모델을 만들었더니 정확도가 **99%** 가 나왔습니다.  
 이 모델은 잘 만든 걸까요?
@@ -38,9 +37,9 @@
 
 ---
 
-## 2-2. 이론 (13분)
+## 2-2. 이론
 
-### ① 정확도의 역설 → 올바른 평가 지표 (5분)
+### ① 정확도의 역설 → 올바른 평가 지표
 
 ```{admonition} 참고 교재
 :class: note
@@ -81,7 +80,7 @@ F1-Score = 2 × (Precision × Recall) / (Precision + Recall)
 
 ---
 
-### ② SMOTE: 소수 클래스 합성 원리 (4분)
+### ② SMOTE: 소수 클래스 합성 원리
 
 ```{admonition} 참고 교재
 :class: note
@@ -122,7 +121,7 @@ print(f"SMOTE 후: {dict(zip(*np.unique(y_resampled, return_counts=True)))}")
 
 ---
 
-### ③ class_weight: 손실함수 레벨에서 조정 (2분)
+### ③ class_weight: 손실함수 레벨에서 조정
 
 ```{admonition} 참고 교재
 :class: note
@@ -154,7 +153,7 @@ model = RandomForestClassifier(
 
 ---
 
-### ④ 임계값 조정: 0.5가 항상 최선이 아니다 (2분)
+### ④ 임계값 조정: 0.5가 항상 최선이 아니다
 
 ```{admonition} 참고 교재
 :class: note
@@ -190,7 +189,7 @@ print(f"최적 임계값: {best_threshold:.3f}")
 
 ---
 
-## 2-3. Claude Code 시연 (10분)
+## 2-3. Claude Code 시연
 
 **Claude에게 던질 프롬프트 예시**:
 ```
@@ -206,7 +205,7 @@ print(f"최적 임계값: {best_threshold:.3f}")
 
 ---
 
-## 2-4. 실습 (19분)
+## 2-4. 실습
 
 ### 과제
 

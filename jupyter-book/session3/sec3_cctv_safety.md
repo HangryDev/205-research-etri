@@ -4,12 +4,11 @@
 :class: note
 
 **참고 교재**: *Practical Machine Learning for Computer Vision* (Valliappa Lakshmanan et al., O'Reilly)
-**소요 시간**: 50분 (파이프라인 설계+데이터 준비 10 + 통합 탐지+알림 15 + 자유 실습 25)
 ```
 
 ---
 
-## 3-1. 파이프라인 설계 + 데이터 준비 (10분)
+## 3-1. 파이프라인 설계 + 데이터 준비
 
 ### 통합 파이프라인 구조
 
@@ -70,7 +69,7 @@ CCTV mp4 영상에서 분석용 프레임을 추출하는 코드를 만들어줘
 
 ---
 
-## 3-2. 통합 탐지 + 알림 트리거 (15분)
+## 3-2. 통합 탐지 + 알림 트리거
 
 ### 위반 판정 로직
 
@@ -150,7 +149,7 @@ def log_violation(frame_idx, fps, violation_types, log_path='violations.csv'):
 
 ---
 
-## 3-3. 자유 실습 (25분)
+## 3-3. 자유 실습
 
 본인의 수준에 맞는 과제를 선택하세요.
 

@@ -4,12 +4,11 @@
 :class: note
 
 **참고 교재**: *Deep Learning with Python, 2nd Ed.* (François Chollet, Manning)  
-**소요 시간**: 45분 (문제 제기 3 + 이론 13 + 시연 10 + 실습 19)
 ```
 
 ---
 
-## 2-1. 문제 제기 (3분)
+## 2-1. 문제 제기
 
 **RUL(Remaining Useful Life)**: 지금부터 설비가 고장날 때까지 남은 사이클(또는 시간)
 
@@ -33,9 +32,9 @@ flowchart LR
 
 ---
 
-## 2-2. 이론 (13분)
+## 2-2. 이론
 
-### ① 왜 일반 회귀가 아닌 LSTM인가 (3분)
+### ① 왜 일반 회귀가 아닌 LSTM인가
 
 ```{admonition} 참고 교재
 :class: note
@@ -62,7 +61,7 @@ LSTM: 이전 상태를 기억하며 처리 → 변화 패턴 학습
 
 ---
 
-### ② LSTM의 직관 (5분)
+### ② LSTM의 직관
 
 ```{admonition} 참고 교재
 :class: note
@@ -115,7 +114,7 @@ model.compile(optimizer='adam', loss='mse', metrics=['mae'])
 
 ---
 
-### ③ 과적합 방지: Dropout과 Early Stopping (5분)
+### ③ 과적합 방지: Dropout과 Early Stopping
 
 ```{admonition} 참고 교재
 :class: note
@@ -165,7 +164,7 @@ model.fit(
 
 ---
 
-## 2-3. Claude Code 시연 (10분)
+## 2-3. Claude Code 시연
 
 ```{admonition} 팁
 :class: tip
@@ -198,7 +197,7 @@ NASA Turbofan FD001 데이터로 LSTM 기반 RUL 예측 모델을 만들어줘.
 
 ---
 
-## 2-4. 실습 (20분)
+## 2-4. 실습
 
 ### 과제
 
