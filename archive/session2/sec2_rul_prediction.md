@@ -137,3 +137,110 @@ model.fit(
     callbacks=[early_stopping]  # 알아서 멈춤
 )
 ```
+
+---
+
+## 2-3. Claude Code 시연
+
+```{admonition} 팁
+:class: tip
+
+**시연 포인트**: 모델 구현보다 **학습 곡선과 예측 결과 해석**에 집중하세요.
+```
+
+**Claude에게 던질 프롬프트 예시**:
+```
+NASA Turbofan FD001 데이터로 LSTM 기반 RUL 예측 모델을 만들어줘.
+- 데이터 로드 및 RUL 라벨 생성 (clip 125)
+- window_size=30, 센서 14개 사용
+- LSTM(64) → Dropout(0.2) → Dense(32) → Dense(1)
+- Early Stopping (patience=10)
+- 결과 시각화 2개:
+  1. 학습/검증 손실 곡선
+  2. 실제 RUL vs 예측 RUL 산점도 (대각선 기준선 포함)
+```
+
+**시연 후 Claude에게 추가 질문**:
+> *"RMSE는 낮은데 실제로 조기경보가 잘 안 될 수 있는 이유가 뭐야?  
+> Scoring Function이라는 비대칭 평가 지표는 왜 필요한 거야?"*
+
+**시연 흐름**:
+1. 데이터 로드 + RUL 라벨 생성 확인
+2. 슬라이딩 윈도우 시퀀스 구성
+3. LSTM 모델 정의 및 학습
+4. 학습 곡선 (Early Stopping 발동 시점 확인)
+5. 예측 vs 실제 비교 산점도
+
+---
+
+## 2-4. 실습
+
+### 과제
+
+LSTM 레이어 수와 Dropout 비율 조합을 바꿔보며 과적합과 성능의 트레이드오프를 분석하세요.
+
+| 실험 | LSTM 레이어 | Dropout | 예상 결과 |
+|------|-----------|---------|----------|
+| A | 1개 | 0.0 | 기준선 (과적합 가능) |
+| B | 1개 | 0.2 | Dropout 효과 확인 |
+| C | 2개 | 0.0 | 복잡한 모델 (과적합↑) |
+| D | 2개 | 0.2 | 복잡 + 정규화 |
+
+**제출 항목**:
+- 4가지 조합의 학습/검증 손실 곡선 (subplot)
+- 각 조합의 RMSE 비교 표
+- "Dropout이 없을 때와 있을 때 학습 곡선이 어떻게 달랐는가?" 한 문단
+
+### 실습 시작 코드
+
+```python
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+# NASA Turbofan FD001 데이터 로드
+# 다운로드: https://www.kaggle.com/datasets/behrad3d/nasa-cmaps
+cols = ['unit', 'cycle', 'op1', 'op2', 'op3'] + [f's{i}' for i in range(1, 22)]
+train_df = pd.read_csv('train_FD001.txt', sep=' ', header=None, names=cols)
+train_df = train_df.dropna(axis=1)
+
+# RUL 라벨 생성 (클리핑 포함)
+max_cycle = train_df.groupby('unit')['cycle'].max()
+train_df = train_df.merge(max_cycle.rename('max_cycle'), on='unit')
+train_df['RUL'] = (train_df['max_cycle'] - train_df['cycle']).clip(upper=125)
+
+# 센서 선택 (변동이 있는 14개)
+sensor_cols = ['s2','s3','s4','s7','s8','s9','s11','s12','s13','s14','s15','s17','s20','s21']
+
+def create_sequences(df, sensor_cols, window_size=30):
+    X, y = [], []
+    for unit in df['unit'].unique():
+        unit_data = df[df['unit'] == unit][sensor_cols].values
+        unit_rul = df[df['unit'] == unit]['RUL'].values
+        for i in range(len(unit_data) - window_size):
+            X.append(unit_data[i:i+window_size])
+            y.append(unit_rul[i+window_size])
+    return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
+
+X, y = create_sequences(train_df, sensor_cols)
+
+# 정규화
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+X_reshaped = X.reshape(-1, len(sensor_cols))
+X_scaled = scaler.fit_transform(X_reshaped).reshape(X.shape)
+
+# 학습/검증 분리
+split = int(len(X_scaled) * 0.8)
+X_train, X_val = X_scaled[:split], X_scaled[split:]
+y_train, y_val = y[:split], y[split:]
+
+results = {}
+for n_layers, dropout_rate in [(1, 0.0), (1, 0.2), (2, 0.0), (2, 0.2)]:
+    # TODO: 모델 구성 → 학습 → RMSE 계산
+    pass
+
+# 결과 비교 시각화
+# TODO
+```

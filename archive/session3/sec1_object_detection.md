@@ -183,3 +183,99 @@ pointwise = nn.Conv2d(
 서버 배포 목표 → YOLOv8m 이상으로 정확도 우선
 엣지 + 정확도 모두 중요 → Quantization 적용 (심화 파트 참조)
 ```
+
+---
+
+## 1-3. Claude Code 시연
+
+```{admonition} 팁
+:class: tip
+
+**시연 포인트**: 모델 크기에 따른 속도-정확도 트레이드오프를 **숫자로 확인**하는 과정에 집중하세요.
+```
+
+**Claude에게 던질 프롬프트 예시**:
+```
+YOLOv8로 안전모 탐지 데모를 만들어줘.
+- ultralytics 라이브러리 사용
+- 모델 3개 비교: YOLOv8n, YOLOv8s, YOLOv8m
+- 동일한 테스트 이미지(공장 작업자 사진)로 각 모델 추론
+- 결과 출력:
+  1. 각 모델의 추론 시간(ms)과 탐지된 객체 수
+  2. bbox 시각화 (subplot 3개)
+  3. 속도 vs mAP 비교 막대그래프
+- 테스트 이미지는 numpy로 합성해줘 (실제 이미지 없이 테스트)
+```
+
+**시연 흐름**:
+1. YOLOv8 모델 3개 로드
+2. 동일 이미지에서 각각 추론 실행
+3. 추론 시간 측정 및 결과 bbox 시각화
+4. 속도·정확도 비교 그래프 출력
+5. **Claude에게 추가 질문**: *"모델 크기를 반으로 줄이면 속도가 두 배가 되는 건 아닌데, 왜 그런 거야?"*
+
+---
+
+## 1-4. 실습
+
+### 과제
+
+YOLOv8 모델 크기별 속도-정확도 트레이드오프를 직접 측정하세요.
+
+| 모델 | 파라미터 수 | 추론 시간(ms) | 탐지율 | 선택 기준 |
+|------|-----------|------------|------|---------|
+| YOLOv8n | 3.2M | 측정 | 측정 | 엣지 디바이스 |
+| YOLOv8s | 11.2M | 측정 | 측정 | 중간 사양 |
+| YOLOv8m | 25.9M | 측정 | 측정 | 서버 |
+
+**제출 항목**:
+- 3개 모델의 추론 시간 + 탐지 결과 비교 표
+- 각 모델의 bbox 시각화 이미지
+- "라즈베리파이 환경(CPU only)에서 어떤 모델을 선택할 것인가?" 한 문단 + 이유
+
+### 실습 시작 코드
+
+```python
+import time
+import numpy as np
+import matplotlib.pyplot as plt
+from ultralytics import YOLO
+
+# 테스트 이미지 생성 (실제 이미지가 없을 때)
+# 실제 실습 시에는 공장 작업자 이미지 파일 경로로 교체
+test_image = np.random.randint(0, 255, (640, 640, 3), dtype=np.uint8)
+
+models = {
+    'YOLOv8n': YOLO('yolov8n.pt'),
+    'YOLOv8s': YOLO('yolov8s.pt'),
+    'YOLOv8m': YOLO('yolov8m.pt'),
+}
+
+results_summary = {}
+
+for model_name, model in models.items():
+    # 워밍업 (첫 추론은 느림)
+    _ = model(test_image, verbose=False)
+
+    # 추론 시간 측정 (10회 평균)
+    times = []
+    for _ in range(10):
+        start = time.time()
+        result = model(test_image, verbose=False)
+        elapsed = (time.time() - start) * 1000  # ms
+        times.append(elapsed)
+
+    avg_time = np.mean(times)
+    n_detections = len(result[0].boxes) if result[0].boxes else 0
+
+    results_summary[model_name] = {
+        'avg_time_ms': avg_time,
+        'n_detections': n_detections,
+    }
+    print(f"{model_name}: {avg_time:.1f}ms, 탐지 수: {n_detections}")
+
+# TODO: 결과를 subplot으로 시각화
+# TODO: 속도 vs 탐지 수 막대그래프 추가
+```
+
+---

@@ -182,3 +182,108 @@ def create_sequences(keypoint_data, labels, window_size=30, step=15):
 위험 행동은 종류가 적고 패턴이 명확함 → 클래스 수 3~5개로 시작
 데이터가 부족할 경우 → 정상 행동만 학습한 Autoencoder로 이상탐지 (세션 2 섹션 1 재활용)
 ```
+
+---
+
+## 2-3. Claude Code 시연
+
+```{admonition} 팁
+:class: tip
+
+**시연 포인트**: MediaPipe로 키포인트를 추출하고 LSTM 입력으로 변환하는 **연결 과정**에 집중하세요.
+```
+
+**Claude에게 던질 프롬프트 예시**:
+```
+작업자 위험 행동 인식 모델을 만들어줘.
+- MediaPipe Pose로 웹캠/영상에서 키포인트 추출
+- window_size=30 프레임으로 슬라이딩 윈도우 생성
+- LSTM(64) → Dropout(0.3) → LSTM(32) → Dense(3, softmax)
+- 행동 클래스: ["정상작업", "허리위험각도", "고소작업위험"]
+- 합성 데이터로 학습 (실제 데이터 없이 테스트 가능하게)
+- 실시간 예측 결과를 프레임에 오버레이 (행동명 + 확률)
+```
+
+**시연 흐름**:
+1. MediaPipe로 샘플 영상에서 키포인트 추출 및 시각화
+2. 키포인트 → LSTM 입력 형태 변환 확인
+3. 합성 데이터로 LSTM 학습
+4. 실시간 예측 결과 프레임 오버레이
+5. **Claude에게 추가 질문**: *"카메라 각도가 정면이 아닌 측면에서 찍히면 키포인트 좌표가 어떻게 달라지고, 이걸 어떻게 대응해야 해?"*
+
+---
+
+## 2-4. 실습
+
+### 과제
+
+`window_size`(분류에 사용할 프레임 수)를 바꿔가며 행동 인식 성능과 지연 시간의 트레이드오프를 분석하세요.
+
+| 실험 | window_size | 지연 시간 | 정확도 | 관찰 포인트 |
+|------|-----------|---------|------|----------|
+| A | 15 프레임 | 0.5초 | 측정 | 빠른 반응, 짧은 맥락 |
+| B | 30 프레임 | 1.0초 | 측정 | 기본값 |
+| C | 60 프레임 | 2.0초 | 측정 | 긴 맥락, 느린 반응 |
+
+**제출 항목**:
+- window_size별 행동 분류 정확도(합성 데이터 기준) 비교 표
+- "실제 현장에서 window_size를 얼마로 설정할 것인가?" 한 문단 + 이유
+  (힌트: 위험 행동이 얼마나 짧게 발생하는가를 고려)
+
+### 실습 시작 코드
+
+```python
+import numpy as np
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# 합성 키포인트 데이터 생성 (실제 영상 없이 테스트)
+np.random.seed(42)
+N_SAMPLES = 300    # 총 샘플 수
+N_CLASSES = 3      # 행동 클래스 수
+N_KEYPOINTS = 99   # 33관절 × 3좌표
+
+def generate_synthetic_data(window_size, n_samples=N_SAMPLES):
+    """행동별 특징이 다른 합성 키포인트 시퀀스 생성"""
+    X, y = [], []
+    for cls in range(N_CLASSES):
+        for _ in range(n_samples // N_CLASSES):
+            # 클래스별로 다른 패턴 부여
+            base = np.random.randn(window_size, N_KEYPOINTS) * 0.1
+            if cls == 1:  # 허리 위험 각도: 허리 키포인트 값 변화
+                base[:, 23*3:25*3] += np.linspace(0, 1, window_size)[:, None]
+            elif cls == 2:  # 고소작업 위험: y좌표 전체 이동
+                base[:, 1::3] -= 0.5
+            X.append(base)
+            y.append(cls)
+    return np.array(X, dtype=np.float32), np.array(y)
+
+def build_model(window_size, n_classes=N_CLASSES):
+    return tf.keras.Sequential([
+        tf.keras.layers.LSTM(64, input_shape=(window_size, N_KEYPOINTS),
+                             return_sequences=True),
+        tf.keras.layers.Dropout(0.3),
+        tf.keras.layers.LSTM(32),
+        tf.keras.layers.Dense(n_classes, activation='softmax')
+    ])
+
+results = {}
+for window_size in [15, 30, 60]:
+    X, y = generate_synthetic_data(window_size)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+    model = build_model(window_size)
+    model.compile(optimizer='adam',
+                  loss='sparse_categorical_crossentropy',
+                  metrics=['accuracy'])
+    # TODO: 모델 학습
+    # TODO: 정확도 및 지연 시간 측정
+    # TODO: 결과 저장
+    pass
+
+# TODO: 결과 비교 시각화
+```
+
+---

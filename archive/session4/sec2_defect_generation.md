@@ -182,3 +182,119 @@ image = pipeline(
     guidance_scale=7.5
 ).images[0]
 ```
+
+---
+
+## 2-3. Claude Code 시연
+
+```{admonition} 팁
+:class: tip
+
+**시연 포인트**: 프롬프트 설계가 생성 결과에 미치는 영향을 **직접 비교**하는 과정에 집중하세요.
+```
+
+**Claude에게 던질 프롬프트 예시**:
+```
+제조 결함 유형별 프롬프트 템플릿을 설계하고 이미지를 생성해줘.
+
+결함 유형별 프롬프트 (각각 3가지 강도):
+1. 스크래치: 경미 / 중간 / 심각
+2. 기포: 소형 / 중형 / 대형
+3. 크랙: 표면 / 깊은 / 관통
+
+- diffusers 파이프라인으로 각 프롬프트 생성
+- 결과: 3×3 grid (행=결함유형, 열=심각도)
+- guidance_scale=7.5 고정
+- guidance_scale을 3 / 7.5 / 15로 바꾼 비교도 추가
+```
+
+**시연 후 Claude에게 추가 질문**:
+> *"같은 프롬프트인데 결과가 매번 다른 이유는 뭐야?
+> 재현 가능한 결과를 원한다면 어떻게 해야 해?"*
+
+**시연 흐름**:
+1. Claude와 함께 결함 프롬프트 템플릿 설계
+2. 유형별 × 강도별 이미지 생성
+3. 3×3 grid 시각화
+4. `guidance_scale` 변화 효과 확인
+5. **seed 고정**으로 재현성 확보 방법 시연
+
+---
+
+## 2-4. 실습
+
+### 과제
+
+`guidance_scale`을 바꿔가며 프롬프트 충실도와 이미지 다양성의 트레이드오프를 분석하세요.
+
+| 실험 | guidance_scale | 특성 | 관찰 포인트 |
+|------|--------------|------|----------|
+| A | 3 | 프롬프트 약하게 반영 | 다양하지만 프롬프트와 다를 수 있음 |
+| B | 7.5 | 기본값 (권장) | 균형 |
+| C | 12 | 프롬프트 강하게 반영 | 충실하지만 부자연스러울 수 있음 |
+| D | 20 | 과도하게 반영 | 과포화, 아티팩트 발생 |
+
+**제출 항목**:
+- 4가지 guidance_scale의 생성 이미지 비교 (동일 seed, subplot)
+- "결함 데이터 생성 목적으로 어떤 guidance_scale을 선택할 것인가?" 한 문단
+
+### 실습 시작 코드
+
+```python
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
+from diffusers import StableDiffusionPipeline
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# 파이프라인 로드 (섹션 1과 동일)
+try:
+    pipe = StableDiffusionPipeline.from_pretrained(
+        "hf-internal-testing/tiny-stable-diffusion-pipe",
+        torch_dtype=torch.float16 if device == "cuda" else torch.float32
+    ).to(device)
+    use_pipe = True
+except:
+    use_pipe = False
+    print("파이프라인 없음: 합성 이미지로 대체")
+
+prompt = (
+    "scratch defect on stainless steel surface, "
+    "industrial quality inspection photo, high resolution"
+)
+negative_prompt = "blurry, low quality, cartoon, text, watermark"
+
+SEED = 42  # 재현성을 위한 seed 고정
+guidance_scales = [3, 7.5, 12, 20]
+generated_images = {}
+
+for gs in guidance_scales:
+    if use_pipe:
+        generator = torch.Generator(device=device).manual_seed(SEED)
+        image = pipe(
+            prompt=prompt,
+            negative_prompt=negative_prompt,
+            guidance_scale=gs,
+            generator=generator,
+            num_inference_steps=30
+        ).images[0]
+        generated_images[gs] = np.array(image)
+    else:
+        # 합성 대체
+        np.random.seed(SEED)
+        generated_images[gs] = (np.random.rand(512, 512, 3) * 255).astype(np.uint8)
+
+# TODO: 4개 이미지를 subplot으로 시각화
+# TODO: 각 이미지 제목에 guidance_scale 표시
+fig, axes = plt.subplots(1, 4, figsize=(16, 4))
+for idx, gs in enumerate(guidance_scales):
+    axes[idx].imshow(generated_images[gs])
+    axes[idx].set_title(f'guidance_scale={gs}')
+    axes[idx].axis('off')
+plt.suptitle('Guidance Scale 비교: 동일 프롬프트, 동일 Seed')
+plt.tight_layout()
+plt.show()
+```
+
+---

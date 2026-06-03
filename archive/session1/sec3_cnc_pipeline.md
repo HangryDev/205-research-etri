@@ -107,3 +107,91 @@ flowchart TB
     D --> E["5. 이상탐지\nIsolation Forest → 이상 점수 계산"]
     E --> F["6. 알림\n이상 점수 > 임계값 → 경보 발생"]
 ```
+
+---
+
+## 3-3. Claude Code 시연
+
+**Claude에게 던질 프롬프트 예시**:
+```
+CNC 밀링머신의 공구 마모 탐지 파이프라인을 만들어줘.
+- 시뮬레이션 데이터: 정상 구간 + 마모 시작 구간 포함
+- 단계: Wavelet 노이즈 제거 → 슬라이딩 윈도우 특징 추출 → Isolation Forest
+- 각 단계의 결과를 subplot으로 시각화 (원본, 노이즈 제거 후, 이상 점수 시계열)
+- contamination=0.05로 설정
+```
+
+**시연 후 Claude에게 추가 질문**:
+> *"탐지 민감도를 높이려면 어떤 파라미터를 조정해야 하고, 그때 트레이드오프는 뭐야?"*
+
+**시연 흐름**:
+1. 합성 진동 데이터 생성 (정상 → 마모 시작 → 심각한 마모)
+2. Wavelet 노이즈 제거 적용
+3. 슬라이딩 윈도우로 특징 벡터 계산
+4. Isolation Forest로 이상 점수 계산
+5. 이상 점수 시계열 플롯 → 마모 시작 구간이 탐지되는지 확인
+
+---
+
+## 3-4. 실습
+
+### 과제
+
+`contamination` 파라미터를 조정하며 탐지 민감도의 트레이드오프를 분석하세요.
+
+| 실험 | contamination | 예상 결과 |
+|------|--------------|----------|
+| A | 0.01 (1%) | 매우 보수적 탐지 |
+| B | 0.05 (5%) | 기본값 |
+| C | 0.10 (10%) | 민감한 탐지 |
+
+**제출 항목**:
+- 3가지 설정의 이상 점수 시계열 그래프 (subplot)
+- "너무 민감한 것과 너무 둔감한 것의 트레이드오프를 실무 관점에서 설명하라" (한 문단)
+
+### 실습 시작 코드
+
+```python
+import numpy as np
+import pywt
+import matplotlib.pyplot as plt
+from sklearn.ensemble import IsolationForest
+
+# 시뮬레이션 데이터 생성
+np.random.seed(42)
+t = np.linspace(0, 10, 10000)  # 10초, 1000Hz 샘플링
+
+# 정상 구간 (0~5초) + 마모 시작 (5~7초) + 심각한 마모 (7~10초)
+signal = np.sin(2 * np.pi * 50 * t)                          # 기본 절삭 신호
+signal[5000:7000] += 0.3 * np.random.randn(2000)              # 마모 시작: 노이즈 증가
+signal[7000:] += 0.8 * np.random.randn(3000)                  # 심각한 마모: 큰 노이즈
+
+# Step 1: Wavelet 노이즈 제거
+def denoise(signal, wavelet='db4', level=5):
+    coeffs = pywt.wavedec(signal, wavelet, level=level)
+    threshold = np.sqrt(2 * np.log(len(signal))) * np.std(coeffs[-1])
+    coeffs[1:] = [pywt.threshold(c, threshold, mode='soft') for c in coeffs[1:]]
+    return pywt.waverec(coeffs, wavelet)
+
+denoised = denoise(signal)
+
+# Step 2: 슬라이딩 윈도우 특징 추출
+def extract_features_windowed(signal, window_size=100, step=50):
+    features = []
+    for i in range(0, len(signal) - window_size, step):
+        window = signal[i:i+window_size]
+        rms = np.sqrt(np.mean(window**2))
+        peak = np.max(np.abs(window))
+        std = np.std(window)
+        kurt = np.mean(((window - np.mean(window)) / (std + 1e-8))**4)
+        features.append([rms, peak, kurt])
+    return np.array(features)
+
+features = extract_features_windowed(denoised)
+
+# Step 3: Isolation Forest (contamination 파라미터를 바꿔가며 실험)
+for contamination in [0.01, 0.05, 0.10]:
+    # TODO: Isolation Forest 학습 및 이상 점수 계산
+    # TODO: 결과 시각화
+    pass
+```

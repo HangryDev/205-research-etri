@@ -136,3 +136,79 @@ flowchart TB
     E --> F["pywt.waverec() — 재합성"]
     F --> G["노이즈 제거된 신호"]
 ```
+
+---
+
+## 1-3. Claude Code 시연
+
+```{admonition} 팁
+:class: tip
+
+**시연 포인트**: 코드 자체보다 **Claude에게 어떻게 질문하는가**를 주목하세요.
+```
+
+**Claude에게 던질 프롬프트 예시**:
+```
+CNC 밀링머신 진동 데이터에서 채터링 노이즈를 제거하려고 해.
+pywt 라이브러리를 사용해서:
+1. db4 wavelet으로 5레벨 분해
+2. 상위 2개 레벨(고주파)에 soft threshold 적용
+3. 재합성 후 원본과 결과를 subplot으로 비교
+샘플 데이터는 numpy로 직접 생성해줘.
+```
+
+**시연 흐름**:
+1. Raw signal 생성 (절삭 신호 + 합성 노이즈)
+2. `wavedec` 로 분해 → 각 레벨 계수 시각화
+3. Threshold 적용 → 계수 변화 확인
+4. `waverec` 로 재합성 → before/after 비교
+5. **Claude에게 추가 질문**: *"db4 대신 sym5를 쓰면 어떤 차이가 있어?"*
+
+---
+
+## 1-4. 실습
+
+### 과제
+
+아래 파라미터 조합을 바꿔보고 결과를 비교하세요.
+
+| 조합 | Wavelet | Level | 관찰 포인트 |
+|------|---------|-------|------------|
+| A | `db4` | 3 | 기준선 |
+| B | `db4` | 5 | 레벨이 늘면? |
+| C | `sym5` | 3 | wavelet 종류 변경 시? |
+| D | `sym5` | 5 | 둘 다 변경 시? |
+
+**제출 항목**:
+- 4가지 조합의 before/after 그래프
+- "어떤 조합이 채터링 제거에 가장 효과적이었는가?" 한 줄 답변 + 이유
+
+### 실습 시작 코드
+
+```python
+import numpy as np
+import pywt
+import matplotlib.pyplot as plt
+
+# 합성 신호 생성
+np.random.seed(42)
+t = np.linspace(0, 1, 1024)
+cutting_signal = np.sin(2 * np.pi * 50 * t)          # 50Hz: 절삭 신호
+spindle_noise  = 0.3 * np.sin(2 * np.pi * 200 * t)   # 200Hz: 스핀들 노이즈
+chatter        = 0.2 * np.random.randn(len(t))         # 광대역 채터링
+signal = cutting_signal + spindle_noise + chatter
+
+def denoise_wavelet(signal, wavelet='db4', level=5, threshold_mode='soft'):
+    # TODO: 여기를 채워보세요
+    # 1. pywt.wavedec 로 분해
+    # 2. 고주파 계수에 threshold 적용
+    # 3. pywt.waverec 로 재합성
+    pass
+
+# 결과 시각화
+fig, axes = plt.subplots(2, 1, figsize=(12, 6))
+axes[0].plot(t, signal, label='원본 신호', alpha=0.7)
+# TODO: 노이즈 제거 결과 추가
+plt.tight_layout()
+plt.show()
+```

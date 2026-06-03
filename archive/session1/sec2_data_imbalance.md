@@ -156,3 +156,69 @@ f1_scores = 2 * precision * recall / (precision + recall + 1e-8)
 best_threshold = thresholds[np.argmax(f1_scores)]
 print(f"최적 임계값: {best_threshold:.3f}")
 ```
+
+---
+
+## 2-3. Claude Code 시연
+
+**Claude에게 던질 프롬프트 예시**:
+```
+불량률 1%인 제조 데이터를 시뮬레이션해줘.
+1. 기본 RandomForest 모델 학습
+2. SMOTE 적용 후 재학습
+3. class_weight='balanced' 적용 후 재학습
+세 모델의 Confusion Matrix와 F1-score를 나란히 비교하는 시각화를 만들어줘.
+```
+
+**시연 후 Claude에게 추가 질문**:
+> *"SMOTE가 항상 최선의 방법인가? 어떤 상황에서는 안 쓰는 게 나을까?"*
+
+---
+
+## 2-4. 실습
+
+### 과제
+
+SMOTE의 `k_neighbors` 파라미터가 결과에 어떤 영향을 미치는지 분석하세요.
+
+| 실험 | k_neighbors | 관찰 지표 |
+|------|-------------|----------|
+| 기본 | 5 (기본값) | F1-Score, Recall |
+| 실험 A | 3 | 위와 동일 |
+| 실험 B | 7 | 위와 동일 |
+| 실험 C | 10 | 위와 동일 |
+
+**제출 항목**:
+- k_neighbors별 F1-Score와 Recall 비교 표 또는 그래프
+- "k_neighbors가 커질수록 어떤 경향이 있었는가?" 한 문단 분석
+
+### 실습 시작 코드
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score, recall_score, classification_report
+from imblearn.over_sampling import SMOTE
+
+# 불균형 데이터 생성 (불량 1%)
+X, y = make_classification(
+    n_samples=10000,
+    weights=[0.99, 0.01],  # 정상 99%, 불량 1%
+    n_features=10,
+    random_state=42
+)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+results = {}
+for k in [3, 5, 7, 10]:
+    # TODO: 각 k_neighbors로 SMOTE 적용 후 모델 학습 및 평가
+    smote = SMOTE(k_neighbors=k, random_state=42)
+    # ...
+    pass
+
+# 결과 비교 시각화
+# TODO
+```

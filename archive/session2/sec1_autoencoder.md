@@ -177,3 +177,106 @@ T보다 높은 오차 → 이상
   안전과 직결된 설비 → T를 낮게 (놓치는 것이 더 위험)
   단순 품질 검사 → T를 높게 (오탐이 더 비쌈)
 ```
+
+---
+
+## 1-3. Claude Code 시연
+
+```{admonition} 팁
+:class: tip
+
+**시연 포인트**: Autoencoder 구조 설계보다 **재구성 오차가 실제로 이상 신호를 잡는지** 확인하는 과정에 집중하세요.
+```
+
+**Claude에게 던질 프롬프트 예시**:
+```
+제조 진동 데이터 이상탐지용 Autoencoder를 만들어줘.
+- 정상 데이터: 사인파 기반 합성 신호 (1000개)
+- 이상 데이터: 노이즈가 추가된 신호 (50개, 학습에는 사용 안 함)
+- PyTorch로 Autoencoder 구현 (input_dim=64, latent_dim=8)
+- 정상 데이터로만 학습 (epoch=50)
+- 결과: 정상/이상 재구성 오차 분포를 겹쳐서 시각화
+- 95th percentile 임계값 표시
+```
+
+**시연 흐름**:
+1. 정상/이상 합성 데이터 생성
+2. Autoencoder 학습 (정상만)
+3. 정상/이상 각각 재구성 오차 계산
+4. 분포 히스토그램 비교 + 임계값 표시
+5. **Claude에게 추가 질문**: *"latent_dim을 8에서 2로 줄이면 분리도가 어떻게 달라져?"*
+
+---
+
+## 1-4. 실습
+
+### 과제
+
+`latent_dim` (잠재 공간 차원)을 바꿔가며 정상/이상 분리도를 비교하세요.
+
+| 실험 | latent_dim | 관찰 포인트 |
+|------|-----------|------------|
+| A | 32 | 압축이 거의 없음 → 이상도 잘 복원? |
+| B | 16 | 기준선 |
+| C | 8 | 강의 시연과 동일 |
+| D | 4 | 강한 압축 → 분리도 변화? |
+
+**분리도 측정 방법**:
+```python
+# 정상과 이상의 재구성 오차 분포가 얼마나 겹치는지 확인
+# 간단한 방법: 임계값(95th pct) 기준으로 이상 탐지율(Recall) 계산
+threshold = np.percentile(normal_errors, 95)
+recall = (anomaly_errors > threshold).mean()
+print(f"latent_dim={latent_dim}, 이상 탐지율: {recall:.2%}")
+```
+
+**제출 항목**:
+- 4가지 latent_dim의 재구성 오차 분포 그래프
+- 각 설정의 이상 탐지율(Recall) 비교 표
+- "압축이 너무 강하거나 너무 약할 때 각각 어떤 문제가 생기는가?" 한 문단
+
+### 실습 시작 코드
+
+```python
+import numpy as np
+import torch
+import torch.nn as nn
+import matplotlib.pyplot as plt
+
+# 데이터 생성
+np.random.seed(42)
+t = np.linspace(0, 1, 64)
+
+# 정상 데이터: 사인파 (약간의 노이즈 포함)
+normal_data = np.array([
+    np.sin(2 * np.pi * 5 * t) + 0.05 * np.random.randn(64)
+    for _ in range(1000)
+], dtype=np.float32)
+
+# 이상 데이터: 스파이크 또는 위상 변이
+anomaly_data = np.array([
+    np.sin(2 * np.pi * 5 * t) + 0.5 * np.random.randn(64)  # 강한 노이즈
+    for _ in range(50)
+], dtype=np.float32)
+
+class Autoencoder(nn.Module):
+    def __init__(self, input_dim=64, latent_dim=8):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, 32), nn.ReLU(),
+            nn.Linear(32, latent_dim)
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(latent_dim, 32), nn.ReLU(),
+            nn.Linear(32, input_dim)
+        )
+    def forward(self, x):
+        return self.decoder(self.encoder(x))
+
+def train_and_evaluate(latent_dim, normal_data, anomaly_data, epochs=50):
+    # TODO: 모델 생성 → 학습 → 오차 계산 → 분리도 평가
+    pass
+
+for latent_dim in [32, 16, 8, 4]:
+    train_and_evaluate(latent_dim, normal_data, anomaly_data)
+```

@@ -183,3 +183,114 @@ def calculate_ssim(real_img, generated_img):
 score = calculate_ssim(real_defect, generated_defect)
 print(f"SSIM: {score:.3f}")  # 0.7 이상이면 품질 양호
 ```
+
+---
+
+## 1-3. Claude Code 시연
+
+```{admonition} 팁
+:class: tip
+
+**시연 포인트**: Fine-tuning 학습 과정이 아닌 **생성 결과의 품질을 평가하는 방법**에 집중하세요.
+```
+
+**Claude에게 던질 프롬프트 예시**:
+```
+Stable Diffusion으로 제조 결함 이미지를 생성하고 품질을 평가해줘.
+- diffusers 라이브러리로 파이프라인 구성
+- 결함 유형 3가지 프롬프트:
+  "scratch defect on metal surface, industrial quality inspection"
+  "bubble defect on painted surface, factory inspection photo"
+  "crack defect on ceramic component, quality control"
+- num_inference_steps=50으로 각 유형당 3장 생성
+- 결과: 3×3 grid 시각화
+- 생성 이미지와 합성 실제 결함 이미지(numpy 생성)의 SSIM 계산
+- GPU 없을 때를 위해 CPU fallback 처리 포함
+```
+
+**시연 흐름**:
+1. 사전 준비된 파이프라인 로드
+2. 결함 유형별 이미지 생성 (3가지)
+3. 생성 결과 grid 시각화
+4. SSIM으로 실제 결함 이미지와 유사도 계산
+5. **Claude에게 추가 질문**: *"생성된 이미지가 너무 비슷하게만 나오는 문제(mode collapse)는 왜 생기고, 어떻게 해결해?"*
+
+---
+
+## 1-4. 실습
+
+### 과제
+
+`num_inference_steps`를 바꿔가며 생성 속도와 이미지 품질의 트레이드오프를 분석하세요.
+
+| 실험 | num_inference_steps | 생성 시간(초) | SSIM | 관찰 포인트 |
+|------|-------------------|------------|------|----------|
+| A | 20 | 측정 | 측정 | 빠르지만 품질은? |
+| B | 50 | 측정 | 측정 | 기본값 |
+| C | 100 | 측정 | 측정 | 느리지만 더 좋은가? |
+
+**제출 항목**:
+- 3가지 steps 설정의 생성 이미지 비교 (각 설정당 1장씩, subplot)
+- 생성 시간 + SSIM 비교 표
+- "실제 제조 현장에서 실시간 생성이 필요하다면 어떤 steps를 선택할 것인가?" 한 문단
+
+### 실습 시작 코드
+
+```python
+import torch
+import numpy as np
+import time
+import matplotlib.pyplot as plt
+from diffusers import StableDiffusionPipeline
+from skimage.metrics import structural_similarity as ssim
+
+# GPU 없는 환경을 위한 설정
+device = "cuda" if torch.cuda.is_available() else "cpu"
+dtype = torch.float16 if device == "cuda" else torch.float32
+
+# 파이프라인 로드
+# GPU 환경: 실제 Stable Diffusion 모델
+# CPU 환경: 경량 모델로 대체
+try:
+    pipe = StableDiffusionPipeline.from_pretrained(
+        "hf-internal-testing/tiny-stable-diffusion-pipe",  # 테스트용 경량 모델
+        torch_dtype=dtype
+    ).to(device)
+except Exception as e:
+    print(f"모델 로드 실패: {e}")
+    print("합성 이미지로 대체합니다.")
+    pipe = None
+
+prompt = "scratch defect on metal surface, industrial inspection photo"
+results = {}
+
+for steps in [20, 50, 100]:
+    if pipe is not None:
+        start = time.time()
+        image = pipe(prompt, num_inference_steps=steps).images[0]
+        elapsed = time.time() - start
+        img_array = np.array(image) / 255.0
+    else:
+        # 파이프라인 없을 때 합성 이미지로 대체
+        elapsed = steps * 0.01  # 시뮬레이션
+        img_array = np.random.rand(512, 512, 3)
+
+    # 실제 결함 이미지 (합성으로 대체)
+    real_defect = np.random.rand(512, 512, 3)
+
+    # SSIM 계산
+    real_gray = np.mean(real_defect, axis=2)
+    gen_gray = np.mean(img_array, axis=2)
+    ssim_score = ssim(real_gray, gen_gray, data_range=1.0)
+
+    results[steps] = {
+        'image': img_array,
+        'time': elapsed,
+        'ssim': ssim_score
+    }
+    print(f"steps={steps}: {elapsed:.1f}초, SSIM={ssim_score:.3f}")
+
+# TODO: 결과 비교 시각화 (subplot 3개 + 비교 표)
+```
+
+---
