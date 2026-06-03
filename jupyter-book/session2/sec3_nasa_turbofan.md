@@ -1,9 +1,5 @@
 # 섹션 3 | NASA Turbofan 통합 실습
 
-> 참고 교재: *Hands-On Unsupervised Learning Using Python* (Ankur A. Patel) / *ML for Time-Series with Python* (Ben Auffarth, Packt) — Ch.2 시계열 분석, Ch.7 LSTM 심화
->
-> 소요 시간: 데이터 확인 10분 + 모델링 15분 + 자유 실습 25분
-
 ---
 
 ## 3-1. 데이터 확인 + RUL 라벨 설계

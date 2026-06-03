@@ -1,8 +1,5 @@
 # 섹션 3 | 합성 데이터 고도화 -- 만든 데이터가 실제로 도움이 되는가
 
-> 참고 교재: *Practical Synthetic Data Generation* Ch.1, Ch.4 / *Hands-On Generative AI* Ch.4
-> 소요 시간: 핵심 개념 + 실험 설계 10분 + 시연 15분 + 자유 실습 25분
-
 ---
 
 ## 3-1. 핵심 개념 + 실험 설계

@@ -1,8 +1,5 @@
 # 섹션 2 | 데이터 불균형 — 99% 정확도의 함정
 
-> 참고 교재: *Machine Learning for Imbalanced Data* (Kumar Abhishek & Mounir Abdelaziz)
-> 소요 시간: 문제 제기 3분 + 이론 13분 + 시연 10분 + 실습 19분
-
 ---
 
 ## 2-1. 문제 제기
@@ -19,9 +16,21 @@
 
 ![Figure 1.1 – 균형 잡힌 분포](../../lecture/images/s1_2_img51.jpg)
 
+- 두 클래스의 샘플 수가 엇비슷한 **균형 데이터**의 분포 예시
+- 클래스가 비슷하면 정확도가 의미 있는 지표로 작동함
+- 바로 다음의 불균형 분포(Figure 1.2)와 대비하기 위한 기준 그림
+
 ![Figure 1.2 – 불균형 데이터셋](../../lecture/images/s1_2_img71.jpg)
 
+- 한 클래스(정상)가 다른 클래스(불량)를 **압도하는 불균형 분포**
+- 다수 클래스에 점이 몰려 소수 클래스가 묻힘 → "전부 정상" 예측이 유혹적이 됨
+- 제조 불량 탐지에서 마주치는 전형적인 데이터 형태
+
 ![Figure 1.3 – 불균형 분류 용어 가이드](../../lecture/images/s1_2_img95.jpg)
+
+- 불균형 분류에서 쓰는 핵심 용어(다수/소수 클래스, 오버/언더샘플링 등)를 정리한 안내도
+- 이후 등장할 개념들의 **지도(map)** 역할
+- 용어를 먼저 정렬해 두면 뒤따르는 SMOTE·CSL 설명이 쉽게 읽힘
 
 ```{admonition} 제조업 현실
 :class: important
@@ -63,9 +72,21 @@ F1-Score = 2 × (Precision × Recall) / (Precision + Recall)
 
 ![Figure 1.4 – ML 알고리즘 결정 경계](../../lecture/images/s1_2_img08.jpg)
 
+- 분류기가 두 클래스를 가르는 **결정 경계(decision boundary)** 를 시각화
+- 불균형이면 경계가 다수 클래스 쪽으로 치우쳐 소수 클래스를 놓치기 쉬움
+- 뒤에서 SMOTE·class_weight가 이 경계를 어떻게 바꾸는지 비교하는 출발점
+
 ![Figure 1.8 – ROC 곡선](../../lecture/images/s1_2_img57.jpg)
 
+- TPR(재현율) vs FPR로 그린 **ROC 곡선** — 곡선이 좌상단에 붙을수록 좋은 모델
+- 불균형이 심하면 FPR이 매우 작게 나와 모델 간 차이가 잘 안 보임
+- 그래서 불균형 데이터에서는 ROC만 보면 성능 착시가 생김
+
 ![Figure 1.9 – PR 곡선 비교](../../lecture/images/s1_2_img97.jpg)
+
+- Precision vs Recall 곡선 — 불균형에서도 모델 간 우열이 또렷하게 드러남
+- 우상단에 가까울수록 정밀도·재현율을 동시에 높게 유지하는 모델
+- "불균형엔 PR 곡선"을 권장하는 직접적 근거
 
 #### F-beta Score — 상황에 맞춰 가중치 조절
 
@@ -119,7 +140,15 @@ flowchart LR
 
 ![Figure 2.5 – SMOTE 동작 원리](../../lecture/images/s1_2_img10.jpg)
 
+- 소수 클래스 샘플과 그 **최근접 이웃 사이 선분 위**에 새 합성 샘플을 찍는 과정
+- 두 실제 점 사이를 보간(interpolation)해 "그럴듯한" 새 불량 샘플을 생성
+- 단순 복사가 아니라 새 점을 만든다는 SMOTE의 핵심을 보여줌
+
 ![Figure 2.6 – SMOTE 오버샘플링 결과](../../lecture/images/s1_2_img27.jpg)
+
+- SMOTE 적용 후 소수 클래스 영역이 합성 샘플로 채워진 분포
+- 두 클래스의 수가 균형을 이뤄 결정 경계가 소수 클래스를 더 잘 감싸게 됨
+- before/after 비교로 SMOTE의 효과를 직관적으로 확인
 
 **장점**: 단순 복사(Oversampling)보다 모델이 더 다양한 경계를 학습
 - 복사하면 같은 점이 여러 개 있어 과적합 위험
@@ -148,7 +177,15 @@ X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
 
 ![Figure 2.8 – Borderline-SMOTE](../../lecture/images/s1_2_img103.jpg)
 
+- 클래스 **경계 부근의 소수 샘플만** 골라 합성하는 SMOTE 변형
+- 분류가 어려운 경계 영역을 집중 보강 → 경계 학습 효율이 올라감
+- 안쪽 깊숙이 안전한 샘플에는 굳이 합성하지 않음
+
 ![Figure 2.11 – ADASYN](../../lecture/images/s1_2_img81.jpg)
+
+- 학습이 **어려운 샘플(주변에 다수 클래스가 많은 곳)** 에 합성 샘플을 더 많이 배치
+- 난이도에 따라 생성 밀도를 **적응적으로** 조절하는 점이 기본 SMOTE와 다름
+- Borderline-SMOTE와 함께 "어디에 더 만들까"를 다루는 전략
 
 ```
 ADASYN:          학습하기 어려운 샘플(경계 근처)에 더 많이 생성
@@ -169,6 +206,10 @@ k_neighbors는 소수 클래스 샘플 수보다 작아야 함
 - 데이터를 건드리지 않고 **모델의 손실 함수에서 불균형을 처리**
 
 ![Figure 5.1 – 비용 민감 학습 방법 분류](../../lecture/images/s1_2_img23.jpg)
+
+- 비용 민감 학습(Cost-Sensitive Learning)의 갈래(가중치 조정·메타비용 등)를 분류한 개요도
+- 데이터를 건드리지 않고 **손실 단계에서** 불균형을 다루는 접근의 지도
+- 우리가 쓰는 class_weight가 그 안에서 어디에 위치하는지 보여줌
 
 ```python
 from sklearn.ensemble import RandomForestClassifier
@@ -200,7 +241,15 @@ model = RandomForestClassifier(class_weight={0: 1, 1: 99}, random_state=42)
 
 ![Figure 5.6 – 기본 모델 결정 경계](../../lecture/images/s1_2_img47.jpg)
 
+- 가중치 없이 학습한 **기본 모델**의 결정 경계 — 다수 클래스 쪽으로 치우침
+- 소수 클래스 영역이 좁게 잡혀 불량을 많이 놓침
+- 다음 그림(balanced 적용 후)과 비교하기 위한 기준
+
 ![Figure 5.7 – balanced 가중치 적용 후](../../lecture/images/s1_2_img24.jpg)
+
+- `class_weight='balanced'` 적용 후 결정 경계가 **소수 클래스 쪽으로 이동**
+- 불량 영역이 넓어져 Recall이 개선됨(대신 오탐은 다소 증가)
+- 데이터를 바꾸지 않고 손실 가중치만으로 경계를 옮긴 결과
 
 ```
 리샘플링(SMOTE): 데이터 자체를 변경 → 오버피팅 위험, 학습 시간 ↑
@@ -221,9 +270,21 @@ CSL(class_weight): 손실 함수 내에서 가중치 조절 → 데이터 불변
 
 ![Figure 5.16 – F1 최적 임계값 PR 곡선](../../lecture/images/s1_2_img73.jpg)
 
+- PR 곡선 위에서 **F1이 최대가 되는 지점**을 표시
+- 0.5 고정이 아니라 곡선을 따라가며 최적 임계값을 찾는다는 아이디어
+- 임계값 선택만으로 성능이 달라질 수 있음을 보여줌
+
 ![Figure 5.17 – 임계값별 지표 변화](../../lecture/images/s1_2_img93.jpg)
 
+- 임계값을 바꿀 때 **Precision·Recall·F1이 어떻게 움직이는지**를 곡선으로 표시
+- 임계값↓ → Recall↑·Precision↓의 트레이드오프가 한눈에 보임
+- 운영 목표(놓침 최소화 등)에 맞춰 임계값을 고르는 근거
+
 ![Figure 5.19 – F1 최적 임계값](../../lecture/images/s1_2_img41.jpg)
+
+- 여러 임계값 중 **F1을 최대화하는 값**을 최종 선택한 결과
+- 불균형에서는 기본 0.5보다 낮은 지점에서 최적이 나오는 경향
+- 단, 이 값은 검증셋에서 정해야 한다는 실무 주의로 연결됨
 
 ```
 모델 출력: P(불량) = 0.3 → 기본(0.5 기준): "정상"

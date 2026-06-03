@@ -1,7 +1,5 @@
 # 섹션 3 | CCTV 안전 위반 탐지 통합 실습
 
-> 참고 교재: *Practical Machine Learning for Computer Vision* (Valliappa Lakshmanan et al., O'Reilly) Ch.4~5 / *Practical Deep Learning for Cloud, Mobile, and Edge* (Anirudh Koul et al., O'Reilly) Ch.6
-
 ---
 
 ## 3-1. 파이프라인 설계 + 데이터 준비

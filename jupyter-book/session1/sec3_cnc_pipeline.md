@@ -1,8 +1,5 @@
 # 섹션 3 | CNC 이상탐지 파이프라인 — 공구 마모 시작점 잡기
 
-> 참고 교재: *Machine Learning for Time-Series with Python* (Ben Auffarth)
-> 소요 시간: 문제 제기 + 검증 5분 + 이론 15분 + 시연 15분 + 실습 15분
-
 ---
 
 ## 3-1. 문제 제기 + 데이터 확인

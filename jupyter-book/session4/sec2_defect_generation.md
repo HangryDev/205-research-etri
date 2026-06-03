@@ -1,8 +1,5 @@
 # 섹션 2 | Defect Generation -- 프롬프트로 결함을 설계한다
 
-> 참고 교재: *Generative Deep Learning, 2nd Edition* Ch.4, Ch.13 / *Hands-On Generative AI* Ch.2
-> 소요 시간: 문제 제기 3분 + 이론 13분 + 시연 10분 + 실습 19분
-
 ---
 
 ## 2-1. 문제 제기
@@ -92,11 +89,27 @@ flowchart LR
 
 ![Figure 4-2. Inputs and outputs of the two networks in a GAN](../../lecture/images/s4_2_img02.png)
 
+- GAN의 두 네트워크(**Generator·Discriminator**)의 입출력 관계를 보여줌
+- 생성자는 가짜를 만들고 판별자는 진짜/가짜를 가름 → 적대적 학습
+- 조건부 생성(CGAN)의 출발이 되는 기본 구조
+
 ![Figure 4-5. Training the DCGAN -- 회색 박스는 동결된 가중치](../../lecture/images/s4_2_img06.png)
+
+- DCGAN 학습 과정 — 회색 박스는 그 단계에서 **동결된(업데이트 안 하는) 가중치**
+- 생성자와 판별자를 번갈아 학습시키는 GAN 훈련 방식
+- GAN 학습이 까다롭고 불안정할 수 있음을 시사
 
 ![Figure 4-16. Inputs and outputs of the generator and critic in a CGAN](../../lecture/images/s4_2_img16.png)
 
+- **조건(레이블)** 을 입력에 추가한 CGAN의 생성자·비평자 입출력
+- 노이즈 + 클래스 레이블 → 해당 클래스의 이미지 생성
+- "조건부 생성"의 초기 형태
+
 ![Figure 4-17. Output from the CGAN -- 조건 레이블로 생성 제어](../../lecture/images/s4_2_img17.png)
+
+- CGAN이 **조건 레이블로 생성을 제어**한 출력 예시
+- 같은 모델이 레이블에 따라 다른 종류의 이미지를 냄
+- 다만 제어 수준이 클래스 단위에 머무는 한계를 보여줌
 
 ---
 
@@ -136,11 +149,27 @@ flowchart TD
 
 ![Figure 13-4. The CLIP training process -- 대조 학습으로 텍스트-이미지 연결](../../lecture/images/s4_2_img20.png)
 
+- 수억 쌍의 (이미지, 텍스트)로 **대조 학습**하는 CLIP 훈련 과정
+- 정답 쌍은 가깝게, 오답 쌍은 멀게 → 텍스트·이미지를 같은 공간에 정렬
+- 텍스트로 이미지를 제어할 수 있게 하는 핵심 다리
+
 ![Figure 13-20. The Stable Diffusion architecture -- 잠재 확산 모델 구조](../../lecture/images/s4_2_img36.png)
+
+- **잠재 확산(latent diffusion)** 기반 Stable Diffusion의 전체 구조
+- 텍스트(CLIP) 조건이 U-Net의 노이즈 제거에 **cross-attention**으로 주입됨
+- 프롬프트 → 이미지가 실제로 어떻게 연결되는지 보여줌
 
 ![Figure 13-1. An example of text-to-image generation by DALL-E 2](../../lecture/images/s4_2_img13.png)
 
+- DALL-E 2의 **텍스트→이미지 생성** 결과 예시
+- 자연어 문장만으로 새 이미지를 만들어내는 능력을 보여줌
+- 조건이 클래스에서 자연어로 진화했음을 실증
+
 ![Figure 13-11. The GLIDE diffusion process -- 텍스트 임베딩으로 U-Net 가이드](../../lecture/images/s4_2_img26.png)
+
+- GLIDE에서 **텍스트 임베딩으로 U-Net을 가이드**하는 확산 과정
+- 노이즈 제거 매 단계마다 프롬프트 의미 쪽으로 끌어당김
+- 텍스트 조건이 생성에 주입되는 메커니즘의 구체 사례
 
 **CLIP 임베딩 확인 코드**
 
