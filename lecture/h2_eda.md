@@ -4,6 +4,8 @@
 
 NASA C-MAPSS (Commercial Modular Aero-Propulsion System Simulation) 데이터셋은 항공기 터보팬 엔진의 성능 저하를 시뮬레이션한 데이터입니다. 4개의 하위 데이터셋(FD001–FD004)으로 구성되어 있으며, 각각 운영 조건(Operating Conditions) 수와 고장 모드(Fault Mode)가 다릅니다.
 
+> **⚠️ 데이터 사본 주의 — 5사이클 서브샘플링**: 본 분석에 사용한 `h2_data_copy/CMaps`는 원본 C-MAPSS를 **5사이클 간격으로 서브샘플한 사본**입니다(각 엔진의 cycle이 1, 6, 11, … 로 기록됨). 그 결과 행 수·수명 수치가 공식 데이터셋과 다릅니다 — 예: FD001 train **4,163행**(공식 20,631행), 수명 범위 **126~361 cycle**(공식 128~362). 아래 모든 통계는 이 서브샘플 사본 기준으로 계산되었습니다.
+
 | Dataset | Train Samples | Train Engines | Test Engines | Op. Conditions | Fault Mode | Avg Life (cycles) |
 |---------|--------------|---------------|--------------|----------------|------------|-------------------|
 | FD001   | 4,163        | 100           | 100          | 1              | HPC degradation | 204 |
