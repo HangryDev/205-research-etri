@@ -8,22 +8,7 @@
 
 ## 교재 (Textbooks)
 
-| 세션 | 교재 | 출판사 | 링크 |
-|------|------|--------|------|
-| 세션 1 | Think DSP: Digital Signal Processing in Python | O'Reilly | [보기](https://www.oreilly.com/library/view/think-dsp/9781491938508/) |
-| 세션 1 | Machine Learning for Imbalanced Data | Packt | [보기](https://www.oreilly.com/library/view/machine-learning-for/9781801070836/) |
-| 세션 1 | Machine Learning for Time-Series with Python | Packt | [보기](https://www.oreilly.com/library/view/machine-learning-for/9781801819626/) |
-| 세션 2 | Hands-On Unsupervised Learning Using Python | O'Reilly | [보기](https://www.oreilly.com/library/view/hands-on-unsupervised-learning/9781492035633/) |
-| 세션 2 | Deep Learning with Python, 2nd Ed. | Manning | [보기](https://www.oreilly.com/library/view/deep-learning-with/9781617296422/) |
-| 세션 3 | Practical Deep Learning for Cloud, Mobile, and Edge | O'Reilly | [보기](https://www.oreilly.com/library/view/practical-deep-learning/9781492034858/) |
-| 세션 3 | Practical Machine Learning for Computer Vision | O'Reilly | [보기](https://www.oreilly.com/library/view/practical-machine-learning/9781098102357/) |
-| 세션 4 | Hands-On Generative AI with Transformers and Diffusion Models | O'Reilly | [보기](https://www.oreilly.com/library/view/hands-on-generative-ai/9781098149239/) |
-| 세션 4 | Generative Deep Learning, 2nd Ed. | O'Reilly | [보기](https://www.oreilly.com/library/view/generative-deep-learning/9781098134174/) |
-| 세션 4 | Practical Synthetic Data Generation | O'Reilly | [보기](https://www.oreilly.com/library/view/practical-synthetic-data/9781492072737/) |
-
-```{tip}
-O'Reilly 교재은 [O'Reilly Learning Platform](https://www.oreilly.com/) 구독으로 전체 내용을 온라인에서 확인할 수 있습니다. 소속 기관에서 구독을 제공하는지 확인해 보세요.
-```
+이 웹 페이지(Jupyter Book)가 교재입니다. 모든 강의 자료, 코드 실습, Claude Code 프롬프트가 여기에 포함되어 있습니다.
 
 ---
 
