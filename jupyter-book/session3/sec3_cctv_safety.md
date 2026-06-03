@@ -27,9 +27,24 @@ flowchart TD
 
 두 모델은 **서로 다른 호흡** 으로 동작합니다. **YOLO** 는 단일 프레임만으로 매 프레임 추론할 수 있어 "안전모가 있다/없다"를 1프레임으로 판단하지만, **LSTM** 은 30프레임 시퀀스가 모여야 추론하므로 첫 30프레임 동안은 결과가 없고 호흡이 느립니다. 둘을 직렬로 묶으면("YOLO가 끝나면 LSTM") LSTM이 대기하는 동안 YOLO 결과까지 멈춰 버립니다. 그래서 **각 스트림을 자기 속도로 돌리고, 결과를 OR 조건으로 합쳐 위반을 판정** 합니다.
 
-![Object Detection, Instance Segmentation, Semantic Segmentation 비교](../../lecture/images/s3_3_img01.png)
-![Object Detection 태스크 예시](../../lecture/images/s3_3_img02.png)
-![Arthropods 데이터셋 예시](../../lecture/images/s3_3_img03.png)
+```{figure} ../../lecture/images/s3_3_img01.png
+:alt: Object Detection, Instance Segmentation, Semantic Segmentation 비교
+:width: 67%
+
+Object Detection, Instance Segmentation, Semantic Segmentation 비교
+```
+```{figure} ../../lecture/images/s3_3_img02.png
+:alt: Object Detection 태스크 예시
+:width: 67%
+
+Object Detection 태스크 예시
+```
+```{figure} ../../lecture/images/s3_3_img03.png
+:alt: Arthropods 데이터셋 예시
+:width: 67%
+
+Arthropods 데이터셋 예시
+```
 
 ### 데이터 준비 시 주의사항
 
@@ -118,9 +133,24 @@ def detect_violation(frame, yolo_model, action_model, keypoint_buffer,
 - 버퍼가 30개에 도달했을 때만 LSTM 추론 호출 (그 전에는 패스)
 - `action_cls != 0`: 정상작업(인덱스 0)이 아닌 위반 행동만 처리
 
-![YOLO 그리드 — 각 셀이 바운딩 박스 예측](../../lecture/images/s3_3_img04.png)
-![YOLO Detection Head — bbox, confidence, class 동시 예측](../../lecture/images/s3_3_img05.png)
-![IoU(Intersection over Union) 지표](../../lecture/images/s3_3_img07.png)
+```{figure} ../../lecture/images/s3_3_img04.png
+:alt: YOLO 그리드 — 각 셀이 바운딩 박스 예측
+:width: 67%
+
+YOLO 그리드 — 각 셀이 바운딩 박스 예측
+```
+```{figure} ../../lecture/images/s3_3_img05.png
+:alt: YOLO Detection Head — bbox, confidence, class 동시 예측
+:width: 67%
+
+YOLO Detection Head — bbox, confidence, class 동시 예측
+```
+```{figure} ../../lecture/images/s3_3_img07.png
+:alt: IoU(Intersection over Union) 지표
+:width: 67%
+
+IoU(Intersection over Union) 지표
+```
 
 ### 위반 이벤트 로깅
 
@@ -183,9 +213,24 @@ CCTV 안전 모니터링 파이프라인의 본질:
 4. **시간적 평활화** (연속 프레임 규칙으로 오탐 감소)
 ```
 
-![CNN 단계별 특징 맵 — 공간 해상도 감소, 의미 정보 증가](../../lecture/images/s3_3_img08.png)
-![YOLO, SSD, FPN 아키텍처 비교](../../lecture/images/s3_3_img09.png)
-![Feature Pyramid Network 상세 구조](../../lecture/images/s3_3_img10.png)
+```{figure} ../../lecture/images/s3_3_img08.png
+:alt: CNN 단계별 특징 맵 — 공간 해상도 감소, 의미 정보 증가
+:width: 67%
+
+CNN 단계별 특징 맵 — 공간 해상도 감소, 의미 정보 증가
+```
+```{figure} ../../lecture/images/s3_3_img09.png
+:alt: YOLO, SSD, FPN 아키텍처 비교
+:width: 67%
+
+YOLO, SSD, FPN 아키텍처 비교
+```
+```{figure} ../../lecture/images/s3_3_img10.png
+:alt: Feature Pyramid Network 상세 구조
+:width: 67%
+
+Feature Pyramid Network 상세 구조
+```
 
 ---
 
@@ -237,6 +282,21 @@ CCTV 안전 모니터링 파이프라인의 본질:
 데이터에서 시작해 의사 결정까지 가는 게 데이터 분석의 본질.
 ```
 
-![다양한 크기와 비율의 앵커 박스 예시](../../lecture/images/s3_3_img11.png)
-![RetinaNet 아키텍처 전체 구조](../../lecture/images/s3_3_img15.png)
-![NMS 적용 전후 — 중복 탐지 제거](../../lecture/images/s3_3_img18.png)
+```{figure} ../../lecture/images/s3_3_img11.png
+:alt: 다양한 크기와 비율의 앵커 박스 예시
+:width: 67%
+
+다양한 크기와 비율의 앵커 박스 예시
+```
+```{figure} ../../lecture/images/s3_3_img15.png
+:alt: RetinaNet 아키텍처 전체 구조
+:width: 67%
+
+RetinaNet 아키텍처 전체 구조
+```
+```{figure} ../../lecture/images/s3_3_img18.png
+:alt: NMS 적용 전후 — 중복 탐지 제거
+:width: 67%
+
+NMS 적용 전후 — 중복 탐지 제거
+```

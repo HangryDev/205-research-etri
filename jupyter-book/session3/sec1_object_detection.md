@@ -18,19 +18,34 @@ flowchart LR
     A[카메라] --> B[인터넷] --> C[GPU 서버] --> D[결과] --> E[카메라]
 ```
 
-![GPU starvation — CPU가 데이터를 준비하는 동안 GPU가 대기](../../lecture/images/s3_1_img01.png)
+```{figure} ../../lecture/images/s3_1_img01.png
+:alt: GPU starvation — CPU가 데이터를 준비하는 동안 GPU가 대기
+:width: 67%
+
+GPU starvation — CPU가 데이터를 준비하는 동안 GPU가 대기
+```
 
 - CPU가 데이터를 준비하는 동안 **GPU가 놀고 있는(starvation)** 상황을 도식화
 - 연산 자원이 있어도 입력 공급이 늦으면 처리량이 안 나옴 → 파이프라인 병목의 개념
 - 영상을 멀리 보내 처리하는 클라우드 방식의 비효율(지연·대기)을 보여주는 맥락
 
-![nvidia-smi 터미널 출력 — GPU 활용률 확인](../../lecture/images/s3_1_img02.png)
+```{figure} ../../lecture/images/s3_1_img02.png
+:alt: nvidia-smi 터미널 출력 — GPU 활용률 확인
+:width: 67%
+
+nvidia-smi 터미널 출력 — GPU 활용률 확인
+```
 
 - `nvidia-smi` 터미널 출력 — 실제 **GPU 활용률·메모리 사용량**을 확인하는 화면
 - 활용률이 낮게 찍히면 모델이 아니라 데이터 공급이 병목일 가능성
 - 성능 문제를 진단하는 가장 기본적인 도구
 
-![TensorBoard 프로파일러 타임라인 — GPU 유휴 시간 시각화](../../lecture/images/s3_1_img03.png)
+```{figure} ../../lecture/images/s3_1_img03.png
+:alt: TensorBoard 프로파일러 타임라인 — GPU 유휴 시간 시각화
+:width: 67%
+
+TensorBoard 프로파일러 타임라인 — GPU 유휴 시간 시각화
+```
 
 - TensorBoard 프로파일러의 타임라인 — **GPU 유휴 구간**을 시각적으로 드러냄
 - 어느 단계에서 시간이 새는지(데이터 로딩 vs 연산)를 한눈에 파악
@@ -96,19 +111,34 @@ flowchart LR
 
 다만 YOLO에도 한계가 있습니다. 한 그리드 셀당 하나의 클래스만 예측하기 때문에 작은 객체가 떼로 몰려 있으면 잘 못 잡고, 마지막 feature map만 사용해 작은 객체 탐지가 약합니다. 이런 한계는 RetinaNet, FPN 같은 후속 아키텍처가 보완합니다.
 
-![Object Detection 아키텍처 발전 타임라인](../../lecture/images/s3_1_img16.png)
+```{figure} ../../lecture/images/s3_1_img16.png
+:alt: Object Detection 아키텍처 발전 타임라인
+:width: 67%
+
+Object Detection 아키텍처 발전 타임라인
+```
 
 - R-CNN→YOLO 등 객체 탐지 **아키텍처의 발전 흐름**을 연표로 정리
 - 2-stage(정확·느림)에서 1-stage(빠름)로 이어지는 큰 흐름을 보여줌
 - "왜 YOLO인가"에 대한 역사적 배경
 
-![탐지 아키텍처와 백본이 mAP에 미치는 영향](../../lecture/images/s3_1_img17.png)
+```{figure} ../../lecture/images/s3_1_img17.png
+:alt: 탐지 아키텍처와 백본이 mAP에 미치는 영향
+:width: 67%
+
+탐지 아키텍처와 백본이 mAP에 미치는 영향
+```
 
 - 탐지 구조와 백본(backbone) 선택이 **정확도(mAP)** 에 미치는 영향을 비교
 - 백본이 강할수록 정확도↑이지만 연산량도↑ → 트레이드오프
 - 모델을 고를 때의 판단 근거
 
-![배치 사이즈 변화에 따른 에포크당 시간과 GPU 활용률](../../lecture/images/s3_1_img05.png)
+```{figure} ../../lecture/images/s3_1_img05.png
+:alt: 배치 사이즈 변화에 따른 에포크당 시간과 GPU 활용률
+:width: 67%
+
+배치 사이즈 변화에 따른 에포크당 시간과 GPU 활용률
+```
 
 - 배치 크기를 키울 때 **에포크당 시간과 GPU 활용률**이 어떻게 변하는지
 - 배치가 커지면 GPU를 더 꽉 채워 효율이 올라감(메모리 한계까지)
@@ -148,19 +178,34 @@ flowchart TD
 엣지 → n/s, 서버 → m/l, 최고 정확도 → x.
 ```
 
-![학습률 변화에 따른 손실 그래프](../../lecture/images/s3_1_img06.png)
+```{figure} ../../lecture/images/s3_1_img06.png
+:alt: 학습률 변화에 따른 손실 그래프
+:width: 67%
+
+학습률 변화에 따른 손실 그래프
+```
 
 - 학습률(learning rate)을 바꿀 때 **손실 곡선**이 어떻게 달라지는지
 - 너무 크면 발산, 너무 작으면 너무 느림 → 적정 학습률이 존재
 - 하이퍼파라미터 튜닝의 기본 감각
 
-![학습률 변화에 따른 손실 변화율](../../lecture/images/s3_1_img07.png)
+```{figure} ../../lecture/images/s3_1_img07.png
+:alt: 학습률 변화에 따른 손실 변화율
+:width: 67%
+
+학습률 변화에 따른 손실 변화율
+```
 
 - 학습률에 따른 **손실 감소 속도(변화율)** 를 본 그림
 - 손실이 가장 빠르게 줄어드는 구간이 좋은 학습률 후보 (LR finder 아이디어)
 - 적정 학습률을 체계적으로 고르는 방법
 
-![모델별 크기, 정확도, 초당 연산량 비교](../../lecture/images/s3_1_img10.png)
+```{figure} ../../lecture/images/s3_1_img10.png
+:alt: 모델별 크기, 정확도, 초당 연산량 비교
+:width: 67%
+
+모델별 크기, 정확도, 초당 연산량 비교
+```
 
 - 여러 모델의 **크기 vs 정확도 vs 초당 연산량**을 한 번에 비교
 - 정확도와 속도가 서로 상충함을 수치로 보여줌
@@ -230,13 +275,23 @@ pointwise = nn.Conv2d(
 둘 다 "정확도를 조금 양보하고 속도와 크기를 크게 얻는" 같은 철학.
 ```
 
-![모바일 친화적 모델 비교](../../lecture/images/s3_1_img11.png)
+```{figure} ../../lecture/images/s3_1_img11.png
+:alt: 모바일 친화적 모델 비교
+:width: 67%
+
+모바일 친화적 모델 비교
+```
 
 - MobileNet 등 **경량 모델들의 정확도-효율**을 비교
 - 적은 연산으로도 쓸 만한 정확도를 내는 모델군을 보여줌
 - 엣지 배포 후보를 고르는 참고 자료
 
-![float32에서 int8로 양자화 — 저장 공간 축소](../../lecture/images/s3_1_img12.png)
+```{figure} ../../lecture/images/s3_1_img12.png
+:alt: float32에서 int8로 양자화 — 저장 공간 축소
+:width: 67%
+
+float32에서 int8로 양자화 — 저장 공간 축소
+```
 
 - 32비트(float32) 가중치를 **8비트(int8)로 양자화**해 저장 공간이 줄어드는 모습
 - 모델 크기 약 4배 축소·추론 가속, 정확도 손실은 1% 미만

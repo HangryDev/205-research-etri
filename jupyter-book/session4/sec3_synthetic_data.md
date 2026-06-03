@@ -35,11 +35,26 @@
 0%도 아니고 100%도 아니고, 그 사이 어딘가에 최적점이 있습니다.
 ```
 
-![Figure 1-1. The conceptual process of data synthesis -- 데이터를 생성 모델에 적합한 후 합성 데이터 생성](../../lecture/images/s4_3_img01.png)
+```{figure} ../../lecture/images/s4_3_img01.png
+:alt: Figure 1-1. The conceptual process of data synthesis -- 데이터를 생성 모델에 적합한 후 합성 데이터 생성
+:width: 67%
 
-![Figure 1-2. The dominoes-playing robot -- NVIDIA의 합성 데이터 활용 사례](../../lecture/images/s4_3_img02.png)
+Figure 1-1. The conceptual process of data synthesis -- 데이터를 생성 모델에 적합한 후 합성 데이터 생성
+```
 
-![Figure 1-3. An example of a synthesized domino image -- 렌더링 엔진으로 생성한 학습용 이미지](../../lecture/images/s4_3_img03.png)
+```{figure} ../../lecture/images/s4_3_img02.png
+:alt: Figure 1-2. The dominoes-playing robot -- NVIDIA의 합성 데이터 활용 사례
+:width: 67%
+
+Figure 1-2. The dominoes-playing robot -- NVIDIA의 합성 데이터 활용 사례
+```
+
+```{figure} ../../lecture/images/s4_3_img03.png
+:alt: Figure 1-3. An example of a synthesized domino image -- 렌더링 엔진으로 생성한 학습용 이미지
+:width: 67%
+
+Figure 1-3. An example of a synthesized domino image -- 렌더링 엔진으로 생성한 학습용 이미지
+```
 
 ### 실험 설계: 무엇을 비교할 것인가
 

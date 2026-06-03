@@ -62,25 +62,45 @@ flowchart TD
     E -->|"반복..."| F["x₀ (새로운 결함 이미지!)"]
 ```
 
-![Figure 4-1. Progressive denoising process -- 노이즈에서 점진적으로 이미지를 복원](../../lecture/images/s4_1_img18.png)
+```{figure} ../../lecture/images/s4_1_img18.png
+:alt: Figure 4-1. Progressive denoising process -- 노이즈에서 점진적으로 이미지를 복원
+:width: 67%
+
+Figure 4-1. Progressive denoising process -- 노이즈에서 점진적으로 이미지를 복원
+```
 
 - 순수 노이즈에서 시작해 **단계적으로 노이즈를 제거**하며 이미지가 드러나는 과정
 - Diffusion의 Reverse Process(노이즈 제거)를 시각적으로 보여줌
 - "노이즈에서 이미지로 가는 방향"을 모델이 학습한다는 핵심을 드러냄
 
-![Figure 4-3. Architecture of a simplified UNet -- 다운샘플링/업샘플링 구조](../../lecture/images/s4_1_img20.png)
+```{figure} ../../lecture/images/s4_1_img20.png
+:alt: Figure 4-3. Architecture of a simplified UNet -- 다운샘플링/업샘플링 구조
+:width: 67%
+
+Figure 4-3. Architecture of a simplified UNet -- 다운샘플링/업샘플링 구조
+```
 
 - Diffusion이 노이즈 예측에 쓰는 **U-Net** 구조(다운샘플링 → 업샘플링)
 - 줄였다 키우며 전역·국소 정보를 모두 활용해 노이즈를 추정
 - 각 스텝에서 "제거할 노이즈"를 출력하는 핵심 신경망
 
-![Figure 2-9. Architecture of a transformer-based language model](../../lecture/images/s4_1_img10.png)
+```{figure} ../../lecture/images/s4_1_img10.png
+:alt: Figure 2-9. Architecture of a transformer-based language model
+:width: 67%
+
+Figure 2-9. Architecture of a transformer-based language model
+```
 
 - 트랜스포머 기반 언어 모델의 구조 — 어텐션으로 토큰 간 관계를 학습
 - 텍스트 프롬프트를 이해하는 **텍스트 인코더**의 기반
 - 텍스트→이미지 생성에서 "조건(프롬프트)"을 처리하는 토대
 
-![Figure 2-10. The encoder-decoder transformer](../../lecture/images/s4_1_img11.png)
+```{figure} ../../lecture/images/s4_1_img11.png
+:alt: Figure 2-10. The encoder-decoder transformer
+:width: 67%
+
+Figure 2-10. The encoder-decoder transformer
+```
 
 - 인코더-디코더 형태의 트랜스포머 구조
 - 입력을 표현으로 **인코딩**하고 그로부터 출력을 **디코딩**
@@ -122,25 +142,45 @@ flowchart LR
     B --> C["결함 특화 모델<br/>(전체 파라미터의 0.1~1%만 학습)"]
 ```
 
-![Figure 7-1. Stable Diffusion fine-tuning architecture](../../lecture/images/s4_1_img31.png)
+```{figure} ../../lecture/images/s4_1_img31.png
+:alt: Figure 7-1. Stable Diffusion fine-tuning architecture
+:width: 67%
+
+Figure 7-1. Stable Diffusion fine-tuning architecture
+```
 
 - Stable Diffusion을 우리 데이터에 맞추는 **fine-tuning 전체 구조**
 - 사전학습 모델 위에 추가 학습을 얹는 방식
 - DreamBooth·LoRA 등 구체적 기법의 공통 틀
 
-![Figure 7-5. LoRA architecture flow -- 작은 파라미터만 추가 학습](../../lecture/images/s4_1_img38.png)
+```{figure} ../../lecture/images/s4_1_img38.png
+:alt: Figure 7-5. LoRA architecture flow -- 작은 파라미터만 추가 학습
+:width: 67%
+
+Figure 7-5. LoRA architecture flow -- 작은 파라미터만 추가 학습
+```
 
 - 원본 가중치는 고정하고 **작은 행렬 A·B만 추가 학습**하는 LoRA 흐름
 - 전체의 0.1~1%만 갱신해 적은 데이터·메모리로 특화
 - 결함 이미지 10여 장으로도 스타일 학습이 가능한 이유
 
-![Figure 7-2. The DreamBooth architecture flow](../../lecture/images/s4_1_img33.png)
+```{figure} ../../lecture/images/s4_1_img33.png
+:alt: Figure 7-2. The DreamBooth architecture flow
+:width: 67%
+
+Figure 7-2. The DreamBooth architecture flow
+```
 
 - 소수 이미지로 **전체 모델을 미세조정**하는 DreamBooth 흐름
 - 특정 대상/스타일을 강하게 각인시킴(고품질, 대신 무거움)
 - LoRA와 대비되는 fine-tuning 전략
 
-![Figure 7-3. Set of face images for DreamBooth training](../../lecture/images/s4_1_img34.png)
+```{figure} ../../lecture/images/s4_1_img34.png
+:alt: Figure 7-3. Set of face images for DreamBooth training
+:width: 67%
+
+Figure 7-3. Set of face images for DreamBooth training
+```
 
 - DreamBooth 학습에 쓰는 **소수의 대상 이미지 세트** 예시
 - 3~20장만으로 특정 대상을 학습시킬 수 있음을 보여줌
@@ -187,7 +227,12 @@ pipeline = pipeline.to("cuda")
 
 **③ FID(Fréchet Inception Distance)** 는 이미지 **집합 대 집합** 의 분포 거리를 측정합니다. 값이 낮을수록 좋으며 10 미만이면 우수, 50 미만이면 양호입니다. 신뢰할 수 있는 FID를 얻으려면 **최소 수백 장** 이 필요합니다.
 
-![Figure 4-4. CNN network used to extract feature maps from images -- FID 계산에 사용되는 특징 추출 네트워크](../../lecture/images/s4_1_img21.png)
+```{figure} ../../lecture/images/s4_1_img21.png
+:alt: Figure 4-4. CNN network used to extract feature maps from images -- FID 계산에 사용되는 특징 추출 네트워크
+:width: 67%
+
+Figure 4-4. CNN network used to extract feature maps from images -- FID 계산에 사용되는 특징 추출 네트워크
+```
 
 - FID 계산에 쓰이는 **특징 추출 CNN**(Inception 계열)
 - 이미지를 특징 벡터로 바꿔 집합 대 집합의 분포 거리를 측정

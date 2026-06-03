@@ -73,25 +73,45 @@ flowchart LR
 
 GAN에는 **Mode Collapse** 라는 고질적 한계가 있습니다(*Generative Deep Learning* 4장). Generator가 Discriminator를 속이기 가장 쉬운 한두 가지 패턴에만 빠져 같은 이미지만 반복 생성하는 현상입니다. Diffusion은 학습 방식이 달라 mode collapse가 훨씬 덜 일어나며, 이것이 Diffusion이 GAN을 대체하는 흐름이 강해진 이유입니다.
 
-![Figure 4-2. Inputs and outputs of the two networks in a GAN](../../lecture/images/s4_2_img02.png)
+```{figure} ../../lecture/images/s4_2_img02.png
+:alt: Figure 4-2. Inputs and outputs of the two networks in a GAN
+:width: 67%
+
+Figure 4-2. Inputs and outputs of the two networks in a GAN
+```
 
 - GAN의 두 네트워크(**Generator·Discriminator**)의 입출력 관계를 보여줌
 - 생성자는 가짜를 만들고 판별자는 진짜/가짜를 가름 → 적대적 학습
 - 조건부 생성(CGAN)의 출발이 되는 기본 구조
 
-![Figure 4-5. Training the DCGAN -- 회색 박스는 동결된 가중치](../../lecture/images/s4_2_img06.png)
+```{figure} ../../lecture/images/s4_2_img06.png
+:alt: Figure 4-5. Training the DCGAN -- 회색 박스는 동결된 가중치
+:width: 67%
+
+Figure 4-5. Training the DCGAN -- 회색 박스는 동결된 가중치
+```
 
 - DCGAN 학습 과정 — 회색 박스는 그 단계에서 **동결된(업데이트 안 하는) 가중치**
 - 생성자와 판별자를 번갈아 학습시키는 GAN 훈련 방식
 - GAN 학습이 까다롭고 불안정할 수 있음을 시사
 
-![Figure 4-16. Inputs and outputs of the generator and critic in a CGAN](../../lecture/images/s4_2_img16.png)
+```{figure} ../../lecture/images/s4_2_img16.png
+:alt: Figure 4-16. Inputs and outputs of the generator and critic in a CGAN
+:width: 67%
+
+Figure 4-16. Inputs and outputs of the generator and critic in a CGAN
+```
 
 - **조건(레이블)** 을 입력에 추가한 CGAN의 생성자·비평자 입출력
 - 노이즈 + 클래스 레이블 → 해당 클래스의 이미지 생성
 - "조건부 생성"의 초기 형태
 
-![Figure 4-17. Output from the CGAN -- 조건 레이블로 생성 제어](../../lecture/images/s4_2_img17.png)
+```{figure} ../../lecture/images/s4_2_img17.png
+:alt: Figure 4-17. Output from the CGAN -- 조건 레이블로 생성 제어
+:width: 67%
+
+Figure 4-17. Output from the CGAN -- 조건 레이블로 생성 제어
+```
 
 - CGAN이 **조건 레이블로 생성을 제어**한 출력 예시
 - 같은 모델이 레이블에 따라 다른 종류의 이미지를 냄
@@ -115,25 +135,45 @@ flowchart TD
 
 Stable Diffusion에서 CLIP은 텍스트와 이미지를 잇는 다리 역할을 합니다. 프롬프트가 입력되면 CLIP이 벡터로 변환하고, 이 벡터가 Diffusion의 노이즈 제거 과정에 **조건으로 주입** 됩니다. 즉 노이즈를 제거할 때마다 "이 텍스트 벡터에 가까워지는 방향으로 가라"는 가이드가 작동하는 셈입니다.
 
-![Figure 13-4. The CLIP training process -- 대조 학습으로 텍스트-이미지 연결](../../lecture/images/s4_2_img20.png)
+```{figure} ../../lecture/images/s4_2_img20.png
+:alt: Figure 13-4. The CLIP training process -- 대조 학습으로 텍스트-이미지 연결
+:width: 67%
+
+Figure 13-4. The CLIP training process -- 대조 학습으로 텍스트-이미지 연결
+```
 
 - 수억 쌍의 (이미지, 텍스트)로 **대조 학습**하는 CLIP 훈련 과정
 - 정답 쌍은 가깝게, 오답 쌍은 멀게 → 텍스트·이미지를 같은 공간에 정렬
 - 텍스트로 이미지를 제어할 수 있게 하는 핵심 다리
 
-![Figure 13-20. The Stable Diffusion architecture -- 잠재 확산 모델 구조](../../lecture/images/s4_2_img36.png)
+```{figure} ../../lecture/images/s4_2_img36.png
+:alt: Figure 13-20. The Stable Diffusion architecture -- 잠재 확산 모델 구조
+:width: 67%
+
+Figure 13-20. The Stable Diffusion architecture -- 잠재 확산 모델 구조
+```
 
 - **잠재 확산(latent diffusion)** 기반 Stable Diffusion의 전체 구조
 - 텍스트(CLIP) 조건이 U-Net의 노이즈 제거에 **cross-attention**으로 주입됨
 - 프롬프트 → 이미지가 실제로 어떻게 연결되는지 보여줌
 
-![Figure 13-1. An example of text-to-image generation by DALL-E 2](../../lecture/images/s4_2_img13.png)
+```{figure} ../../lecture/images/s4_2_img13.png
+:alt: Figure 13-1. An example of text-to-image generation by DALL-E 2
+:width: 67%
+
+Figure 13-1. An example of text-to-image generation by DALL-E 2
+```
 
 - DALL-E 2의 **텍스트→이미지 생성** 결과 예시
 - 자연어 문장만으로 새 이미지를 만들어내는 능력을 보여줌
 - 조건이 클래스에서 자연어로 진화했음을 실증
 
-![Figure 13-11. The GLIDE diffusion process -- 텍스트 임베딩으로 U-Net 가이드](../../lecture/images/s4_2_img26.png)
+```{figure} ../../lecture/images/s4_2_img26.png
+:alt: Figure 13-11. The GLIDE diffusion process -- 텍스트 임베딩으로 U-Net 가이드
+:width: 67%
+
+Figure 13-11. The GLIDE diffusion process -- 텍스트 임베딩으로 U-Net 가이드
+```
 
 - GLIDE에서 **텍스트 임베딩으로 U-Net을 가이드**하는 확산 과정
 - 노이즈 제거 매 단계마다 프롬프트 의미 쪽으로 끌어당김

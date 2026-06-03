@@ -47,9 +47,19 @@ RMS 낮음          RMS 서서히 상승        RMS 급등, 불규칙
 
 여기서는 물리적으로 의미 있는 세 가지 특징으로 신호를 압축합니다. **RMS(Root Mean Square)** 는 신호의 에너지를 나타내며($\sqrt{\Sigma x^2 / N}$), 마모가 진행될수록 커집니다. **Peak Value** 는 순간 최대 진폭으로, 채터링이나 충격이 발생하면 급등합니다. **Kurtosis(첨도)** 는 신호가 얼마나 뾰족한지를 재는 값으로($E[(X-\mu)^4]/\sigma^4$), 정상이면 약 3(정규분포)이지만 결함이 생기면 3 이상으로 올라갑니다.
 
-![Figure 3.1 – 선명화 필터](../../lecture/images/s1_3_img96.png)
+```{figure} ../../lecture/images/s1_3_img96.png
+:alt: Figure 3.1 – 선명화 필터
+:width: 67%
 
-![Figure 3.7 – ROCKET 특징 추출](../../lecture/images/s1_3_img113.png)
+Figure 3.1 – 선명화 필터
+```
+
+```{figure} ../../lecture/images/s1_3_img113.png
+:alt: Figure 3.7 – ROCKET 특징 추출
+:width: 67%
+
+Figure 3.7 – ROCKET 특징 추출
+```
 
 ```python
 def extract_features(signal_window):
@@ -90,11 +100,26 @@ model.fit(X_normal)                    # 정상 데이터로만 학습
 predictions = model.predict(X_test)     # 1: 정상, -1: 이상
 ```
 
-![Figure 6.1 – 변화점 가능 위치](../../lecture/images/s1_3_img110.png)
+```{figure} ../../lecture/images/s1_3_img110.png
+:alt: Figure 6.1 – 변화점 가능 위치
+:width: 67%
 
-![Figure 6.3 – 이상 탐지 응용 분야](../../lecture/images/s1_3_img99.png)
+Figure 6.1 – 변화점 가능 위치
+```
 
-![Figure 6.4 – 이상 탐지 방법 분류](../../lecture/images/s1_3_img01.png)
+```{figure} ../../lecture/images/s1_3_img99.png
+:alt: Figure 6.3 – 이상 탐지 응용 분야
+:width: 67%
+
+Figure 6.3 – 이상 탐지 응용 분야
+```
+
+```{figure} ../../lecture/images/s1_3_img01.png
+:alt: Figure 6.4 – 이상 탐지 방법 분류
+:width: 67%
+
+Figure 6.4 – 이상 탐지 방법 분류
+```
 
 #### 시계열 이상의 3가지 유형
 
@@ -104,11 +129,26 @@ predictions = model.predict(X_test)     # 1: 정상, -1: 이상
 
 이상탐지가 "이 데이터 포인트가 비정상이다"를 말한다면, 변화점 탐지는 "이 시점부터 데이터의 분포가 변했다"를 찾습니다. 공구 마모 탐지에서 **마모 시작점은 곧 변화점(change point)** 으로, 정상 구간에서 마모 구간으로 전환되는 순간입니다. 즉 이상 점수가 급증하는 시점을 찾는 것이 변화점 탐지이며, 구현은 Isolation Forest로 이상 점수 시계열을 계산한 뒤 이동평균이나 CUSUM으로 급증 시점을 잡는 방식입니다.
 
-![Figure 6.12 – 이상치가 표시된 시계열](../../lecture/images/s1_3_img54.png)
+```{figure} ../../lecture/images/s1_3_img54.png
+:alt: Figure 6.12 – 이상치가 표시된 시계열
+:width: 67%
 
-![Figure 6.13 – 변화점이 표시된 시계열](../../lecture/images/s1_3_img78.png)
+Figure 6.12 – 이상치가 표시된 시계열
+```
 
-![Figure 6.14 – Binary Segmentation 변화점 탐지](../../lecture/images/s1_3_img106.png)
+```{figure} ../../lecture/images/s1_3_img78.png
+:alt: Figure 6.13 – 변화점이 표시된 시계열
+:width: 67%
+
+Figure 6.13 – 변화점이 표시된 시계열
+```
+
+```{figure} ../../lecture/images/s1_3_img106.png
+:alt: Figure 6.14 – Binary Segmentation 변화점 탐지
+:width: 67%
+
+Figure 6.14 – Binary Segmentation 변화점 탐지
+```
 
 #### 온라인/실시간 이상탐지
 
@@ -129,11 +169,26 @@ for x in data_stream:
 
 ### ③ 전체 파이프라인 설계
 
-![Figure 4.1 – ML 카테고리](../../lecture/images/s1_3_img09.png)
+```{figure} ../../lecture/images/s1_3_img09.png
+:alt: Figure 4.1 – ML 카테고리
+:width: 67%
 
-![Figure 4.8 – ML 워크플로우](../../lecture/images/s1_3_img61.png)
+Figure 4.1 – ML 카테고리
+```
 
-![Figure 4.9 – 교차 검증](../../lecture/images/s1_3_img85.png)
+```{figure} ../../lecture/images/s1_3_img61.png
+:alt: Figure 4.8 – ML 워크플로우
+:width: 67%
+
+Figure 4.8 – ML 워크플로우
+```
+
+```{figure} ../../lecture/images/s1_3_img85.png
+:alt: Figure 4.9 – 교차 검증
+:width: 67%
+
+Figure 4.9 – 교차 검증
+```
 
 ```{mermaid}
 flowchart TB
