@@ -1065,7 +1065,7 @@ signal[7000:] += 0.8 * np.random.randn(3000)       # 심각한 마모</code></pr
     <div class="presentable">
       <pre><code>[실제 CNC 밀링머신 데이터 구성]
 
-데이터: 13개 CSV 파일, 2,994,307개 샘플
+데이터: 12개 CSV 파일(+ CAD 파일 1개), 2,994,307개 샘플
 센서: 3축 가속도 센서 (acc_x, acc_y, acc_z)
 
 3가지 조건:
@@ -1089,13 +1089,31 @@ RMS (Root Mean Square):
 → RMS와 std 모두 조건 분별력이 뛰어남</code></pre>
     </div>
     <div class="presentable">
-      <p><strong>주파수 분석 결과</strong></p>
-      <pre><code>지배 주파수 (Dominant Frequency):
-  Normal:  1–2kHz    ← 안정적인 저주파 영역
-  Chatter: ~4kHz     ← 고주파 떨림 특성
-  Wear:    1.5–5kHz  ← 넓은 주파수 대역 분포
+      <p><strong>주파수 분석 결과 (정규화 주파수)</strong></p>
+      <pre><code>※ 데이터에 샘플링 주파수(fs)가 없어 절대 Hz가 아닌
+   정규화 주파수(cycles/sample, Nyquist=0.5)로 분석
 
-→ FFT 스펙트럼 분석으로도 조건 구분 가능 확인</code></pre>
+지배 정규화 주파수 (acc_x):
+  Normal:  0.08–0.11   ← 저주파, 안정적
+  Chatter: ~0.40       ← 나이퀴스트의 약 80%, 고주파 떨림
+  Wear:    0.14–0.46   ← 넓은 대역 분포
+
+→ FFT 스펙트럼으로도 조건 구분 가능
+→ fs 확인 시 Hz = 정규화주파수 × fs 로 환산 (이전 ~4kHz는 가정 fs 의존값)</code></pre>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <h3>심화 발견 — 단순 통계가 놓치는 패턴</h3>
+    <div class="presentable">
+      <p><strong>핵심 패턴 (라벨별 EDA)</strong></p>
+      <ul>
+        <li><strong>평균은 조건 무관 거의 동일</strong>(x̄≈-25, ȳ≈-17, z̄≈1,005mg) → 거치 자세 동일, 분류 단서는 변동성·동역학</li>
+        <li><strong>라벨 01(정상)의 숨은 스파이크</strong>: σ는 작지만 acc_x 첨도 ≈2,900, 최소 -1,299mg — 드문 강한 충격 혼입</li>
+        <li><strong>라벨 11(채터링) 축 결합</strong>: 축 간 상관 |0.59~0.64| — 단순 진폭이 아닌 축 위상 결합으로도 구분</li>
+        <li><strong>magnitude 범위</strong> 약 10~5,000mg(고동역) — 자유낙하(≈0)부터 4~5g 충격까지 포함</li>
+        <li><strong>라벨 00의 49% 중복</strong>은 정지 상태 자연 현상 → 제거 금지</li>
+      </ul>
     </div>
   </div>
 
