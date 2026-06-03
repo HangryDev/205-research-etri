@@ -1,13 +1,13 @@
 # VSCode & Claude Code 설치 가이드
 
-```{admonition} 초보자도 따라할 수 있는 단계별 설치 안내서
+```{admonition} ETRI 교육 참가자용 설치 안내서
 :class: note
-본 가이드는 Windows, macOS, Linux 모든 환경에서 VSCode와 Claude Code를 설치하는 방법을 단계별로 안내합니다. 운영체제에 맞는 섹션을 선택하여 진행하세요.
+본 가이드는 Windows 환경에서 VSCode와 Claude Code를 설치하는 방법을 단계별로 안내합니다.
 ```
 
 ---
 
-**목차**: VSCode 설치 → Claude Code 설치 → 첫 실행 및 로그인 → 설치 확인 → FAQ
+**목차**: VSCode 설치 → Claude Code 설치 → 로그인 → Colab MCP 설치 → BMAD-METHOD 설치 → 설치 확인
 
 ---
 
@@ -15,8 +15,6 @@
 
 **VSCode(Visual Studio Code)** 는 Microsoft에서 만든 무료 코드 편집기입니다.
 Claude Code와 함께 사용하면 AI 코딩 어시스턴트를 바로 터미널에서 활용할 수 있습니다.
-
-### Windows
 
 **다운로드 링크:** [https://code.visualstudio.com/Download](https://code.visualstudio.com/Download)
 
@@ -35,84 +33,17 @@ Claude Code와 함께 사용하면 AI 코딩 어시스턴트를 바로 터미널
 
 ---
 
-### macOS
-
-**다운로드 링크:** [https://code.visualstudio.com/Download](https://code.visualstudio.com/Download)
-
-1. 위 링크에서 **Mac** 버튼 클릭 (`.zip` 파일 다운로드)
-2. 다운로드된 `.zip` 파일 더블클릭하여 압축 해제
-3. 압축 해제된 `Visual Studio Code.app` 파일을 **응용 프로그램(Applications)** 폴더로 드래그
-
-**터미널에서 `code` 명령어 사용 설정 (권장):**
-
-VSCode를 열고 `Cmd + Shift + P` → `Shell Command: Install 'code' command in PATH` 선택
-
-이제 터미널에서 `code .` 을 입력하면 현재 폴더를 VSCode로 열 수 있습니다.
-
-```{admonition} Apple Silicon(M1/M2/M3) 사용자
-:class: tip
-다운로드 페이지에서 **Apple Silicon** 버전을 선택하세요.
-```
-
----
-
-### Linux
-
-**다운로드 링크:** [https://code.visualstudio.com/Download](https://code.visualstudio.com/Download)
-
-**Ubuntu / Debian 계열 (.deb):**
-
-```bash
-# 방법 1: 터미널에서 직접 설치 (권장)
-sudo apt update
-sudo apt install wget gpg
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
-sudo apt update
-sudo apt install code
-```
-
-```bash
-# 방법 2: .deb 파일 다운로드 후 설치
-# 위 링크에서 .deb 파일 다운로드 후
-sudo dpkg -i code_*.deb
-```
-
-**Fedora / RHEL 계열 (.rpm):**
-
-```bash
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-sudo dnf check-update
-sudo dnf install code
-```
-
----
-
 ## 2. Claude Code 설치
 
 **Claude Code** 는 Anthropic이 만든 터미널 기반 AI 코딩 에이전트입니다.
 프로젝트 파일을 읽고, 코드를 수정하고, 명령어를 실행할 수 있습니다.
 
-### 사전 준비: Anthropic 계정 만들기
-
-Claude Code를 사용하려면 **Anthropic 계정** 또는 **Claude Pro/Max 구독**이 필요합니다.
-
-1. [https://claude.ai](https://claude.ai) 접속
-2. **Sign up** 클릭 → 이메일로 가입
-3. (선택) Claude Pro 구독 시 Claude Code를 포함한 고급 기능 사용 가능
-
-```{admonition} 요금 안내
-:class: warning
-Claude Code는 API 사용량에 따라 요금이 청구됩니다. 자세한 내용은 [요금 안내](https://www.anthropic.com/pricing)를 참고하세요.
+```{admonition} Team Plan 안내
+:class: tip
+본 교육에서는 **Team Plan**으로 Claude Code를 사용합니다. 별도 가입이나 결제가 필요 없습니다 — 설치 후 ETRI 이메일로 로그인만 하시면 됩니다.
 ```
 
----
-
 ### Windows
-
-Windows에서는 **두 가지 방법** 중 하나를 선택할 수 있습니다.
 
 #### 방법 1: PowerShell 네이티브 설치 (권장 - 가장 쉬움)
 
@@ -167,89 +98,7 @@ VSCode 확장 프로그램(Extensions)에서 `WSL` 검색 → **Microsoft의 WSL
 
 ---
 
-### macOS
-
-**다운로드 링크 (공식):** [https://claude.ai/download](https://claude.ai/download)
-
-**터미널에서 네이티브 설치 (권장):**
-
-1. `Spotlight(Cmd + Space)` 또는 응용 프로그램 → **터미널** 실행
-
-2. 아래 명령어 입력:
-
-```bash
-curl -fsSL https://claude.ai/install.sh | bash
-```
-
-3. 설치 완료 후 셸 설정 새로고침:
-
-```bash
-# zsh 사용자 (macOS 기본)
-source ~/.zshrc
-
-# bash 사용자
-source ~/.bashrc
-```
-
-4. 설치 확인:
-
-```bash
-claude --version
-claude doctor
-```
-
-**Homebrew를 사용하는 경우:**
-
-```bash
-brew install claude-code
-```
-
-```{admonition} Homebrew가 없다면
-:class: tip
-Homebrew가 설치되어 있지 않다면 [https://brew.sh](https://brew.sh) 를 참고하여 먼저 설치하세요.
-```
-
----
-
-### Linux
-
-**터미널에서 네이티브 설치 (권장):**
-
-```bash
-curl -fsSL https://claude.ai/install.sh | bash
-```
-
-설치 완료 후:
-
-```bash
-# 셸 설정 새로고침
-source ~/.bashrc   # bash 사용자
-# 또는
-source ~/.zshrc    # zsh 사용자
-```
-
-**Alpine Linux / musl 기반 배포판:**
-
-```bash
-apk add libgcc libstdc++ ripgrep
-export USE_BUILTIN_RIPGREP=0
-curl -fsSL https://claude.ai/install.sh | bash
-```
-
-**npm으로 설치하는 방법 (Node.js 18 이상 필요):**
-
-```bash
-npm install -g @anthropic-ai/claude-code
-```
-
-```{admonition} 주의
-:class: warning
-`sudo npm install -g` 는 권한 문제를 일으킬 수 있으니 사용하지 마세요.
-```
-
----
-
-## 3. Claude Code 첫 실행 및 로그인
+## 3. Claude Code 로그인
 
 설치가 완료되면 터미널에서 아래를 입력합니다:
 
@@ -257,13 +106,12 @@ npm install -g @anthropic-ai/claude-code
 claude
 ```
 
-처음 실행 시 로그인 방법을 선택하라는 화면이 나타납니다:
+처음 실행 시 로그인 화면이 나타납니다. **Claude Code를 설치한 후 ETRI 이메일로 로그인하시면 바로 사용할 수 있습니다.**
 
-| 옵션 | 설명 |
-|------|------|
-| **Claude.ai (Pro/Max)** | Claude 구독이 있는 경우 |
-| **Anthropic Console** | API 키로 직접 사용 (종량제) |
-| **Enterprise (Bedrock/Vertex)** | 기업용 AWS/GCP 환경 |
+```{admonition} 로그인 안내
+:class: important
+별도의 계정 생성이나 결제 과정은 필요 없습니다. Claude Code 실행 후 **ETRI 이메일**로 로그인만 하시면 Team Plan 권한이 자동으로 적용됩니다.
+```
 
 브라우저가 자동으로 열리며 로그인을 완료하면 터미널에서 바로 사용 가능합니다.
 로그인 정보는 로컬에 저장되므로 매번 다시 로그인할 필요가 없습니다.
@@ -275,9 +123,6 @@ claude
 cd /내/프로젝트/폴더
 claude
 
-# 도움말 보기
-claude help
-
 # 세션 내 주요 명령어
 /help    # 사용 가능한 명령어 목록
 /clear   # 대화 내용 초기화
@@ -286,7 +131,143 @@ claude help
 
 ---
 
-## 4. 설치 확인 방법
+## 4. Colab MCP 설치
+
+**Colab MCP** 는 Google Colab을 Claude Code에서 직접 제어할 수 있게 해주는 MCP(Model Context Protocol) 서버입니다.
+클라우드 GPU를 활용해 코드를 실행하고, Colab 노트북 셀을 자동으로 생성·실행할 수 있습니다.
+
+```{admonition} 공식 저장소
+:class: note
+[https://github.com/googlecolab/colab-mcp](https://github.com/googlecolab/colab-mcp)
+```
+
+### 사전 준비
+
+아래 패키지가 시스템에 설치되어 있어야 합니다.
+
+**① Python 설치 확인**
+
+```powershell
+python --version
+```
+
+설치되어 있지 않으면 [https://www.python.org/about/gettingstarted/](https://www.python.org/about/gettingstarted/) 에서 다운로드하세요.
+
+**② git 설치 확인**
+
+```powershell
+git --version
+```
+
+설치되어 있지 않으면 [https://github.com/git-guides/install-git](https://github.com/git-guides/install-git) 을 참고하세요.
+
+**③ uv 설치**
+
+```powershell
+pip install uv
+```
+
+### Claude Code에 Colab MCP 추가
+
+Claude Code의 설정 파일(`~/.claude.json`)에 MCP 서버 설정을 추가합니다.
+
+터미널에서 아래 명령어를 실행하세요:
+
+```bash
+claude mcp add colab-proxy-mcp -- uvx "git+https://github.com/googlecolab/colab-mcp"
+```
+
+또는 설정 파일을 직접 편집하려면 `~/.claude.json` 파일을 열고 `mcpServers` 섹션에 추가합니다:
+
+```json
+{
+  "mcpServers": {
+    "colab-proxy-mcp": {
+      "command": "uvx",
+      "args": ["git+https://github.com/googlecolab/colab-mcp"],
+      "timeout": 30000
+    }
+  }
+}
+```
+
+```{admonition} 설정 반영
+:class: tip
+설정 변경 후 Claude Code를 재시작해야 MCP 서버가 인식됩니다.
+```
+
+### 사용 방법
+
+1. 브라우저에서 [Google Colab](https://colab.research.google.com/) 노트북을 하나 엽니다
+2. Claude Code에서 프롬프트에 Colab 관련 작업을 요청합니다
+   - 예: "이 데이터셋을 Colab에서 분석해줘"
+3. Claude Code가 자동으로 Colab 노트북에 셀을 추가하고 코드를 실행합니다
+
+---
+
+## 5. BMAD-METHOD 설치
+
+**BMAD-METHOD** 는 AI 주도 애자일 개발을 위한 오픈소스 프레임워크입니다.
+전문 역할(PM, 아키텍트, 개발자, UX 등)의 AI 에이전트가 구조화된 워크플로로 프로젝트를 진행합니다.
+
+```{admonition} 공식 저장소
+:class: note
+[https://github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) — MIT 라이선스, 100% 무료
+```
+
+### 사전 준비
+
+- **Node.js v20.12+**
+- **Python 3.10+**
+- **uv** (Python 패키지 매니저)
+
+**Node.js 설치 확인:**
+
+```powershell
+node --version
+```
+
+Node.js가 설치되어 있지 않으면 [https://nodejs.org/](https://nodejs.org/) 에서 LTS 버전을 다운로드하세요.
+
+**Python 및 uv 설치 확인:**
+
+```powershell
+python --version
+pip install uv
+```
+
+### 설치
+
+프로젝트 폴더에서 아래 명령어를 실행합니다:
+
+```bash
+npx bmad-method install
+```
+
+인스톨러가 실행되면 프롬프트에 따라 아래를 선택합니다:
+
+1. **설치할 디렉토리** — 현재 프로젝트 폴더 경로 확인
+2. **모듈 선택** — `BMM` (BMad Method Core) 권장
+3. **도구 선택** — `claude-code` 선택
+
+```{admonition} 빠른 설치 (비대화형)
+:class: tip
+모든 값을 미리 지정하여 한 번에 설치할 수도 있습니다:
+
+```bash
+npx bmad-method install --yes --modules bmm --tools claude-code
+```
+```
+
+### 설치 확인
+
+설치가 완료되면 프로젝트 폴더에 `.bmad/` 디렉토리와 `CLAUDE.md` 파일이 생성됩니다.
+
+Claude Code에서 `bmad-help` 를 입력하면 다음에 해야 할 작업을 안내받을 수 있습니다.
+
+---
+
+## 6. 설치 확인 방법
 
 설치가 잘 됐는지 아래 명령어로 확인하세요:
 
@@ -309,41 +290,16 @@ claude doctor
 
 ---
 
-## 5. 자주 묻는 질문 (FAQ)
-
-**Q. Claude Code는 유료인가요?**
-A. Claude.ai Pro/Max 구독자는 포함된 한도 내에서 사용 가능합니다. API 키로 사용할 경우 사용량에 따라 요금이 부과됩니다. [요금 안내](https://www.anthropic.com/pricing)
-
-**Q. Node.js를 꼭 설치해야 하나요?**
-A. 네이티브 바이너리 설치 방법(`curl` 또는 PowerShell 스크립트)을 사용하면 Node.js가 없어도 됩니다. npm으로 설치할 경우에만 Node.js 18 이상이 필요합니다.
-
-**Q. Windows에서 명령어가 안 먹혀요.**
-A. PowerShell 대신 WSL(Ubuntu)을 사용해보세요. Claude Code는 Unix 환경에 최적화되어 있어 WSL에서 더 안정적으로 동작합니다.
-
-**Q. `claude doctor` 실행 시 오류가 나요.**
-A. 기존에 npm 버전이 설치되어 있다면 충돌이 날 수 있습니다. 기존 버전을 삭제 후 네이티브 설치를 다시 시도해보세요:
-
-```bash
-npm uninstall -g @anthropic-ai/claude-code
-curl -fsSL https://claude.ai/install.sh | bash
-```
-
-**Q. VSCode에서 Claude Code 터미널을 바로 사용할 수 있나요?**
-A. 네! VSCode의 내장 터미널(`Ctrl + \`` 또는 `Cmd + \``)에서 `claude` 명령어를 바로 사용할 수 있습니다.
-
----
-
 ## 공식 링크 모음
 
 | 리소스 | 링크 |
 |--------|------|
 | VSCode 다운로드 | [https://code.visualstudio.com/Download](https://code.visualstudio.com/Download) |
 | Claude Code 공식 문서 | [https://docs.anthropic.com/en/docs/claude-code/overview](https://docs.anthropic.com/en/docs/claude-code/overview) |
-| Anthropic 계정 만들기 | [https://claude.ai](https://claude.ai) |
-| Anthropic Console (API 키) | [https://console.anthropic.com](https://console.anthropic.com) |
-| 요금 안내 | [https://www.anthropic.com/pricing](https://www.anthropic.com/pricing) |
 | WSL 설치 가이드 (Microsoft 공식) | [https://learn.microsoft.com/ko-kr/windows/wsl/install](https://learn.microsoft.com/ko-kr/windows/wsl/install) |
-| Homebrew (macOS 패키지 관리자) | [https://brew.sh](https://brew.sh) |
+| Colab MCP (Google 공식) | [https://github.com/googlecolab/colab-mcp](https://github.com/googlecolab/colab-mcp) |
+| BMAD-METHOD | [https://github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) |
+| Node.js 다운로드 | [https://nodejs.org/](https://nodejs.org/) |
 
 ---
 
