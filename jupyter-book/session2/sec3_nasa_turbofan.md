@@ -1,4 +1,4 @@
-# 섹션 3 | NASA Turbofan 통합 실습
+# NASA Turbofan 통합 실습
 
 ---
 

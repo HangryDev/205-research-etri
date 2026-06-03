@@ -1,4 +1,4 @@
-# 섹션 1 | Object Detection — YOLO가 어떻게 그렇게 빠른가
+# Object Detection — YOLO가 어떻게 그렇게 빠른가
 
 ---
 

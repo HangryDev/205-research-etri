@@ -1,4 +1,4 @@
-# 섹션 2 | Defect Generation -- 프롬프트로 결함을 설계한다
+# Defect Generation -- 프롬프트로 결함을 설계한다
 
 ---
 

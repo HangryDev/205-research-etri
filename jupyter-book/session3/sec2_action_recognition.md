@@ -1,4 +1,4 @@
-# 섹션 2 | Action Recognition — 사람의 행동을 숫자로 읽는다
+# Action Recognition — 사람의 행동을 숫자로 읽는다
 
 ---
 

@@ -1,4 +1,4 @@
-# 섹션 1 | Diffusion Model -- 노이즈에서 결함 이미지를 꺼내는 법
+# Diffusion Model -- 노이즈에서 결함 이미지를 꺼내는 법
 
 ---
 
