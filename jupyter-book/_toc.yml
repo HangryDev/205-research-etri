@@ -15,7 +15,7 @@ parts:
       - file: session1/sec3_cnc_pipeline
       - file: session1/sec_practice
       - file: session1/sec4_advanced
-      - file: h1_cnc_anomaly_detection
+      # - file: h1_cnc_anomaly_detection
   - caption: Part 3. 세션 2 — 딥러닝 이상 탐지
     chapters:
       - file: session2/sec1_autoencoder
@@ -23,7 +23,7 @@ parts:
       - file: session2/sec3_nasa_turbofan
       - file: session2/sec_practice
       - file: session2/sec4_advanced
-      - file: h2_nasa_turbofan_rul
+      # - file: h2_nasa_turbofan_rul
   # - caption: Part 4. 세션 3 — Vision AI 안전 모니터링
   #   chapters:
   #     - file: session3/sec1_object_detection
