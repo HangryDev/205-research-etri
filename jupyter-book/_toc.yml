@@ -22,17 +22,17 @@ parts:
       - file: session2/sec3_nasa_turbofan
       - file: session2/sec4_advanced
       - file: h2_nasa_turbofan_rul
-  - caption: Part 4. 세션 3 — Vision AI 안전 모니터링
-    chapters:
-      - file: session3/sec1_object_detection
-      - file: session3/sec2_action_recognition
-      - file: session3/sec3_cctv_safety
-      - file: session3/sec4_advanced
-      - file: h3_cctv_safety_detection
-  - caption: Part 5. 세션 4 — Generative AI 합성 데이터
-    chapters:
-      - file: session4/sec1_diffusion_model
-      - file: session4/sec2_defect_generation
-      - file: session4/sec3_synthetic_data
-      - file: session4/sec4_advanced
-      - file: h4_mvtec_anomaly_detection
+  # - caption: Part 4. 세션 3 — Vision AI 안전 모니터링
+  #   chapters:
+  #     - file: session3/sec1_object_detection
+  #     - file: session3/sec2_action_recognition
+  #     - file: session3/sec3_cctv_safety
+  #     - file: session3/sec4_advanced
+  #     - file: h3_cctv_safety_detection
+  # - caption: Part 5. 세션 4 — Generative AI 합성 데이터
+  #   chapters:
+  #     - file: session4/sec1_diffusion_model
+  #     - file: session4/sec2_defect_generation
+  #     - file: session4/sec3_synthetic_data
+  #     - file: session4/sec4_advanced
+  #     - file: h4_mvtec_anomaly_detection
