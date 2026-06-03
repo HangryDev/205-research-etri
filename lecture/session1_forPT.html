@@ -1038,6 +1038,125 @@ signal[7000:] += 0.8 * np.random.randn(3000)       # 심각한 마모</code></pr
   </div>
 </section>
 
+
+<!-- ═══════════ 실제 CNC 데이터 분석 결과 ═══════════ -->
+<section class="module" id="cnc-eda">
+  <div class="module-header">
+    <span class="module-number">REAL DATA</span>
+    <h2 class="module-title">실제 CNC 밀링머신 데이터 분석 결과</h2>
+  </div>
+  <p class="module-desc">
+    실제 CNC 밀링머신 가속도 센서 데이터에 앞서 배운 기법들을 적용한 결과입니다.
+  </p>
+
+  <!-- 데이터 개요 -->
+  <div class="section-block">
+    <h3>데이터 개요 및 핵심 발견</h3>
+    <div class="presentable">
+      <pre><code>[실제 CNC 밀링머신 데이터 구성]
+
+데이터: 13개 CSV 파일, 2,994,307개 샘플
+센서: 3축 가속도 센서 (acc_x, acc_y, acc_z)
+
+3가지 조건:
+  정상 (normal)  — 12.0%
+  채터링 (chatter) — 10.1%
+  마모 (wear)    — 77.9%</code></pre>
+    </div>
+    <div class="presentable">
+      <p><strong>핵심 발견 — 조건별 acc_x 통계량 비교</strong></p>
+      <pre><code>표준편차 (std):
+  Normal:  5.88   ← 매우 안정적
+  Wear:    292    ← Normal의 약 50배
+  Chatter: 373    ← Normal의 약 63배
+
+RMS (Root Mean Square):
+  Normal:  28.58
+  Wear:    220
+  Chatter: 363
+
+→ Normal, Wear, Chatter 간 명확한 구분 가능
+→ RMS와 std 모두 조건 분별력이 뛰어남</code></pre>
+    </div>
+    <div class="presentable">
+      <p><strong>주파수 분석 결과</strong></p>
+      <pre><code>지배 주파수 (Dominant Frequency):
+  Normal:  1–2kHz    ← 안정적인 저주파 영역
+  Chatter: ~4kHz     ← 고주파 떨림 특성
+  Wear:    1.5–5kHz  ← 넓은 주파수 대역 분포
+
+→ FFT 스펙트럼 분석으로도 조건 구분 가능 확인</code></pre>
+    </div>
+  </div>
+
+  <!-- Wavelet 노이즈 제거 -->
+  <div class="section-block">
+    <h3>Wavelet 노이즈 제거 결과</h3>
+    <div class="step-block">
+      <h4>실제 채터링 데이터에 적용</h4>
+      <p>채터링 데이터(label_11, acc_x)에 <code>db4</code> wavelet, <code>level=5</code>, <strong>soft threshold</strong>를 적용한 결과:</p>
+      <pre><code>[적용 파라미터]
+Wavelet:    db4 (Daubechies 4)
+Level:      5
+Threshold:  soft threshold
+대상:       채터링 데이터 (label_11, acc_x)
+
+[결과]
+원본 std 대비 노이즈 성분이 효과적으로 제거됨을 확인
+→ 섹션 1에서 배운 파이프라인이 실제 데이터에도 유효</code></pre>
+    </div>
+  </div>
+
+  <!-- 클래스 불균형 처리 -->
+  <div class="section-block">
+    <h3>클래스 불균형 처리 결과</h3>
+    <div class="step-block">
+      <h4>RandomForest 기반 비교 실험</h4>
+      <p>실제 데이터는 <strong>마모 77.9%, 정상 12.0%, 채터링 10.1%</strong>로 심각한 불균형 상태입니다. 세 가지 접근법을 비교했습니다.</p>
+    </div>
+    <div class="presentable">
+      <table>
+        <thead><tr><th>방법</th><th>F1-Score</th><th>정상 클래스 Recall</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td>Basic RandomForest</td><td>0.99</td><td>0.98</td><td>기본 모델</td></tr>
+          <tr><td>SMOTE + RandomForest</td><td>0.99</td><td>0.99</td><td>소수 클래스(정상) recall 개선</td></tr>
+          <tr><td>class_weight='balanced'</td><td>0.98</td><td>—</td><td>손실함수 가중치로도 유사한 성능</td></tr>
+        </tbody>
+      </table>
+      <p><strong>핵심 인사이트</strong>: SMOTE 적용 시 소수 클래스(정상)의 Recall이 0.98에서 0.99로 개선되었습니다. class_weight만으로도 유사한 수준의 성능을 달성할 수 있어, 현장 상황에 따라 더 간단한 방식을 선택할 수 있습니다.</p>
+    </div>
+  </div>
+
+  <!-- Isolation Forest -->
+  <div class="section-block">
+    <h3>Isolation Forest 이상탐지 결과</h3>
+    <div class="step-block">
+      <h4>정상 데이터로만 학습한 이상탐지 모델</h4>
+      <pre><code>[모델 설정]
+알고리즘:       IsolationForest
+학습 데이터:    정상(normal) 조건 데이터만 사용
+contamination:  0.05</code></pre>
+    </div>
+    <div class="presentable">
+      <p><strong>이상 점수(Anomaly Score) 분포</strong></p>
+      <pre><code>Normal 조건:
+  → 낮고 안정적인 이상 점수 (정상 범위)
+
+Chatter 조건:
+  → 높은 이상 점수 — 채터링 패턴이 정상과 확연히 다름
+
+Wear 조건:
+  → 높은 이상 점수 — 마모로 인한 진동 변화가 명확히 감지됨
+
+→ 마모 시작점 탐지 가능 확인!
+→ 섹션 3에서 설계한 파이프라인이 실제 데이터에서도 작동</code></pre>
+    </div>
+    <div class="callout callout-tip"><span class="callout-icon">💡</span><div>
+      <strong>실무 인사이트</strong>: 정상 데이터로만 학습해도 Chatter와 Wear 조건을 명확히 구분할 수 있었습니다. 이는 실제 현장에서 라벨링 비용을 크게 절감할 수 있다는 것을 의미합니다.
+    </div></div>
+  </div>
+</section>
+
 </div>
 
 <footer style="text-align:center; padding:3rem 2rem; color:#5A5A5A; font-size:0.82rem;">
