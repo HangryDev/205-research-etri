@@ -1,0 +1,76 @@
+<svg viewBox="0 0 780 560" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans KR','Segoe UI',Roboto,-apple-system,sans-serif">
+  <!-- title -->
+  <text x="390" y="34" text-anchor="middle" font-size="18" font-weight="700" fill="#111827">행동 인식 모델 지형도</text>
+  <text x="390" y="52" text-anchor="middle" font-size="12" fill="#6b7280">입력 양식 × 연산 부담·배포 위치</text>
+
+  <!-- plot area -->
+  <rect x="90" y="70" width="630" height="400" fill="#fafafa" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- quadrant tints -->
+  <rect x="90" y="270" width="315" height="200" fill="#0d9488" opacity="0.06"/>
+  <rect x="405" y="70" width="315" height="200" fill="#ea580c" opacity="0.06"/>
+
+  <!-- midlines -->
+  <line x1="405" y1="70" x2="405" y2="470" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="90" y1="270" x2="720" y2="270" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- corner annotations -->
+  <text x="100" y="458" font-size="11" font-style="italic" fill="#0f766e">엣지·실시간·개인정보 보호</text>
+  <text x="710" y="88" text-anchor="end" font-size="11" font-style="italic" fill="#c2410c">최고 정확도·맥락 이해·클라우드</text>
+
+  <!-- y axis caption -->
+  <text x="26" y="270" text-anchor="middle" font-size="13" font-weight="600" fill="#374151" transform="rotate(-90 26 270)">연산 부담 · 배포 위치</text>
+  <text x="62" y="78" text-anchor="middle" font-size="11" fill="#6b7280" transform="rotate(-90 62 78)">▲ 고성능·클라우드</text>
+  <text x="62" y="462" text-anchor="middle" font-size="11" fill="#6b7280" transform="rotate(-90 62 462)">경량·엣지 ▼</text>
+
+  <!-- x axis labels -->
+  <text x="95" y="492" font-size="11" fill="#6b7280">◀ 골격 (keypoint)</text>
+  <text x="715" y="492" text-anchor="end" font-size="11" fill="#6b7280">RGB 영상 (픽셀) ▶</text>
+  <text x="405" y="512" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">입력 양식</text>
+
+  <!-- ===== skeleton-based (teal) ===== -->
+  <g fill="#0d9488">
+    <circle cx="166" cy="421" r="6"/>
+    <text x="176" y="425" font-size="12.5" fill="#0f766e">LSTM (pose 시퀀스)</text>
+
+    <circle cx="203" cy="347" r="6"/>
+    <text x="213" y="351" font-size="12.5" fill="#0f766e">ST-GCN</text>
+
+    <circle cx="241" cy="286" r="6"/>
+    <text x="251" y="290" font-size="12.5" fill="#0f766e">CTR-GCN / 2s-AGCN</text>
+
+    <circle cx="216" cy="232" r="6"/>
+    <text x="206" y="222" text-anchor="end" font-size="12.5" fill="#0f766e">Simba (Mamba)</text>
+
+    <circle cx="289" cy="206" r="6"/>
+    <text x="299" y="210" font-size="12.5" fill="#0f766e">SkelFormer (Transformer)</text>
+  </g>
+
+  <!-- ===== hybrid (purple) ===== -->
+  <g fill="#7c3aed">
+    <circle cx="360" cy="250" r="6"/>
+    <text x="360" y="272" text-anchor="middle" font-size="12.5" fill="#6d28d9">PoseConv3D</text>
+  </g>
+
+  <!-- ===== RGB / video (orange) ===== -->
+  <g fill="#ea580c">
+    <circle cx="506" cy="300" r="6"/>
+    <text x="506" y="320" text-anchor="middle" font-size="12.5" fill="#c2410c">I3D / Two-Stream (3D CNN)</text>
+
+    <circle cx="585" cy="180" r="6"/>
+    <text x="575" y="170" text-anchor="end" font-size="12.5" fill="#c2410c">VideoMAE V2</text>
+
+    <circle cx="640" cy="120" r="6"/>
+    <text x="630" y="124" text-anchor="end" font-size="12.5" fill="#c2410c">InternVideo2 / -Next</text>
+  </g>
+
+  <!-- legend -->
+  <g font-size="12" fill="#374151">
+    <circle cx="210" cy="538" r="6" fill="#0d9488"/>
+    <text x="222" y="542">골격 기반</text>
+    <circle cx="330" cy="538" r="6" fill="#7c3aed"/>
+    <text x="342" y="542">하이브리드</text>
+    <circle cx="450" cy="538" r="6" fill="#ea580c"/>
+    <text x="462" y="542">RGB·영상 기반</text>
+  </g>
+</svg>

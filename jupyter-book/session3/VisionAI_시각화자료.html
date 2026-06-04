@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VisionAI 안전 모니터링 · 시각화 자료</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e1113;
+    --bg2:#13181a;
+    --surface:#1a2124;
+    --surface2:#212a2e;
+    --line:#2c3a40;
+    --text:#e9e6df;
+    --muted:#8b979c;
+    --hivis:#ffd23f;       /* hi-vis safety yellow */
+    --amber:#ff8c1a;       /* safety orange */
+    --steel:#5b8fb0;       /* foundation era */
+    --teal:#3fcaa8;        /* anchor-free era */
+    --green:#b6f02a;       /* nms-free / latest */
+    --magenta:#ff5d8f;     /* attention era */
+    --cyan:#33d6e0;        /* skeleton */
+    --rgb:#ff9d3c;         /* rgb branch */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(900px 500px at 12% -8%, rgba(255,210,63,.06), transparent 60%),
+      radial-gradient(800px 600px at 100% 0%, rgba(51,214,224,.05), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    line-height:1.55;
+    padding:48px 20px 80px;
+    background-attachment:fixed;
+  }
+  /* faint engineering grid */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:46px 46px;
+    mask-image:radial-gradient(ellipse at 50% 30%,#000 40%,transparent 85%);
+  }
+  .wrap{max-width:1120px;margin:0 auto;position:relative;z-index:1}
+
+  /* ---------- header ---------- */
+  header{margin-bottom:54px}
+  .kicker{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--hivis);
+    display:inline-flex;align-items:center;gap:10px;margin-bottom:14px;
+  }
+  .kicker::before{content:"";width:34px;height:2px;background:var(--hivis)}
+  h1{
+    font-family:"Chakra Petch",sans-serif;font-weight:700;
+    font-size:clamp(28px,4.6vw,46px);line-height:1.05;letter-spacing:-.01em;
+  }
+  h1 .hl{color:var(--hivis)}
+  .sub{color:var(--muted);max-width:62ch;margin-top:14px;font-size:15.5px}
+
+  /* ---------- section ---------- */
+  section{margin-top:72px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+  .sec-no{
+    font-family:"IBM Plex Mono",monospace;color:var(--amber);font-size:14px;font-weight:600;
+    border:1px solid var(--line);padding:3px 9px;border-radius:6px;background:var(--bg2);
+  }
+  h2{font-family:"Chakra Petch",sans-serif;font-weight:700;font-size:clamp(22px,3vw,30px);letter-spacing:-.01em}
+  .sec-desc{color:var(--muted);font-size:14.5px;margin:10px 0 30px;max-width:74ch}
+  .sec-desc b{color:var(--text);font-weight:600}
+
+  /* ---------- timeline ---------- */
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:26px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .timeline{position:relative;padding-left:42px}
+  .timeline::before{
+    content:"";position:absolute;left:14px;top:6px;bottom:6px;width:2px;
+    background:linear-gradient(var(--steel),var(--teal) 38%,var(--hivis) 60%,var(--magenta) 80%,var(--green));
+    box-shadow:0 0 14px rgba(255,210,63,.25);
+  }
+  .node{position:relative;margin-bottom:22px;opacity:0;transform:translateY(14px);
+    animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .node::before{
+    content:"";position:absolute;left:-34px;top:24px;width:14px;height:14px;border-radius:50%;
+    background:var(--bg);border:3px solid var(--era);box-shadow:0 0 0 4px var(--bg),0 0 12px var(--era);
+  }
+  .card{
+    background:linear-gradient(180deg,var(--surface),var(--bg2));
+    border:1px solid var(--line);border-left:4px solid var(--era);
+    border-radius:12px;padding:18px 20px;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+  }
+  .card:hover{transform:translateX(6px);box-shadow:-6px 8px 26px rgba(0,0,0,.45);border-color:var(--era)}
+  .card.flag{box-shadow:0 0 0 1px var(--era),0 10px 30px rgba(0,0,0,.4)}
+  .crow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .year{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;color:var(--era);
+    background:color-mix(in srgb,var(--era) 14%,transparent);padding:2px 9px;border-radius:6px}
+  .vname{font-family:"Chakra Petch",sans-serif;font-weight:700;font-size:18.5px}
+  .org{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted)}
+  .tag{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+    text-transform:uppercase;padding:3px 8px;border-radius:5px;border:1px solid var(--line);color:var(--muted)}
+  .tag.nms{color:#ff7a7a;border-color:#5a2e2e}
+  .tag.free{color:var(--green);border-color:#42591a;background:rgba(182,240,42,.06)}
+  .tag.attn{color:var(--magenta);border-color:#5a2e3e}
+  .tag.edge{color:var(--cyan);border-color:#2a4d52}
+  .desc{font-size:14px;color:#cdd4d6}
+  .desc b{color:var(--hivis);font-weight:600}
+  .metric{margin-top:9px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);
+    border-top:1px dashed var(--line);padding-top:8px}
+  .metric b{color:var(--text)}
+
+  .note{
+    margin-top:24px;background:rgba(255,140,26,.07);border:1px solid #4a3415;border-radius:10px;
+    padding:14px 18px;font-size:13.5px;color:#e7d9c4
+  }
+  .note b{color:var(--amber)}
+
+  /* ---------- VS comparison ---------- */
+  .vs{display:grid;grid-template-columns:1fr 56px 1fr;gap:0;align-items:stretch;margin-top:8px}
+  .col{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:22px;position:relative;overflow:hidden}
+  .col.rgb{border-top:4px solid var(--rgb)}
+  .col.skel{border-top:4px solid var(--cyan)}
+  .col::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(420px 160px at 80% -10%,var(--glow),transparent 70%);opacity:.5}
+  .col.rgb{--glow:rgba(255,157,60,.16)}
+  .col.skel{--glow:rgba(51,214,224,.16)}
+  .col h3{font-family:"Chakra Petch",sans-serif;font-size:20px;display:flex;align-items:center;gap:10px}
+  .col .num{font-family:"IBM Plex Mono",monospace;font-size:14px;width:26px;height:26px;border-radius:50%;
+    display:grid;place-items:center;color:var(--bg);font-weight:700}
+  .rgb .num{background:var(--rgb)} .skel .num{background:var(--cyan)}
+  .col .lede{font-size:13px;color:var(--muted);margin:8px 0 16px}
+
+  .pipe{display:flex;flex-direction:column;gap:0;margin:0 0 18px}
+  .stage{position:relative;font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--text);
+    background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:9px 12px}
+  .stage small{display:block;color:var(--muted);font-size:11px;margin-top:2px;font-family:"IBM Plex Sans",sans-serif}
+  .arrow{height:18px;display:grid;place-items:center;color:var(--accent)}
+  .rgb .arrow,.rgb .stage{--accent:var(--rgb)}
+  .skel .arrow,.skel .stage{--accent:var(--cyan)}
+  .rgb .stage{border-left:3px solid var(--rgb)} .skel .stage{border-left:3px solid var(--cyan)}
+  .arrow svg{width:14px;height:14px}
+
+  .pc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+  .pc h4{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+  .pros h4{color:var(--green)} .cons h4{color:#ff7a7a}
+  .pc ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+  .pc li{font-size:12.6px;color:#cdd4d6;padding-left:16px;position:relative;line-height:1.4}
+  .pros li::before{content:"+";position:absolute;left:0;color:var(--green);font-weight:700}
+  .cons li::before{content:"–";position:absolute;left:0;color:#ff7a7a;font-weight:700}
+
+  .divider{display:flex;align-items:center;justify-content:center}
+  .vsbadge{font-family:"Chakra Petch",sans-serif;font-weight:700;font-size:15px;color:var(--bg);
+    background:var(--hivis);width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+    box-shadow:0 0 0 5px var(--bg),0 0 22px rgba(255,210,63,.4)}
+
+  /* metric gauges */
+  .gauges{margin-top:26px;border:1px solid var(--line);border-radius:14px;background:var(--bg2);padding:20px 22px}
+  .gauges h3{font-family:"Chakra Petch",sans-serif;font-size:15px;margin-bottom:16px;color:var(--muted);
+    font-weight:600;letter-spacing:.02em}
+  .grow{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;margin-bottom:13px}
+  .glabel{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--text)}
+  .bar{position:relative;height:14px;background:var(--surface2);border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+  .fill{position:absolute;top:0;bottom:0;left:0;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;
+    padding-right:7px;font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--bg);font-weight:700}
+  .fill.r{background:linear-gradient(90deg,#b35e16,var(--rgb))}
+  .fill.s{background:linear-gradient(90deg,#1c7e85,var(--cyan));margin-top:0}
+  .gpair{display:flex;flex-direction:column;gap:5px}
+  .keymini{display:flex;gap:18px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);margin-bottom:14px}
+  .keymini span{display:inline-flex;align-items:center;gap:6px}
+
+  .conclude{margin-top:22px;font-size:13.5px;color:#cdd4d6;background:var(--surface);border:1px solid var(--line);
+    border-radius:10px;padding:14px 18px}
+  .conclude b{color:var(--hivis)}
+
+  footer{margin-top:64px;border-top:1px solid var(--line);padding-top:18px;
+    font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted);line-height:1.7}
+
+  @media(max-width:760px){
+    .vs{grid-template-columns:1fr;gap:16px}
+    .divider{height:8px}
+    .vsbadge{transform:rotate(0)}
+    .pc{grid-template-columns:1fr}
+    .grow{grid-template-columns:90px 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="kicker">VisionAI · Smart Safety Monitoring</span>
+    <h1>VisionAI 안전 모니터링<br><span class="hl">시각화 자료</span></h1>
+    <p class="sub">핵심을 한눈에 정리한 시각 자료 2종 — ① YOLO 아키텍처 변천사(YOLOv1 → YOLO26), ② 행동 인식의 RGB 기반 vs Skeleton 기반 비교. 관통하는 메시지는 <i>“정확도 경쟁 → 배포 친화성(후처리·속도) 경쟁”</i>으로의 이동입니다.</p>
+  </header>
+
+  <!-- ============ SECTION 1: YOLO TIMELINE ============ -->
+  <section id="yolo">
+    <div class="sec-head">
+      <span class="sec-no">01</span>
+      <h2>YOLO 아키텍처 변천사</h2>
+    </div>
+    <p class="sec-desc">단일 스테이지 검출의 시작(v1)부터 <b>NMS-free 표준화(YOLO26)</b>까지. v10이 후처리(NMS) 제거의 방향을 열었고, v12·v13의 attention 설계를 거쳐 YOLO26에서 native NMS-free가 표준이 됩니다.</p>
+
+    <div class="legend">
+      <span><i class="dot" style="background:var(--steel)"></i>기반 CNN (v1–v5)</span>
+      <span><i class="dot" style="background:var(--teal)"></i>anchor-free (v8)</span>
+      <span><i class="dot" style="background:var(--hivis)"></i>후처리 혁신 (v9–v11)</span>
+      <span><i class="dot" style="background:var(--magenta)"></i>attention 중심 (v12–v13)</span>
+      <span><i class="dot" style="background:var(--green)"></i>NMS-free 표준화 (v26)</span>
+    </div>
+
+    <div class="timeline">
+
+      <div class="node" style="--era:var(--steel);animation-delay:.05s">
+        <div class="card">
+          <div class="crow"><span class="year">2016</span><span class="vname">YOLOv1</span><span class="org">Joseph Redmon</span></div>
+          <p class="desc">단일 스테이지 <b>grid 예측</b>의 시작 — 검출을 회귀 문제로 재정의해 한 번의 forward로 박스+클래스를 예측.</p>
+        </div>
+      </div>
+
+      <div class="node" style="--era:var(--steel);animation-delay:.12s">
+        <div class="card">
+          <div class="crow"><span class="year">2018</span><span class="vname">YOLOv3</span><span class="org">Redmon</span></div>
+          <p class="desc">3개 스케일 <b>multi-scale 예측</b>, Darknet-53 backbone — 작은 객체 검출이 크게 개선.</p>
+        </div>
+      </div>
+
+      <div class="node" style="--era:var(--steel);animation-delay:.19s">
+        <div class="card">
+          <div class="crow"><span class="year">2020</span><span class="vname">YOLOv4 / YOLOv5</span><span class="org">Bochkovskiy / Ultralytics</span></div>
+          <p class="desc">v4: <b>Mosaic 증강</b>·CSPDarknet. v5: <b>PyTorch 모듈화</b>와 배포 생태계 — 산업 적용의 사실상 표준을 만듦.</p>
+        </div>
+      </div>
+
+      <div class="node" style="--era:var(--teal);animation-delay:.26s">
+        <div class="card">
+          <div class="crow"><span class="year">2023</span><span class="vname">YOLOv8</span><span class="org">Ultralytics</span><span class="tag nms">NMS</span></div>
+          <p class="desc"><b>anchor-free</b> + decoupled head + C2f 모듈, 검출·분할·pose·분류를 아우르는 <b>멀티태스크</b>. 단, 추론 시 NMS 후처리에 여전히 의존.</p>
+        </div>
+      </div>
+
+      <div class="node" style="--era:var(--hivis);animation-delay:.33s">
+        <div class="card flag">
+          <div class="crow"><span class="year">2024</span><span class="vname">YOLOv9 · YOLOv10 · YOLO11</span><span class="org">Wang / THU-MIG / Ultralytics</span><span class="tag free">NMS-FREE</span></div>
+          <p class="desc">v9: PGI·GELAN. <b>v10(칭화대): NMS-free dual label assignment</b> — 학습은 one-to-many, 추론은 one-to-one. v11(9월): C3k2 backbone·C2PSA 공간 attention.</p>
+          <p class="metric">YOLOv10 — COCO <b>52.7% AP</b> · YOLOv9-C 대비 latency <b>46% ↓</b></p>
+        </div>
+      </div>
+
+      <div class="node" style="--era:var(--magenta);animation-delay:.40s">
+        <div class="card">
+          <div class="crow"><span class="year">2025</span><span class="vname">YOLOv12 · YOLOv13</span><span class="org">Tian 등 (NeurIPS) / Lei 등</span><span class="tag attn">ATTENTION</span></div>
+          <p class="desc"><b>attention-centric</b> 설계로 전환 — Area Attention(A2), R-ELAN, FlashAttention. 정확도는 올랐으나 <b>NMS·DFL을 유지</b>해 latency·export 부담이 남음.</p>
+          <p class="metric">YOLOv12-N — <b>40.6% mAP</b> @ 1.64 ms (T4) · v10-N/v11-N 대비 +2.1%/+1.2%</p>
+        </div>
+      </div>
+
+      <div class="node" style="--era:var(--green);animation-delay:.47s">
+        <div class="card flag">
+          <div class="crow"><span class="year">2026</span><span class="vname">YOLO26</span><span class="org">Ultralytics</span><span class="tag free">NMS-FREE</span><span class="tag edge">EDGE</span></div>
+          <p class="desc"><b>native end-to-end NMS-free</b> + DFL 제거로 export 단순화. ProgLoss·STAL(소형 객체)·MuSGD 옵티마이저. 엣지·로봇·모바일에 최적화.</p>
+          <p class="metric">CPU ONNX 추론 <b>43% ↑</b> (vs YOLO11n) · 2025.9 YOLO Vision London 공개 → 2026.1 릴리스</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="note"><b>⚠ 실무 주의:</b> 최신 버전 = 항상 프로덕션 최적은 아니다. YOLOv12는 attention 블록 때문에 학습 불안정·메모리 증가·CPU 처리량 저하가 있어, Ultralytics는 프로덕션에 <b>YOLO11 또는 YOLO26</b>을 권장한다.</div>
+  </section>
+
+  <!-- ============ SECTION 2: RGB vs SKELETON ============ -->
+  <section id="action">
+    <div class="sec-head">
+      <span class="sec-no">02</span>
+      <h2>Action Recognition — RGB vs Skeleton</h2>
+    </div>
+    <p class="sec-desc">작업자 위험 행동 인식의 두 접근. <b>Skeleton 표현 자체가 강력한 전처리/특징공학 선택</b>이라는 점이 핵심 — 픽셀을 버리고 관절만 남겨 배경·조명에 robust하고 가볍게 만든다.</p>
+
+    <div class="vs">
+      <!-- RGB -->
+      <div class="col rgb">
+        <h3><span class="num">1</span> RGB 기반</h3>
+        <p class="lede">픽셀(프레임/클립)을 직접 사용</p>
+        <div class="pipe">
+          <div class="stage">입력 영상 스트림<small>CCTV / 현장 카메라</small></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v16M6 14l6 6 6-6"/></svg></div>
+          <div class="stage">프레임 샘플링 · 클립 구성<small>정규화 / 데이터 증강</small></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v16M6 14l6 6 6-6"/></svg></div>
+          <div class="stage">3D-CNN (I3D · C3D) / Two-Stream<small>시공간 특징 추출</small></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v16M6 14l6 6 6-6"/></svg></div>
+          <div class="stage">행동 분류 (위험 / 정상)</div>
+        </div>
+        <div class="pc">
+          <div class="pros"><h4>장점</h4><ul>
+            <li>외형·도구·PPE 등 맥락 정보 풍부</li>
+            <li>객체 상호작용·환경 단서 보존</li>
+            <li>pose 추정 의존성 없음</li>
+          </ul></div>
+          <div class="cons"><h4>단점</h4><ul>
+            <li>배경·조명 변화에 취약</li>
+            <li>3D conv로 연산이 무거움</li>
+            <li>대량의 영상 라벨 필요</li>
+          </ul></div>
+        </div>
+      </div>
+
+      <div class="divider"><span class="vsbadge">VS</span></div>
+
+      <!-- SKELETON -->
+      <div class="col skel">
+        <h3><span class="num">2</span> Skeleton 기반</h3>
+        <p class="lede">관절 좌표(2D/3D keypoint)를 사용</p>
+        <div class="pipe">
+          <div class="stage">person detection (YOLO)<small>작업자 위치 검출</small></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v16M6 14l6 6 6-6"/></svg></div>
+          <div class="stage">pose estimation<small>OpenPose / YOLO-pose · 핵심 전처리</small></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v16M6 14l6 6 6-6"/></svg></div>
+          <div class="stage">ST-GCN / LSTM<small>관절의 시공간 그래프 모델링</small></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v16M6 14l6 6 6-6"/></svg></div>
+          <div class="stage">행동 분류 (위험 / 정상)</div>
+        </div>
+        <div class="pc">
+          <div class="pros"><h4>장점</h4><ul>
+            <li>배경·조명에 robust (관절만 사용)</li>
+            <li>입력이 희소 → 가볍고 빠름</li>
+            <li>적은 데이터로도 학습 용이</li>
+          </ul></div>
+          <div class="cons"><h4>단점</h4><ul>
+            <li>pose 추정 실패 시 연쇄 오류</li>
+            <li>도구·복장(PPE) 판단 어려움</li>
+            <li>미세 동작 정보 손실 가능</li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- gauges -->
+    <div class="gauges">
+      <h3>핵심 축 비교 (상대 강도)</h3>
+      <div class="keymini">
+        <span><i class="dot" style="background:var(--rgb)"></i>RGB 기반</span>
+        <span><i class="dot" style="background:var(--cyan)"></i>Skeleton 기반</span>
+      </div>
+
+      <div class="grow"><span class="glabel">배경/조명 robust</span>
+        <div class="gpair">
+          <div class="bar"><div class="fill r" style="width:35%">RGB</div></div>
+          <div class="bar"><div class="fill s" style="width:90%">SKEL</div></div>
+        </div></div>
+
+      <div class="grow"><span class="glabel">추론 속도/경량</span>
+        <div class="gpair">
+          <div class="bar"><div class="fill r" style="width:40%">RGB</div></div>
+          <div class="bar"><div class="fill s" style="width:88%">SKEL</div></div>
+        </div></div>
+
+      <div class="grow"><span class="glabel">외형/도구 정보</span>
+        <div class="gpair">
+          <div class="bar"><div class="fill r" style="width:92%">RGB</div></div>
+          <div class="bar"><div class="fill s" style="width:30%">SKEL</div></div>
+        </div></div>
+
+      <div class="grow"><span class="glabel">데이터 효율</span>
+        <div class="gpair">
+          <div class="bar"><div class="fill r" style="width:45%">RGB</div></div>
+          <div class="bar"><div class="fill s" style="width:82%">SKEL</div></div>
+        </div></div>
+    </div>
+
+    <div class="conclude"><b>실무 결론:</b> 작업자 안전에서는 추락·자세 불안정 같은 <b>신체 동작 위험</b>에 강한 <b>Skeleton 기반이 주류</b>. 단, “헬멧 미착용 + 위험 자세”처럼 객체 맥락과 동작이 동시에 필요하면 <b>객체 검출 → pose → 행동</b>의 하이브리드 필요.</div>
+  </section>
+
+  <footer>
+    출처 — YOLO: arXiv 2405.14458(v10) · NeurIPS 2025 / arXiv 2502.14740(v12) · arXiv 2509.25164(YOLO26) · Ultralytics Docs<br>
+    Action Recognition: J.Constr.Eng.Manage. 2023(ST-GCN) · PMC12431360(CoG-STGCN) · NTU RGB+D(github.com/shahroudy)<br>
+  </footer>
+
+</div>
+</body>
+</html>
