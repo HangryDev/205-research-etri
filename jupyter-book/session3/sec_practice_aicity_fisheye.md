@@ -1,4 +1,4 @@
-# AI City Challenge 2025로 보는 엣지 안전 탐지 실습 — Track 4 피시아이 도로 객체 탐지
+# [실습] AI City Challenge 2025로 보는 엣지 안전 탐지 — Track 4 피시아이 도로 객체 탐지
 
 ---
 

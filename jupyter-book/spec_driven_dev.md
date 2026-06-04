@@ -279,7 +279,242 @@ Phase 1: 분석         Phase 2: 기획         Phase 3: 설계         Phase 4:
 
 ---
 
-## 5. Autoresearch와의 비교
+## 5. Kaggle 대회를 위한 Spec-Driven 워크플로
+
+```{admonition} 실전에 바로 쓰는 4단계 사이클
+:class: note
+BMAD의 무거운 4-Phase 구조를 Kaggle·해커톤 등 **단기 연구 프로젝트**에 맞게 간소화한 워크플로입니다. PRD → Research → Quick Dev → Test 사이클을 빠르게 반복하면서 성능을 끌어올립니다.
+```
+
+### 5.1 전체 흐름
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│  ① PRD          ② Research        ③ Quick Dev     ④ Test       │
+│  ┌──────────┐   ┌──────────────┐   ┌──────────┐   ┌─────────┐  │
+│  │ 문제 정의 │──▶│ 논문·베이스라 │──▶│ 핵심 코드 │──▶│ 실험 결과│  │
+│  │ 메트릭   │   │ 인 탐색      │   │ 빠른 구현 │   │ 분석    │  │
+│  │ 제약사항 │   │ Consensus MCP│   │           │   │ 개선점  │  │
+│  └──────────┘   └──────────────┘   └──────────┘   └────┬────┘  │
+│       ▲                                                 │       │
+│       └─────────────── 다음 이터레이션 ◀────────────────┘       │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### 5.2 ① PRD (Product Requirements Document) — 문제 정의
+
+Kaggle 대회에 참여할 때 가장 먼저 할 일은 **문제를 정확히 이해하고 문서화**하는 것입니다.
+
+```markdown
+# PRD: [대회명]
+
+## 대회 개요
+- **목표:** 무엇을 예측/분류/생성하는가?
+- **평가 지표:** RMSE? F1? mAP?
+- **데이터:** 크기, 형식, 클래스 불균형 여부
+- **제약:** 제출 횟수, 실행 시간 제한, 외부 데이터 사용 가능 여부
+
+## 베이스라인 목표
+- 1차 목표: 상위 X% 또는 스코어 Y
+- 최종 목표: 메달권 (상위 10%)
+
+## 리소스
+- 컴퓨팅: GPU 종류, 사용 가능 시간
+- 시간: 대회 마감일까지 남은 일수
+```
+
+```{admonition} PRD 작성 팁
+:class: tip
+Claude Code에서 `/bmad-bmm-create-product-brief`를 실행하면, AI가 대회 Description을 분석해 PRD 초안을 자동으로 작성해 줍니다. 이 초안을 검토하고 보완하는 방식이 가장 효율적입니다.
+```
+
+### 5.3 ② Research — 논문·베이스라인 탐색
+
+PRD가 완성되면, **어떤 접근법이 유효한지** 논문과 기존 솔루션을 조사합니다.
+
+```{admonition} Research 체크리스트
+:class: tip
+```
+
+| 항목 | 확인 내용 |
+|------|----------|
+| **SOTA 논문** | 최신 1~3년 내 동일 도메인 최고 성능 모델 |
+| **베이스라인 코드** | 대회 제공 베이스라인 또는 유사 대회 우승 솔루션 |
+| **데이터 EDA** | 기존 노트북의 EDA 결과, 분포·결측치·이상치 |
+| **인사이트** | 포럼(Fourm)에서 공유된 핵심 발견 |
+| **앙상블 전략** | 단일 모델 vs 앙상블, 다양성 확보 방법 |
+
+이 단계에서 **Consensus MCP**를 활용하면 AI 어시스턴트 내에서 바로 2억 편 이상의 학술 논문을 검색할 수 있습니다. 자세한 사용법은 아래 [6. Consensus MCP로 논문 리서치하기](#6-consensus-mcp%EB%A1%9C-%EB%85%BC%EB%AC%B8-%EB%A6%AC%EC%84%9C%EC%B9%98%ED%95%98%EA%B8%B0) 섹션을 참고하세요.
+
+### 5.4 ③ Quick Dev — 핵심 코드 빠른 구현
+
+리서치 결과를 바탕으로 **가장 유망한 접근법을 먼저 구현**합니다.
+
+```
+Quick Dev 원칙:
+1. 완벽한 코드가 아니라 "돌아가는 코드"를 먼저 만든다
+2. 한 번에 하나의 아이디어만 실험한다
+3. 노트북 기반으로 빠르게 프로토타입 → 검증 → 리팩토링
+```
+
+**Claude Code를 활용한 Quick Dev 예시:**
+
+```
+👤 "PRD와 리서치 결과를 바탕으로, ResNet50 베이스라인 학습 파이프라인을 작성해줘.
+    데이터 로더, 증강, 학습 루프, 검증까지 포함하고, Mixed Precision을 적용해."
+
+🤖 [코드 생성 → 실행 → 에러 수정 → 결과 확인]
+→ train.py, dataset.py, config.yaml 생성 완료
+→ 베이스라인 LB 스코어: 0.72
+```
+
+### 5.5 ④ Test — 실험 결과 분석 및 개선
+
+실험 결과를 분석하고 **다음 이터레이션의 방향**을 결정합니다.
+
+```markdown
+# Experiment Log
+
+## Experiment 01 — ResNet50 Baseline
+- **아이디어:** pretrained ResNet50 + 기본 증강
+- **결과:** Val 0.74 / LB 0.72
+- **분석:** 클래스 3, 7에서 오답이 집중. 증강 다양성 부족
+- **다음 실험:** CutMix + 클래스 가중치 적용
+
+## Experiment 02 — ResNet50 + CutMix + Class Weights
+- **아이디어:** Experiment 01 + CutMix + inversely proportional class weights
+- **결과:** Val 0.78 / LB 0.76
+- **분석:** 클래스 3 개선, 클래스 7은 여전히 부족
+- **다음 실험:** EfficientNet-B3 + Focal Loss로 교체
+```
+
+```{admonition} 실험 관리
+:class: warning
+Kaggle 대회에서는 **실험 추적이 순위를 가른다**. 모든 실험을 로그에 기록하고, "무엇을 시도했고 왜 됐거나 안 됐는지"를 명확히 남기세요. Claude Code의 `/bmad-bmm-dev-story`로 각 실험을 스토리 단위로 관리하면 편리합니다.
+```
+
+---
+
+## 6. Consensus MCP로 논문 리서치하기
+
+```{admonition} AI 시대의 논문 검색
+:class: note
+**Consensus MCP**는 AI 어시스턴트(Claude, ChatGPT 등)에서 **2억 편 이상의 학술 논문**을 직접 검색할 수 있게 해주는 도구입니다. Kaggle 대회 준비 중 "최신 기법이 무엇인지" 논문을 찾아야 할 때, 브라우저를 떠나지 않고 Claude 안에서 바로 검색할 수 있습니다.
+```
+
+### 6.1 Consensus MCP란?
+
+| 항목 | 내용 |
+|------|------|
+| **정식 명칭** | Consensus Model Context Protocol Server |
+| **검색 대상** | 2억 편 이상의 피어 리뷰 학술 논문 |
+| **지원 플랫폼** | Claude Desktop, Claude Code, ChatGPT, Cursor, VS Code |
+| **필요 사항** | [Consensus 계정](https://consensus.app) (무료 가입 가능) |
+| **공식 문서** | [https://docs.consensus.app/docs/mcp](https://docs.consensus.app/docs/mcp) |
+
+Consensus MCP는 Anthropic이 제안한 **Model Context Protocol(MCP)** 표준을 따릅니다. MCP는 AI 도구와 외부 데이터 소스를 안전하게 연결하는 개방형 표준으로, Consensus는 이를 통해 학술 논문 데이터베이스를 Claude 등 AI 어시스턴트에 연결합니다.
+
+### 6.2 설치 및 연결 방법
+
+#### Claude Code에서 설정하기
+
+Claude Code 터미널에서 아래 명령어를 실행합니다:
+
+```bash
+claude mcp add consensus --transport http https://mcp.consensus.app/mcp
+```
+
+또는 Claude Code 내에서 `/mcp` 명령어를 입력한 뒤, Consensus 커넥터를 선택해 연결합니다.
+
+```{admonition} 인증 안내
+:class: warning
+처음 연결하면 Consensus 계정으로 OAuth 로그인이 진행됩니다. 무료 계정으로는 쿼리당 최대 3편의 논문을 받을 수 있으며, API 키를 발급받으면 쿼리당 최대 20편까지 검색 가능합니다. API 키는 [https://consensus.app/home/api](https://consensus.app/home/api)에서 신청할 수 있습니다.
+```
+
+#### Claude Desktop에서 설정하기
+
+1. **Settings → Connectors** 이동
+2. **Browse Connectors** 클릭
+3. **"Consensus"** 검색 후 **Connect** 클릭
+4. OAuth 로그인 완료
+
+### 6.3 사용 방법
+
+Consensus MCP가 연결되면, Claude와의 대화에서 자연어로 논문을 검색할 수 있습니다.
+
+**기본 검색:**
+
+```
+👤 "anomaly detection in manufacturing 최신 논문을 찾아줘"
+```
+
+**연도 필터링:**
+
+```
+👤 "2023년 이후 diffusion model 기반 defect generation 논문을 검색해줘"
+```
+
+**고급 필터 (샘플 사이즈, 저널 등급):**
+
+```
+👤 "인간 대상 연구, 샘플 100명 이상, Q1 저널에서 cognitive behavioral therapy 관련 논문을 찾아줘"
+```
+
+### 6.4 검색 결과 구조
+
+| 필드 | 설명 |
+|------|------|
+| `title` | 논문 제목 |
+| `authors` | 저자 목록 |
+| `abstract` | 초록 전문 |
+| `journal` | 저널명 및 출판 정보 |
+| `year` | 출판 연도 |
+| `citation_count` | 피인용 횟수 |
+| `url` | Consensus 논문 페이지 바로가기 |
+
+### 6.5 Kaggle 리서치 실전 예시
+
+Kaggle 대회 준비 중 Consensus MCP를 활용하는 실제 시나리오입니다:
+
+```
+👤 "표면 결함 탐지(surface defect detection)를 위한 최신 딥러닝 방법론을
+    2022년 이후 논문에서 찾아줘. 특히 합성 데이터 증강 관련 연구가 있으면 함께 보여줘."
+
+🤖 [Consensus MCP로 논문 검색]
+
+검색 결과 (총 47편):
+
+1. "Diffusion Models for Industrial Anomaly Detection" (2024)
+   - 저자: Zhang et al.
+   - 인용: 23회
+   - 초록: Diffusion model을 활용한 산업 결함 탐지 프레임워크...
+   → 🔗 https://consensus.app/papers/...
+
+2. "Synthetic Data Augmentation for Surface Defect Inspection" (2023)
+   - 저자: Kim et al.
+   - 인용: 45회
+   - 초록: GAN 기반 합성 결함 이미지 생성으로 학습 데이터 부족 문제 해결...
+   → 🔗 https://consensus.app/papers/...
+```
+
+```{admonition} 리서치 팁
+:class: tip
+Consensus MCP로 찾은 논문을 Claude Code에 바로 공유하면, "이 논문의 핵심 아이디어를 Kaggle 대회에 적용할 수 있을까?" 같은 후속 질문이 가능합니다. 리서치 → 구현 사이의 컨텍스트 전환이 줄어듭니다.
+```
+
+### 6.6 참고 자료
+
+| 자료 | 링크 |
+|------|------|
+| Consensus MCP 공식 문서 | [https://docs.consensus.app/docs/mcp](https://docs.consensus.app/docs/mcp) |
+| Consensus MCP 소개 영상 | [The Consensus MCP & Claude Connector (YouTube)](https://www.youtube.com/watch?v=gcMel2guYE8) |
+| Consensus MCP 심화 튜토리얼 | [This MCP Server Gave Claude 200 Million Research Papers (YouTube)](https://www.youtube.com/watch?v=fyRRafCurzE) |
+| Consensus MCP 튜토리얼 플레이리스트 | [Master the Consensus MCP (YouTube)](https://www.youtube.com/playlist?list=PL5at_-ZVRXUFrKoDwbWe_JUfqT4RGyT8r) |
+| MCP 프로토콜 소개 | [https://www.anthropic.com/news/model-context-protocol](https://www.anthropic.com/news/model-context-protocol) |
+
+---
+
+## 7. Autoresearch와의 비교
 
 ```{admonition} Autoresearch란?
 :class: note
@@ -351,3 +586,7 @@ BMAD는 **"무엇을 만들 것인가"** 에 집중하는 소프트웨어 엔지
 | BMAD-METHOD 공식 저장소 | [https://github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) |
 | Autoresearch 공식 저장소 | [https://github.com/karpathy/autoresearch](https://github.com/karpathy/autoresearch) |
 | Claude Code 공식 문서 | [https://docs.anthropic.com/en/docs/claude-code](https://docs.anthropic.com/en/docs/claude-code) |
+| Consensus MCP 공식 문서 | [https://docs.consensus.app/docs/mcp](https://docs.consensus.app/docs/mcp) |
+| Consensus MCP 소개 영상 | [The Consensus MCP & Claude Connector (YouTube)](https://www.youtube.com/watch?v=gcMel2guYE8) |
+| Consensus MCP 심화 튜토리얼 | [This MCP Server Gave Claude 200 Million Research Papers (YouTube)](https://www.youtube.com/watch?v=fyRRafCurzE) |
+| Consensus MCP 튜토리얼 플레이리스트 | [Master the Consensus MCP (YouTube)](https://www.youtube.com/playlist?list=PL5at_-ZVRXUFrKoDwbWe_JUfqT4RGyT8r) |

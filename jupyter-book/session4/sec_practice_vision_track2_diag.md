@@ -1,4 +1,4 @@
-# 실습 배경 -- VISION Track 2와 DIAG
+# [실습] VISION Track 2 — 합성 데이터로 표면 결함 탐지 고도화
 
 ```{admonition} 이 페이지의 목적
 :class: note

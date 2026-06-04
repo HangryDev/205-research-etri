@@ -4,6 +4,7 @@ parts:
   - caption: 학습 자료 및 리소스
     chapters:
       - file: resources
+      - file: troubleshooting
   - caption: 개발환경 설정
     chapters:
       - file: vscode_install
@@ -22,22 +23,34 @@ parts:
       - file: session2/sec2_rul_prediction
       - file: session2/sec3_nasa_turbofan
       - file: session2/sec_practice
-      - file: spec_driven_dev
       - file: h2_nasa_turbofan_rul_exercise
       - file: session2/sec4_advanced
-  # - caption: 세션 3 — Vision AI 안전 모니터링
-  #   chapters:
-  #     - file: session3/sec1_object_detection
-  #     - file: session3/sec2_action_recognition
-  #     - file: session3/sec3_cctv_safety
-  #     - file: session3/sec_practice
-  #     - file: h3_cctv_safety_detection
-  #     - file: session3/sec4_advanced
-  # - caption: 세션 4 — Generative AI 합성 데이터
-  #   chapters:
-  #     - file: session4/sec1_diffusion_model
-  #     - file: session4/sec2_defect_generation
-  #     - file: session4/sec3_synthetic_data
-  #     - file: session4/sec_practice
-  #     - file: h4_mvtec_anomaly_detection
-  #     - file: session4/sec4_advanced
+  - caption: 2일차 강의 안내
+    chapters:
+      - file: day2_guide
+      - file: spec_driven_dev
+      - file: bmad_full_walkthrough
+  - caption: 세션 3 — Vision AI 안전 모니터링
+    chapters:
+      - file: session3/sec1_object_detection
+      - file: session3/sec2_action_recognition
+      - file: session3/sec3_cctv_safety
+      - file: session3/sec_practice
+      - file: session3/sec_practice_aicity_fisheye
+      - file: h3_cctv_safety_detection
+      - file: session3/sec4_advanced
+      - file: session3/sec_appendix_classical_cv_background
+      - file: session3/sec_appendix_yolo_evolution
+      - file: session3/sec_appendix_action_recognition_research
+  - caption: 세션 4 — Generative AI 합성 데이터
+    chapters:
+      - file: session4/sec0_landscape
+      - file: session4/sec1_diffusion_model
+      - file: session4/sec2_defect_generation
+      - file: session4/sec3_synthetic_data
+      - file: session4/sec_practice
+      - file: session4/sec_practice_defect_generation
+      - file: session4/sec_practice_vision_track2_diag
+      - file: h4_mvtec_anomaly_detection
+      - file: session4/sec4_advanced
+      - file: session4/sec_appendix_diffusion_defect_deep_dive
