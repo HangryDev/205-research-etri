@@ -1,4 +1,4 @@
-# Spec-Driven Development with BMAD-METHOD
+# Spec Driven Development로 연구개발 해보기
 
 ```{admonition} AI 시대의 체계적인 개발 방법론
 :class: note
@@ -71,18 +71,6 @@ npx bmad-method install --yes --modules bmm --tools claude-code
 
 설치 후 프로젝트에 `.bmad/` 디렉토리와 `CLAUDE.md`가 생성됩니다.
 
-```{admonition} 폴더 구조
-:class: tip
-```
-my-project/
-├── .bmad/                    # BMAD 코어 파일 (에이전트 정의, 템플릿)
-├── _bmad-output/
-│   ├── planning-artifacts/   # Phase 1~3 산출물
-│   └── implementation-artifacts/  # Phase 4 산출물
-├── CLAUDE.md                 # 프로젝트 규칙
-└── src/                      # 소스 코드
-```
-
 ---
 
 ### Phase 1: 분석 (Analysis) — Product Brief 작성
@@ -91,9 +79,7 @@ my-project/
 
 Claude Code에서 아래 명령어를 실행합니다:
 
-```bash
-/bmad-bmm-create-product-brief
-```
+`/bmad-bmm-create-product-brief`
 
 에이전트가 **Analyst** 역할로 대화형 질문을 진행합니다:
 
@@ -134,15 +120,11 @@ Claude Code에서 아래 명령어를 실행합니다:
 
 **목표:** Product Brief를 바탕으로 상세 제품 요구사항 문서(PRD)를 작성하고, 개발 단위인 에픽(Epic)으로 분해합니다.
 
-```bash
-/bmad-bmm-create-prd
-```
+`/bmad-bmm-create-prd`
 
 에이전트가 **PM** 역할로 PRD를 작성합니다.
 
-```bash
-/bmad-bmm-create-epics-and-stories
-```
+`/bmad-bmm-create-epics-and-stories`
 
 PM이 에픽과 사용자 스토리를 분해합니다:
 
@@ -170,9 +152,7 @@ Epic 3: 평가 및 시각화
 
 #### 아키텍처 문서 작성
 
-```bash
-/bmad-bmm-create-architecture
-```
+`/bmad-bmm-create-architecture`
 
 에이전트가 **Architect** 역할로 기술 설계를 진행합니다:
 
@@ -191,9 +171,7 @@ Epic 3: 평가 및 시각화
 
 #### 구현 준비 상태 점검
 
-```bash
-/bmad-bmm-check-implementation-readiness
-```
+`/bmad-bmm-check-implementation-readiness`
 
 에이전트가 모든 산출물의 완성도를 평가합니다:
 
@@ -215,9 +193,7 @@ Epic 3: 평가 및 시각화
 
 #### 스프린트 계획
 
-```bash
-/bmad-bmm-sprint-planning
-```
+`/bmad-bmm-sprint-planning`
 
 **Scrum Master** 역할이 스프린트를 계획합니다.
 
@@ -225,15 +201,9 @@ Epic 3: 평가 및 시각화
 
 각 스토리마다 아래 과정을 반복합니다:
 
-```bash
-# 1. 스토리 상세 작성
-/bmad-bmm-create-story
-```
+**1. 스토리 상세 작성:** `/bmad-bmm-create-story`
 
-```bash
-# 2. 스토리 구현
-/bmad-bmm-dev-story
-```
+**2. 스토리 구현:** `/bmad-bmm-dev-story`
 
 에이전트가 **Developer** 역할로 코드를 작성합니다:
 
