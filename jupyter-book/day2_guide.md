@@ -20,9 +20,8 @@
 :gutter: 3
 :class-container: sd-pt-4
 
-```
-{grid-item-card} 1. AI와 함께 연구 완성하기
-:img-top: 
+```{grid-item-card} 1. AI와 함께 연구 완성하기
+:img-top:
 :class-card: sd-rounded-3 sd-shadow-sm
 :text-align: center
 
@@ -32,7 +31,7 @@ BMAD를 통해 연구/개발을 진행하는 튜토리얼이 준비되어 있습
 
 ^^^
 
-```{button-link} # 
+```{button-link} #
 :color: primary
 :click-parent:
 :expand:
@@ -40,8 +39,7 @@ BMAD를 통해 연구/개발을 진행하는 튜토리얼이 준비되어 있습
 ```
 ```
 
-```
-{grid-item-card} 2. 2장–4장 연구/개발 자료
+```{grid-item-card} 2. 2장–4장 연구/개발 자료
 :class-card: sd-rounded-3 sd-shadow-sm
 :text-align: center
 
@@ -51,7 +49,7 @@ BMAD를 통해 연구/개발을 진행하는 튜토리얼이 준비되어 있습
 
 ^^^
 
-```{button-link} # 
+```{button-link} #
 :color: secondary
 :click-parent:
 :expand:
@@ -59,8 +57,7 @@ BMAD를 통해 연구/개발을 진행하는 튜토리얼이 준비되어 있습
 ```
 ```
 
-```
-{grid-item-card} 3. 수업 종료 1시간 전 — 활동 요약 제출
+```{grid-item-card} 3. 수업 종료 1시간 전 — 활동 요약 제출
 :class-card: sd-rounded-3 sd-shadow-sm
 :text-align: center
 
@@ -77,10 +74,6 @@ BMAD를 통해 연구/개발을 진행하는 튜토리얼이 준비되어 있습
 ```
 
 ```
-
----
-
-## MCP 연결
 
 ---
 
