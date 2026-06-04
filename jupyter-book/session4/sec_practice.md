@@ -1,4 +1,4 @@
-# 세션 4 실습 — Claude Code 시연 & 실습 모음
+# [실습 시 프롬프트 제안] 세션 4 — Claude Code 시연 & 실습 모음
 
 
 > 세션 4(Generative AI 합성 데이터)의 각 강의 섹션에 있던 **Claude Code 시연**과 **실습** 부분을 한곳에 모았습니다.
