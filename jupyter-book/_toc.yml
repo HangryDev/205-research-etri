@@ -14,7 +14,7 @@ parts:
       - file: session1/sec2_data_imbalance
       - file: session1/sec3_cnc_pipeline
       - file: session1/sec_practice
-      - file: h1_cnc_anomaly_detection_exercise
+      - file: h1_cnc_anomaly_detection_answer
       - file: session1/sec4_advanced
   - caption: 세션 2 — 딥러닝 이상 탐지
     chapters:
